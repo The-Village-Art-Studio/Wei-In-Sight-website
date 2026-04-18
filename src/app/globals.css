@@ -1,0 +1,122 @@
+/* Design Tokens & Global Reset */
+:root {
+  --midnight: #050505;
+  --neon-pink: #ff00ff;
+  --neon-pink-glow: rgba(255, 0, 255, 0.4);
+  --white: #ffffff;
+  --gray-subtle: #888888;
+  --magenta-depth: #1a001a;
+  
+  --font-main: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-poetic: 'serif'; /* Will refine with specific fonts in later stages */
+  
+  --spacing-xs: 0.5rem;
+  --spacing-s: 1rem;
+  --spacing-m: 2rem;
+  --spacing-l: 4rem;
+  --spacing-xl: 8rem;
+  
+  --transition-slow: 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-medium: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+  background: var(--midnight);
+  color: var(--white);
+  font-family: var(--font-main);
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: inherit;
+  font: inherit;
+}
+
+h1, h2, h3, h4 {
+  font-weight: 300;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+/* Typography Scale */
+.text-xs { font-size: 0.75rem; letter-spacing: 0.05em; }
+.text-small { font-size: 0.875rem; }
+.text-base { font-size: 1rem; line-height: 1.6; }
+.text-large { font-size: 1.25rem; }
+.text-xl { font-size: 2rem; }
+.text-display { font-size: clamp(2rem, 8vw, 6rem); }
+
+/* Utility Classes */
+.text-neon {
+  color: var(--neon-pink);
+  text-shadow: 0 0 10px var(--neon-pink-glow);
+}
+
+.layout-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: var(--spacing-m);
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Page Transitions (Framer Motion focus) */
+.page-wrapper {
+  min-height: 100vh;
+  width: 100%;
+}
+
+/* Base Layout Structure */
+.site-wrapper {
+  display: flex;
+  min-height: 100vh;
+  background: var(--midnight);
+}
+
+.site-header {
+  width: 300px; /* Fixed width for left panel on desktop */
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  flex-shrink: 0;
+}
+
+.site-main {
+  flex-grow: 1;
+  min-height: 100vh;
+}
+
+@media (max-width: 768px) {
+  .site-wrapper {
+    flex-direction: column;
+  }
+  .site-header {
+    width: 100%;
+    height: auto;
+    position: relative;
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+}
