@@ -5,6 +5,7 @@ import MainNav from "@/components/shared/MainNav";
 import BackToTop from "@/components/shared/BackToTop";
 import { HomepageProvider } from "@/context/HomepageContext";
 import { AudioProvider } from "@/context/AudioContext";
+import { Analytics } from "@vercel/analytics/react";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit" });
@@ -30,6 +31,7 @@ export default function RootLayout({
               </header>
               <main className="site-main">
                 {children}
+                <Analytics />
               </main>
               <BackToTop />
             </div>
