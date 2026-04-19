@@ -37,11 +37,10 @@ export default function BodyModel() {
   }, [scene]);
 
   useFrame((state) => {
-    // Keep subtle ambient breathing/drifting
+    // Subtle idle sway — rotation only, no Y drift (keeps mesh aligned with anchor dots)
     if (groupRef.current) {
       const t = state.clock.getElapsedTime();
-      groupRef.current.position.y = Math.sin(t * 0.5) * 0.02; 
-      groupRef.current.rotation.y = Math.sin(t * 0.2) * 0.05;
+      groupRef.current.rotation.y = Math.sin(t * 0.2) * 0.04;
     }
 
     // Material react to interactions globally

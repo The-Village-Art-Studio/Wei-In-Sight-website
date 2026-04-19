@@ -1,7 +1,7 @@
 'use client';
 
 import { Canvas } from '@react-three/fiber';
-import { Suspense } from 'react';
+import { Suspense, useState, useEffect } from 'react';
 import * as THREE from 'three';
 import { useHomepageState } from '@/context/HomepageContext';
 import { NAV_SECTIONS } from '@/lib/constants';
@@ -12,7 +12,7 @@ import { Html } from '@react-three/drei';
 import BodyModel from './BodyModel';
 import CameraController from './CameraController';
 
-function AnchorPoint({ section }: { section: typeof NAV_SECTIONS[0] }) {
+function AnchorPoint({ section, isMobile }: { section: typeof NAV_SECTIONS[0], isMobile: boolean }) {
   const { hoveredSection, selectedSection, setSelectedSection, setIsFocused } = useHomepageState();
   const isHovered = hoveredSection === section.id;
   const isSelected = selectedSection === section.id;
@@ -22,7 +22,6 @@ function AnchorPoint({ section }: { section: typeof NAV_SECTIONS[0] }) {
     <Html 
       position={new THREE.Vector3(...section.anchorPos3D)} 
       center 
-      distanceFactor={10}
       zIndexRange={[100, 0]}
     >
       <div className={`anchor-point-container ${isVisible ? 'visible' : ''} ${isSelected ? 'selected' : ''}`}>
@@ -41,9 +40,9 @@ function AnchorPoint({ section }: { section: typeof NAV_SECTIONS[0] }) {
               initial={{ opacity: 0, scale: 0.8, x: 20 }}
               animate={{ opacity: 1, scale: 1, x: 0 }}
               exit={{ opacity: 0, scale: 0.8, x: 20 }}
-              className="emerging-submenu"
+              className={`emerging-submenu ${isMobile ? 'mobile' : ''}`}
             >
-              <div className="submenu-title text-xs text-neon">{section.label}</div>
+              <div className="submenu-title">{section.label}</div>
               <ul className="submenu-items">
                 {section.submenus.map((sub, i) => (
                   <motion.li 
@@ -52,7 +51,7 @@ function AnchorPoint({ section }: { section: typeof NAV_SECTIONS[0] }) {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: i * 0.1 }}
                   >
-                    <Link href={sub.href} className="submenu-item-link text-small">
+                    <Link href={sub.href} className="submenu-item-link">
                       {sub.label}
                     </Link>
                   </motion.li>
@@ -63,7 +62,7 @@ function AnchorPoint({ section }: { section: typeof NAV_SECTIONS[0] }) {
         </AnimatePresence>
       </div>
 
-      <style jsx>{`
+      <style>{`
         .anchor-point-container {
           pointer-events: auto;
           position: relative;
@@ -73,76 +72,99 @@ function AnchorPoint({ section }: { section: typeof NAV_SECTIONS[0] }) {
           width: 8px;
           height: 8px;
           border-radius: 50%;
-          background: var(--white);
-          border: 2px solid var(--neon-pink);
+          background: rgba(255, 255, 255, 0.9);
+          border: 1.5px solid var(--neon-pink);
           cursor: pointer;
-          transition: var(--transition-medium);
-          opacity: 0.2;
+          transition: all 0.3s ease;
+          opacity: 0.25;
+          box-shadow: 0 0 6px rgba(255, 105, 180, 0.3);
         }
         
         .anchor-point-container.visible .anchor-dot {
           opacity: 1;
-          box-shadow: 0 0 15px var(--neon-pink);
-          transform: scale(2);
+          box-shadow: 0 0 18px var(--neon-pink), 0 0 40px rgba(255, 105, 180, 0.4);
+          transform: scale(2.2);
         }
         
         .anchor-point-container.selected .anchor-dot {
           background: var(--neon-pink);
+          box-shadow: 0 0 20px var(--neon-pink), 0 0 50px rgba(255, 105, 180, 0.5);
         }
         
         .emerging-submenu {
           position: absolute;
-          left: 40px;
+          left: 30px;
           top: 50%;
           transform: translateY(-50%);
-          min-width: 180px;
-          padding: var(--spacing-s);
-          background: rgba(5, 5, 5, 0.9);
-          backdrop-filter: blur(20px);
-          border-left: 1px solid var(--neon-pink);
+          min-width: 300px;
+          width: max-content;
+          padding: 24px 32px;
+          background: rgba(15, 6, 30, 0.85); /* Much stronger glass background */
+          backdrop-filter: blur(24px) saturate(200%);
+          -webkit-backdrop-filter: blur(24px) saturate(200%);
+          border: 1px solid rgba(255, 105, 180, 0.6); /* Very visible border */
+          border-radius: 16px;
+          box-shadow:
+            0 16px 48px rgba(0, 0, 0, 0.9),
+            0 0 0 1px rgba(255, 255, 255, 0.15) inset,
+            0 0 32px rgba(255, 105, 180, 0.3) inset;
           display: flex;
           flex-direction: column;
-          gap: var(--spacing-s);
-          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+          gap: 16px;
           z-index: 100;
+          pointer-events: auto; /* Fully force hover reception */
+        }
+
+        .emerging-submenu.mobile {
+          left: 50%;
+          top: 25px;
+          transform: translateX(-50%);
+          min-width: 140px;
+          padding: 10px 12px;
         }
         
         .submenu-items {
           list-style: none;
           display: flex;
           flex-direction: column;
-          gap: 6px;
+          gap: 4px;
+          margin: 0;
+          padding: 0;
         }
         
         .submenu-item-link {
-          color: var(--white);
-          opacity: 0.7;
-          transition: var(--transition-medium);
+          color: rgba(255, 255, 255, 0.75);
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           white-space: nowrap;
           text-decoration: none;
           display: block;
+          font-size: 2.34rem; /* 3x of 0.78rem */
+          letter-spacing: 0.05em;
+          padding: 8px 12px;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+          border-radius: 6px;
         }
         
         .submenu-item-link:hover {
           opacity: 1;
-          color: var(--neon-pink);
-          padding-left: 8px;
+          color: #fff;
+          background: rgba(255, 105, 180, 0.2);
+          padding-left: 20px;
+          border-bottom-color: transparent;
+          text-shadow: 0 0 10px #ff69b4, 0 0 20px #ff69b4;
+          box-shadow: inset 4px 0 0 #ff69b4;
         }
         
         .submenu-title {
-          letter-spacing: 0.2em;
+          letter-spacing: 0.18em;
           text-transform: uppercase;
-          font-weight: bold;
+          font-size: 1.95rem; /* 3x of 0.65rem */
+          font-weight: 800;
+          color: #ff69b4;
+          text-shadow: 0 0 16px rgba(255, 105, 180, 0.9);
           margin-bottom: 4px;
-        }
-
-        .text-neon {
-          color: var(--neon-pink);
-          text-shadow: 0 0 10px var(--neon-pink-glow);
-        }
-        
-        .text-small {
-          font-size: 0.8rem;
+          padding-bottom: 12px;
+          border-bottom: 2px solid rgba(255, 105, 180, 0.3);
         }
       `}</style>
     </Html>
@@ -151,6 +173,13 @@ function AnchorPoint({ section }: { section: typeof NAV_SECTIONS[0] }) {
 
 export default function BodyScene() {
   console.log("BodyScene is rendering!");
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
   return (
     <div 
       className="scene-wrapper"
@@ -171,7 +200,7 @@ export default function BodyScene() {
         
         {/* 3D-Anchored navigation points */}
         {NAV_SECTIONS.map((section) => (
-          <AnchorPoint key={section.id} section={section} />
+          <AnchorPoint key={section.id} section={section} isMobile={isMobile} />
         ))}
       </Canvas>
     </div>
