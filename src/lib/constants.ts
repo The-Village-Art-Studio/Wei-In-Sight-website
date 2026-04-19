@@ -23,6 +23,11 @@ export interface Section {
   cameraPos3D: Point3D;
   cameraTarget3D: Point3D;
   submenus: SubMenu[];
+  editorial: {
+    layoutType: 'gallery' | 'audio' | 'process' | 'prose' | 'narrative' | 'profile' | 'pulse';
+    moodColor?: string;
+    accentColor?: string;
+  };
 }
 
 export const IDENTITY = {
@@ -56,6 +61,10 @@ export const NAV_SECTIONS: Section[] = [
       { id: 'sculpture', label: 'Sculpture', href: '/sight/sculpture' },
       { id: 'collections', label: 'Collections', href: '/sight/collections' },
     ],
+    editorial: {
+      layoutType: 'gallery',
+      accentColor: '#ff00ff',
+    },
   },
   {
     id: 'sound',
@@ -74,6 +83,10 @@ export const NAV_SECTIONS: Section[] = [
       { id: 'audio-visual-work', label: 'Audio-Visual Work', href: '/sound/audio-visual-work' },
       { id: 'music-archive', label: 'Music Archive', href: '/sound/music-archive' },
     ],
+    editorial: {
+      layoutType: 'audio',
+      accentColor: '#00ffff',
+    },
   },
   {
     id: 'touch',
@@ -92,6 +105,10 @@ export const NAV_SECTIONS: Section[] = [
       { id: 'fabric-texture-work', label: 'Fabric & Texture Work', href: '/touch/fabric-texture-work' },
       { id: 'studio-process', label: 'Studio Process', href: '/touch/studio-process' },
     ],
+    editorial: {
+      layoutType: 'process',
+      accentColor: '#ffa500',
+    },
   },
   {
     id: 'voice',
@@ -110,6 +127,10 @@ export const NAV_SECTIONS: Section[] = [
       { id: 'spoken-word', label: 'Spoken Word', href: '/voice/spoken-word' },
       { id: 'journal-fragments', label: 'Journal Fragments', href: '/voice/journal-fragments' },
     ],
+    editorial: {
+      layoutType: 'prose',
+      accentColor: '#ffffff',
+    },
   },
   {
     id: 'dream',
@@ -128,6 +149,10 @@ export const NAV_SECTIONS: Section[] = [
       { id: 'excerpts', label: 'Excerpts', href: '/dream/excerpts' },
       { id: 'behind-the-story', label: 'Behind the Story', href: '/dream/behind-the-story' },
     ],
+    editorial: {
+      layoutType: 'narrative',
+      accentColor: '#7b68ee',
+    },
   },
   {
     id: 'heart',
@@ -146,6 +171,10 @@ export const NAV_SECTIONS: Section[] = [
       { id: 'journey', label: 'Journey', href: '/heart/journey' },
       { id: 'exhibitions-features', label: 'Exhibitions & Features', href: '/heart/exhibitions-features' },
     ],
+    editorial: {
+      layoutType: 'profile',
+      accentColor: '#ff6b6b',
+    },
   },
   {
     id: 'pulse',
@@ -164,5 +193,9 @@ export const NAV_SECTIONS: Section[] = [
       { id: 'commissions', label: 'Commissions', href: '/pulse/commissions' },
       { id: 'contact', label: 'Contact', href: '/pulse/contact' },
     ],
+    editorial: {
+      layoutType: 'pulse',
+      accentColor: '#00ffc3',
+    },
   },
 ];

@@ -1,13 +1,14 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { NAV_SECTIONS, IDENTITY, FOOTER_LINKS } from '@/lib/constants';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useHomepageState } from '@/context/HomepageContext';
 
 export default function MainNav() {
   const pathname = usePathname();
+  const router = useRouter();
   const isHome = pathname === '/';
   const { 
     hoveredSection, 
@@ -25,7 +26,7 @@ export default function MainNav() {
     if (isHome) setHoveredSection(null);
   };
 
-  const handleClick = (id: string) => {
+  const handleClick = (id: string, href: string) => {
     if (isHome) {
       if (selectedSection === id) {
         setSelectedSection(null);
@@ -34,11 +35,14 @@ export default function MainNav() {
         setSelectedSection(id);
         setIsFocused(true);
       }
+    } else {
+      // If not on home, clicking a section should navigate to its landing page
+      router.push(href);
     }
   };
 
   return (
-    <nav className="main-nav">
+    <nav className={`main-nav glass`}>
       <div className="nav-top">
         <Link href="/" className="nav-brand" onClick={() => {
           setSelectedSection(null);
@@ -77,7 +81,7 @@ export default function MainNav() {
                 onMouseLeave={handleMouseLeave}
               >
                 <div 
-                  onClick={() => handleClick(section.id)}
+                  onClick={() => handleClick(section.id, section.href)}
                   className={`nav-link-wrapper ${isPersistentlyActive || isHomeSelected ? 'active' : ''} ${isHovered ? 'hovered' : ''}`}
                 >
                   <div className="nav-link-main">
@@ -126,11 +130,18 @@ export default function MainNav() {
       <style jsx>{`
         .main-nav {
           padding: var(--spacing-l) var(--spacing-m);
-          height: 100%;
+          height: calc(100vh - var(--spacing-m) * 2);
+          margin: var(--spacing-m);
           display: flex;
           flex-direction: column;
           justify-content: space-between;
-          background: var(--midnight);
+          border-radius: 2px; /* Very subtle like a plate */
+          transition: var(--transition-medium);
+        }
+        
+        .main-nav:hover {
+          border-color: rgba(255, 255, 255, 0.1);
+          transform: translateX(4px);
         }
         
         .nav-top {
