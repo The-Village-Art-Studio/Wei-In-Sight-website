@@ -415,8 +415,14 @@ export default function MainNav() {
         .nav-bottom {
           display: flex;
           flex-direction: column;
-          gap: 12px;
+          gap: 6px;
           margin-top: auto;
+        }
+
+        @media (max-height: 850px) {
+          .nav-bottom {
+            gap: 4px !important;
+          }
         }
 
         @media (max-height: 850px) {

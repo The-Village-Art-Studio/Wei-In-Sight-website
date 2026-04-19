@@ -52,7 +52,7 @@ function AnchorPoint({ section, isMobile }: { section: typeof NAV_SECTIONS[0], i
               initial={{ opacity: 0, scale: 0.8, x: section.id === 'touch' ? -20 : 20 }}
               animate={{ opacity: 1, scale: 1, x: 0 }}
               exit={{ opacity: 0, scale: 0.8, x: section.id === 'touch' ? -20 : 20 }}
-              className={`emerging-submenu ${isMobile ? 'mobile' : ''} ${['touch', 'heart', 'sound', 'pulse'].includes(section.id) ? 'align-left' : ''}`}
+              className={`emerging-submenu ${isMobile ? 'mobile' : ''} ${['touch', 'heart', 'sound'].includes(section.id) ? 'align-left' : ''}`}
             >
               <div className="submenu-title">{section.label}</div>
               <ul className="submenu-items">
