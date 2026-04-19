@@ -77,7 +77,6 @@ export const NAV_SECTIONS: Section[] = [
     cameraTarget3D: [-0.1, 1.25, 0],
     submenus: [
       { id: 'streaming-platforms', label: 'Streaming Platforms', href: '/sound/streaming-platforms' },
-      { id: 'original-songs', label: 'Original Songs', href: '/sound/original-songs' },
       { id: 'audio-visual-work', label: 'Audio-Visual Work', href: '/sound/audio-visual-work' },
       { id: 'music-archive', label: 'Music Archive', href: '/sound/music-archive' },
     ],
@@ -101,7 +100,7 @@ export const NAV_SECTIONS: Section[] = [
       { id: 'mixed-media', label: 'Mixed Media', href: '/touch/mixed-media' },
       { id: 'material-experiments', label: 'Material Experiments', href: '/touch/material-experiments' },
       { id: 'fabric-texture-work', label: 'Fabric & Texture Work', href: '/touch/fabric-texture-work' },
-      { id: 'studio-process', label: 'Studio Process', href: '/touch/studio-process' },
+      { id: 'fashion', label: 'Fashion', href: '/touch/fashion' },
     ],
     editorial: {
       layoutType: 'process',
@@ -123,7 +122,6 @@ export const NAV_SECTIONS: Section[] = [
       { id: 'poems', label: 'Poems', href: '/voice/poems' },
       { id: 'lyrics', label: 'Lyrics', href: '/voice/lyrics' },
       { id: 'spoken-word', label: 'Spoken Word', href: '/voice/spoken-word' },
-      { id: 'journal-fragments', label: 'Journal Fragments', href: '/voice/journal-fragments' },
     ],
     editorial: {
       layoutType: 'prose',
@@ -143,8 +141,7 @@ export const NAV_SECTIONS: Section[] = [
     cameraTarget3D: [0.1, 1.35, 0],
     submenus: [
       { id: 'the-novel', label: 'The Novel', href: '/dream/the-novel' },
-      { id: 'story-world', label: 'Story World', href: '/dream/story-world' },
-      { id: 'excerpts', label: 'Excerpts', href: '/dream/excerpts' },
+      { id: 'quote', label: 'Quote', href: '/dream/quote' },
       { id: 'behind-the-story', label: 'Behind the Story', href: '/dream/behind-the-story' },
     ],
     editorial: {
@@ -187,7 +184,6 @@ export const NAV_SECTIONS: Section[] = [
     cameraTarget3D: [0.1, 0.2, 0],
     submenus: [
       { id: 'buy-art', label: 'Buy Art', href: '/pulse/buy-art' },
-      { id: 'available-works', label: 'Available Works', href: '/pulse/available-works' },
       { id: 'commissions', label: 'Commissions', href: '/pulse/commissions' },
       { id: 'contact', label: 'Contact', href: '/pulse/contact' },
     ],

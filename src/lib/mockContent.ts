@@ -39,18 +39,7 @@ export const MOCK_CONTENT: Record<string, DeepContent> = {
       ], caption: 'Selected large-scale paintings from the 2024 collection.' }
     ]
   },
-  // SOUND
-  'sound/original-songs': {
-    id: 'so1',
-    slug: 'original-songs',
-    sectionId: 'sound',
-    title: 'Resonance Theory',
-    subtitle: 'A collection of ambient and experimental soundscapes.',
-    blocks: [
-      { type: 'audio', url: '/mock-audio/resonance-1.mp3', caption: 'Resonance 01: The Void', metadata: { duration: '4:20', platform: 'Spotify' } },
-      { type: 'text', content: 'Sound is more than vibration; it is the architecture of the invisible.' }
-    ]
-  },
+
   // VOICE
   'voice/poems': {
     id: 'v1',
@@ -101,20 +90,7 @@ export const MOCK_CONTENT: Record<string, DeepContent> = {
       { type: 'text', content: 'Jacky Ho is an artist based between worlds, focusing on the intersection of memory and technology.' }
     ]
   },
-  // PULSE
-  'pulse/available-works': {
-    id: 'p1',
-    slug: 'available-works',
-    sectionId: 'pulse',
-    title: 'Current Collections',
-    subtitle: 'Works available for acquisition.',
-    blocks: [
-      { type: 'gallery', items: [
-        'https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5',
-        'https://images.unsplash.com/photo-1582555172866-f73bb12a2ab3'
-      ], caption: 'Inquire for pricing and shipping details.' }
-    ]
-  }
+
 };
 
 export function getContent(sectionId: string, slug: string): DeepContent | undefined {
