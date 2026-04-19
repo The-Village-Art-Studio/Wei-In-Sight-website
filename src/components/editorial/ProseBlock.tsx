@@ -8,6 +8,23 @@ interface ProseBlockProps {
 }
 
 export default function ProseBlock({ content, type = 'standard' }: ProseBlockProps) {
+  const renderContent = (text: string) => {
+    return text.split('\n\n').map((paragraph, pIdx) => {
+      // Handle Headers (###)
+      if (paragraph.startsWith('### ')) {
+        const headerText = paragraph.replace('### ', '');
+        return <h3 key={pIdx} className="prose-header">{headerText}</h3>;
+      }
+      
+      // Handle Standard Paragraphs
+      return (
+        <p key={pIdx} className={type === 'narrative' ? 'text-large' : 'text-base'}>
+          {paragraph}
+        </p>
+      );
+    });
+  };
+
   return (
     <motion.div 
       initial={{ opacity: 0, y: 10 }}
@@ -20,9 +37,9 @@ export default function ProseBlock({ content, type = 'standard' }: ProseBlockPro
           {content}
         </blockquote>
       ) : (
-        <p className={type === 'narrative' ? 'text-large' : 'text-base'}>
-          {content}
-        </p>
+        <div className="prose-inner">
+          {renderContent(content)}
+        </div>
       )}
 
       <style jsx>{`
@@ -33,9 +50,29 @@ export default function ProseBlock({ content, type = 'standard' }: ProseBlockPro
           color: rgba(255, 255, 255, 0.9);
         }
         
+        .prose-header {
+          font-family: var(--font-poetic);
+          font-size: 0.75rem;
+          text-transform: uppercase;
+          letter-spacing: 0.2em;
+          color: var(--neon-pink);
+          text-shadow: 0 0 10px rgba(255, 46, 115, 0.3);
+          margin-bottom: 12px;
+          margin-top: 24px;
+        }
+
+        .prose-header:first-child {
+          margin-top: 0;
+        }
+
+        .prose-inner {
+          display: flex;
+          flex-direction: column;
+        }
+
         .type-standard {
           font-family: var(--font-main);
-          opacity: 0.8;
+          opacity: 0.9;
         }
 
         .type-quote {

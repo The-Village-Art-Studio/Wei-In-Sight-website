@@ -4,7 +4,6 @@ import { useParams, notFound } from 'next/navigation';
 import { NAV_SECTIONS } from '@/lib/constants';
 import { motion } from 'framer-motion';
 import SectionHero from '@/components/editorial/SectionHero';
-import MediaGrid from '@/components/editorial/MediaGrid';
 import Link from 'next/link';
 
 export default function SectionPage() {
@@ -14,16 +13,6 @@ export default function SectionPage() {
   if (!section) {
     notFound();
   }
-
-  // Mock featured images for the gallery/landing pages
-  const featuredImages = [
-    'https://images.unsplash.com/photo-1549490349-8643362247b5',
-    'https://images.unsplash.com/photo-1554188248-986adbb73be4',
-    'https://images.unsplash.com/photo-1515405299443-8b0bb401ec51',
-    'https://images.unsplash.com/photo-1506744038136-46273834b3fb',
-    'https://images.unsplash.com/photo-1511300633959-d9eec73b137a',
-    'https://images.unsplash.com/photo-1518709268805-4e9042af9f23',
-  ].slice(0, section.editorial.layoutType === 'gallery' ? 6 : 3);
 
   return (
     <motion.div 
@@ -101,11 +90,6 @@ export default function SectionPage() {
             ))}
           </div>
         </div>
-
-        {/* Dynamic Layout based on section type */}
-        {section.editorial.layoutType === 'gallery' || section.editorial.layoutType === 'process' ? (
-          <MediaGrid items={featuredImages} columns={section.editorial.layoutType === 'gallery' ? 3 : 2} />
-        ) : null}
       </div>
 
       <style jsx>{`

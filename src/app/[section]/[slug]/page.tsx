@@ -10,6 +10,7 @@ import MediaGrid from '@/components/editorial/MediaGrid';
 import AudioBlock from '@/components/editorial/AudioBlock';
 import ProseBlock from '@/components/editorial/ProseBlock';
 import LogoGrid from '@/components/editorial/LogoGrid';
+import PulseForm from '@/components/editorial/PulseForm';
 
 export default function ContentPage() {
   const { section: sectionId, slug } = useParams();
@@ -41,6 +42,23 @@ export default function ContentPage() {
       <SectionHero section={section} compact />
 
       <article className="content-container">
+        {content?.heroImage && (
+          <motion.div 
+            initial={{ opacity: 0, scale: 1.02 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+            className="page-hero"
+          >
+            <div className="hero-image-container">
+              <img 
+                src={content.heroImage} 
+                alt={content.title} 
+                className="hero-image"
+              />
+            </div>
+          </motion.div>
+        )}
+
         <header className="page-header">
           <h2 className="text-xl">{content?.title || activeSubmenu.label}</h2>
           {content?.subtitle && <p className="text-small opacity-50">{content.subtitle}</p>}
@@ -72,6 +90,13 @@ export default function ContentPage() {
                       items={block.logoItems || []} 
                     />
                   );
+                case 'form':
+                  return (
+                    <PulseForm 
+                      key={idx} 
+                      formType={block.formType || 'contact'} 
+                    />
+                  );
                 default:
                   return null;
               }
@@ -91,6 +116,25 @@ export default function ContentPage() {
       </article>
 
       <style jsx>{`
+        .page-hero {
+          margin-bottom: var(--spacing-l);
+          width: 100%;
+          overflow: hidden;
+          background: rgba(255, 255, 255, 0.02);
+        }
+        .hero-image-container {
+          width: 100%;
+          max-height: 400px;
+          overflow: hidden;
+          position: relative;
+        }
+        .hero-image {
+          width: 100%;
+          height: auto;
+          object-fit: cover;
+          display: block;
+        }
+        
         .content-page {
           /* Layout managed globally in globals.css */
         }

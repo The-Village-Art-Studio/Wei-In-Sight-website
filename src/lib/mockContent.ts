@@ -9,6 +9,7 @@ export interface ContentBlock {
   caption?: string;
   items?: string[]; // For gallery or process steps
   logoItems?: { logoUrl: string; title: string; description: string; preserveColor?: boolean }[];
+  formType?: 'contact' | 'commission';
   metadata?: Record<string, any>;
 }
 
@@ -29,15 +30,87 @@ export const MOCK_CONTENT: Record<string, DeepContent> = {
     slug: 'paintings',
     sectionId: 'sight',
     title: 'The Inner Landscape',
-    subtitle: 'A series of oil on canvas exploring memory and space.',
-    heroImage: 'https://images.unsplash.com/photo-1541963463532-d68292c34b19',
+    subtitle: 'A series of atmospheric oil abstractions exploring memory and spatial resonance.',
+    heroImage: '/assets/art/sight_paintings_hero_1776626955531.png',
     blocks: [
-      { type: 'text', content: 'These works represent a five-year exploration of sensory memory. Each stroke is a translation of a specific moment in time.' },
-      { type: 'gallery', items: [
-        'https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5',
-        'https://images.unsplash.com/photo-1578301978693-85fa9c0320b9',
-        'https://images.unsplash.com/photo-1582555172866-f73bb12a2ab3'
-      ], caption: 'Selected large-scale paintings from the 2024 collection.' }
+      { 
+        type: 'text', 
+        content: `### TEXTURE OF MEMORY\n\nThese works represent a five-year exploration of sensory memory. Each stroke is a translation of a specific moment in time—a vibration captured through heavy impasto and gold leaf. \n\nThe palette is restricted to charcoal, deep violets, and oxidized golds, focusing the viewer's attention on the physical rhythm of the paint.` 
+      },
+      { 
+        type: 'gallery', 
+        items: [
+          '/assets/art/sight_paintings_1_1776627360680.png',
+          '/assets/art/sight_paintings_2_1776627384437.png'
+        ], 
+        caption: 'Selected large-scale oil works on canvas, 2024.' 
+      }
+    ]
+  },
+  'sight/photography': {
+    id: 's2',
+    slug: 'photography',
+    sectionId: 'sight',
+    title: 'Architectural Silence',
+    subtitle: 'High-contrast studies of brutalist geometry and the play of light.',
+    heroImage: '/assets/art/sight_photography_preview_1776626984989.png',
+    blocks: [
+      { 
+        type: 'text', 
+        content: `### THE VOID BEYOND\n\nPhotography, for me, is an exercise in subtractive composition. By removing color and isolating monolithic structures, I seek to reveal the "silent pulse" of the built environment. \n\nThis series focuses on the intersection of concrete, shadow, and a single, unforgiving beam of light.` 
+      },
+      { 
+        type: 'gallery', 
+        items: [
+          '/assets/art/sight_photography_1_1776627407211.png',
+          '/assets/art/sight_photography_2_1776627429953.png',
+          '/assets/art/sight_photography_3_1776627454474.png'
+        ], 
+        caption: 'Monolithic studies in shadow and structure.' 
+      }
+    ]
+  },
+  'sight/sculpture': {
+    id: 's3',
+    slug: 'sculpture',
+    sectionId: 'sight',
+    title: 'Frozen Motion',
+    subtitle: 'Brutalist mixed media forms exploring the tension between glass and steel.',
+    heroImage: '/assets/art/sight_sculpture_preview_1776627004575.png',
+    blocks: [
+      { 
+        type: 'text', 
+        content: `### TACTILE BRUTALISM\n\nMy sculptures are physical manifestations of internal friction. Using industrial materials like oxidized steel, cracked glass, and raw concrete, I build forms that feel like they are either emerging from or collapsing into their environment.` 
+      },
+      { 
+        type: 'gallery', 
+        items: [
+          '/assets/art/sight_sculpture_1_1776627480388.png',
+          '/assets/art/sight_sculpture_2_1776627504199.png'
+        ], 
+        caption: 'Brutalist interventions in space.' 
+      }
+    ]
+  },
+  'sight/collections': {
+    id: 's4',
+    slug: 'collections',
+    sectionId: 'sight',
+    title: 'Archival Assemblages',
+    subtitle: 'Curated series of artifacts and mixed media studies.',
+    heroImage: '/assets/art/sight_collections_preview_1776627027864.png',
+    blocks: [
+      { 
+        type: 'text', 
+        content: `### THE CREATIVE ATLAS\n\nCollections represent the connective tissue between my disparate disciplines. These are not just finished works, but the process records—sketches, prototypes, and material fragments—grouped to reveal the thematic throughlines of the Wei In Sight project.` 
+      },
+      { 
+        type: 'gallery', 
+        items: [
+          '/assets/art/sight_collections_1_1776627530672.png'
+        ], 
+        caption: 'Thematic groupings of archival process artifacts.' 
+      }
     ]
   },
 
@@ -47,7 +120,7 @@ export const MOCK_CONTENT: Record<string, DeepContent> = {
     slug: 'streaming-platforms',
     sectionId: 'sound',
     title: 'Digital Resonance',
-    subtitle: 'Stream and experience audio across the global atlas.',
+    subtitle: 'Where to experience my cinematic soundscapes and audio explorations.',
     blocks: [
       { 
         type: 'logo-grid', 
@@ -55,19 +128,19 @@ export const MOCK_CONTENT: Record<string, DeepContent> = {
           { 
             logoUrl: '/assets/spotify-logo.png', 
             title: 'Spotify', 
-            description: "The world's most popular audio streaming subscription service, bringing your music to hundreds of millions of listeners globally.",
+            description: "Stream my latest conceptual soundscapes, original albums, and immersive audio explorations.",
             preserveColor: true
           },
           { 
             logoUrl: '/assets/apple-music-logo.png', 
             title: 'Apple Music', 
-            description: 'A premium listening experience with lossless audio and spatial sound, connecting you with listeners across the Apple ecosystem.',
+            description: "Find my entire discography and narratively-driven scores in high-fidelity spatial audio.",
             preserveColor: true
           },
           { 
             logoUrl: '/assets/youtube-music-logo.png', 
             title: 'YouTube Music', 
-            description: "Integrates music videos and official tracks, leveraging the world's largest video community to expand your sonic reach.",
+            description: "A centralized hub to watch my audio-visual projects and listen to my official track releases.",
             preserveColor: true
           }
         ]
@@ -132,7 +205,7 @@ export const MOCK_CONTENT: Record<string, DeepContent> = {
     slug: 'buy-art',
     sectionId: 'pulse',
     title: 'Acquisition Destinations',
-    subtitle: 'Where technical precision meets artistic craftsmanship.',
+    subtitle: 'Official channels for acquiring my physical works and fine art editions.',
     blocks: [
       {
         type: 'logo-grid',
@@ -140,24 +213,56 @@ export const MOCK_CONTENT: Record<string, DeepContent> = {
           { 
             logoUrl: '/assets/artrewards-logo.png', 
             title: 'ArtRewards', 
-            description: "Showcase your work through meticulously curated collections and professional presentation that connects you with a global audience." 
+            description: "Discover curated physical editions and exclusive prints of my visual works available for collectors." 
           },
           { 
             logoUrl: '/assets/artsy-logo.png', 
             title: 'Artsy', 
-            description: "The world’s leading online art marketplace, connecting artists with a community of over 3 million collectors." 
+            description: "Access my larger fine art pieces and high-end works through global gallery partners and auctions." 
           },
           { 
             logoUrl: '/assets/helloart-logo.png', 
             title: 'HelloArt', 
-            description: "Transforms commercial real estate into dynamic galleries by exhibiting your work in high-traffic professional venues." 
+            description: "Encounter my work in person at various high-traffic professional venues and galleries across North America." 
           },
           { 
             logoUrl: '/assets/righttime-logo.png', 
             title: 'Right Time', 
-            description: "Celebrates horological excellence and the 'art of Swiss watchmaking', where technical precision meets artistic craftsmanship." 
+            description: "Explore my horological collaborations where art meets precision in exclusive Swiss-made collections." 
           }
         ]
+      }
+    ]
+  },
+  'pulse/commissions': {
+    slug: 'commissions',
+    sectionId: 'pulse',
+    title: 'Sound Commissions',
+    subtitle: 'Secure a custom-crafted audio experience for your vision.',
+    blocks: [
+      {
+        type: 'text',
+        content: `### COLLABORATIVE CREATION\n\nI am currently accepting commissions related to cinematic sound design, original scoring, and experimental audio-visual landscapes. \n\nWhether you are a filmmaker, game developer, or performance artist, we can build a sonic universe that resonates with your core narrative. Use the form below to share your project details.`
+      },
+      {
+        type: 'form',
+        formType: 'commission'
+      }
+    ]
+  },
+  'pulse/contact': {
+    slug: 'contact',
+    sectionId: 'pulse',
+    title: 'Inquiries & Resonance',
+    subtitle: 'Initiate a dialogue regarding exhibitions, press, or general inquiries.',
+    blocks: [
+      {
+        type: 'text',
+        content: `### REACH OUT\n\nFor general curiosities, press inquiries, or exhibition opportunities, please use the standard inquiry form below. I typically respond within 2-3 business sunrises.`
+      },
+      {
+        type: 'form',
+        formType: 'contact'
       }
     ]
   },

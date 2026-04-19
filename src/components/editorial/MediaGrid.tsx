@@ -49,7 +49,6 @@ export default function MediaGrid({ items, columns = 3 }: MediaGridProps) {
           grid-template-columns: repeat(3, 1fr);
         }
         .grid-item {
-          aspect-ratio: 4/5;
           overflow: hidden;
           background: rgba(255, 255, 255, 0.02);
           border: 1px solid rgba(255, 255, 255, 0.05);
@@ -60,7 +59,7 @@ export default function MediaGrid({ items, columns = 3 }: MediaGridProps) {
         }
         .image-container {
           width: 100%;
-          height: 100%;
+          aspect-ratio: 4/5;
           position: relative;
         }
         img {
