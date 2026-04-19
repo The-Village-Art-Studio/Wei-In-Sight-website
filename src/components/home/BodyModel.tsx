@@ -101,13 +101,13 @@ export default function BodyModel() {
       )}
 
       {/* Invisible anchor helpers for Ears/Eyes/Chest/Wrist matching original behavior */}
-      <Anchor id="dream" position={[0, 1.4, 0]} /> {/* Forehead */}
-      <Anchor id="sight" position={[0, 1.3, 0.1]} /> {/* Eyes */}
-      <Anchor id="sound" position={[0.15, 1.3, 0]} /> {/* Ears */}
-      <Anchor id="voice" position={[0, 1.15, 0.1]} /> {/* Throat */}
-      <Anchor id="heart" position={[0, 0.9, 0.15]} /> {/* Heart/Chest */}
-      <Anchor id="touch" position={[-0.45, 0.55, 0.05]} /> {/* Hand L */}
-      <Anchor id="pulse" position={[0.45, 0.55, 0.05]} /> {/* Hand R */}
+      <Anchor id="dream" position={[0,    1.52, 0.1]} />  {/* Crown of head */}
+      <Anchor id="sight" position={[0,    1.44, 0.15]} /> {/* Eyes/face */}
+      <Anchor id="sound" position={[-0.12, 1.44, 0.1]} /> {/* Left ear */}
+      <Anchor id="voice" position={[0,    1.36, 0.15]} /> {/* Throat/neck */}
+      <Anchor id="heart" position={[0,    1.1,  0.15]} /> {/* Chest/heart */}
+      <Anchor id="touch" position={[-0.38, 0.18, 0.1]} /> {/* Left hand */}
+      <Anchor id="pulse" position={[0.28,  0.38, 0.1]} /> {/* Right hand */}
     </group>
   );
 }
