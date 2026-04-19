@@ -113,6 +113,14 @@ function AnchorPoint({ section, isMobile }: { section: typeof NAV_SECTIONS[0], i
           box-shadow: 0 0 18px var(--neon-pink), 0 0 40px rgba(255, 105, 180, 0.4);
           transform: scale(2.2);
         }
+
+        .anchor-dot:hover {
+          transform: scale(2.8) !important;
+          background: #fff !important;
+          box-shadow: 0 0 25px var(--neon-pink), 0 0 50px var(--neon-pink) !important;
+          border-color: #fff !important;
+          z-index: 50;
+        }
         
         .anchor-point-container.selected .anchor-dot {
           background: var(--neon-pink);

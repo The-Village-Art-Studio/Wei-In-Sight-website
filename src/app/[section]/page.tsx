@@ -46,16 +46,56 @@ export default function SectionPage() {
           <h3 className="nav-title text-xs">Deep Destinations</h3>
           <div className="sub-nav-grid">
             {section.submenus.map((sub, index) => (
-              <Link key={sub.id} href={sub.href}>
+              <Link key={sub.id} href={sub.href} className="sub-nav-link">
                 <motion.div 
                   initial={{ opacity: 0, x: -10 }}
                   whileInView={{ opacity: 1, x: 0 }}
+                  whileHover="hover"
+                  whileTap={{ scale: 0.98 }}
                   transition={{ delay: index * 0.1 }}
                   className="sub-nav-item"
                 >
-                  <span className="index">0{index + 1}</span>
-                  <span className="label text-base">{sub.label}</span>
-                  <span className="arrow">→</span>
+                  <motion.span 
+                    className="index"
+                    variants={{
+                      hover: { 
+                        color: section.editorial.accentColor || '#ff69b4', 
+                        opacity: 1, 
+                        scale: 1.2,
+                        textShadow: `0 0 10px ${section.editorial.accentColor || '#ff69b4'}`,
+                        transition: { duration: 0.3 }
+                      }
+                    }}
+                  >
+                    0{index + 1}
+                  </motion.span>
+                  <motion.span 
+                    className="label text-base"
+                    variants={{
+                      hover: { 
+                        color: '#ffffff', 
+                        x: 10,
+                        textShadow: `0 0 15px #fff, 0 0 30px ${section.editorial.accentColor || '#ff69b4'}, 0 0 50px ${section.editorial.accentColor || '#ff69b4'}`,
+                        transition: { duration: 0.3 }
+                      }
+                    }}
+                  >
+                    {sub.label}
+                  </motion.span>
+                  <motion.span 
+                    className="arrow"
+                    variants={{
+                      hover: { 
+                        opacity: 1, 
+                        x: 15, 
+                        color: section.editorial.accentColor || '#ff69b4',
+                        textShadow: `0 0 10px ${section.editorial.accentColor || '#ff69b4'}`,
+                        transition: { duration: 0.3 }
+                      }
+                    }}
+                  >
+                    →
+                  </motion.span>
                 </motion.div>
               </Link>
             ))}
@@ -94,32 +134,54 @@ export default function SectionPage() {
           gap: var(--spacing-s);
         }
         .sub-nav-item {
-          padding: var(--spacing-m);
-          background: rgba(255, 255, 255, 0.02);
-          border: 1px solid rgba(255, 255, 255, 0.05);
+          padding: 12px 10px;
+          background: transparent;
+          border: none;
           display: flex;
           align-items: center;
-          gap: var(--spacing-m);
+          gap: 24px;
           transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+          cursor: pointer;
+          position: relative;
         }
         .sub-nav-item:hover {
-          background: rgba(255, 255, 255, 0.05);
-          border-color: ${section.editorial.accentColor || 'var(--neon-pink)'};
           transform: translateX(10px);
+        }
+        .sub-nav-item:hover .label {
+          color: #fff;
+          text-shadow: 
+            0 0 10px #fff,
+            0 0 20px ${section.editorial.accentColor || 'var(--neon-pink)'},
+            0 0 40px ${section.editorial.accentColor || 'var(--neon-pink)'};
+        }
+        .sub-nav-item:hover .index {
+          opacity: 1;
+          color: ${section.editorial.accentColor || 'var(--neon-pink)'};
+          text-shadow: 0 0 10px ${section.editorial.accentColor || 'var(--neon-pink)'};
         }
         .index {
           font-family: var(--font-main);
           font-size: 0.7rem;
-          opacity: 0.4;
+          font-weight: 800;
+          opacity: 0.3;
+          transition: all 0.4s ease;
+        }
+        .label {
+          transition: all 0.4s ease;
+          letter-spacing: 0.05em;
+          color: rgba(255, 255, 255, 0.7);
         }
         .arrow {
-          margin-left: auto;
+          margin-left: 10px;
           opacity: 0;
-          transition: transform 0.4s ease, opacity 0.4s ease;
+          color: ${section.editorial.accentColor || 'var(--neon-pink)'};
+          transition: all 0.4s ease;
+          transform: translateX(-10px);
         }
         .sub-nav-item:hover .arrow {
           opacity: 1;
-          transform: translateX(5px);
+          transform: translateX(0);
+          text-shadow: 0 0 10px ${section.editorial.accentColor || 'var(--neon-pink)'};
         }
       `}</style>
     </motion.div>
