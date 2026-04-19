@@ -52,18 +52,6 @@ export default function MainNav() {
           <span className="subtitle">{IDENTITY.subtitle}</span>
         </Link>
         
-        <AnimatePresence>
-          {isHome && !selectedSection && (
-            <motion.div 
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              className="intro-copy"
-            >
-              <p className="text-small">{IDENTITY.intro}</p>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </div>
 
       <div className="nav-middle">

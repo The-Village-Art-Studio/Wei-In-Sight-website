@@ -3,10 +3,11 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import BodyScene from '@/components/home/BodyScene';
 import { useHomepageState } from '@/context/HomepageContext';
+import { IDENTITY } from '@/lib/constants';
 import { useEffect, useState } from 'react';
 
 export default function HomePage() {
-  const { isFocused } = useHomepageState();
+  const { isFocused, selectedSection } = useHomepageState();
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
@@ -26,18 +27,56 @@ export default function HomePage() {
         <div className="scene-area">
           <BodyScene />
         </div>
+
+        {/* Repositioned Intro Manifesto */}
+        <AnimatePresence>
+          {!selectedSection && (
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              transition={{ duration: 1, delay: 0.5 }}
+              className="stage-intro glass"
+              style={{ top: '160px', left: '80px' }} /* Forced displacement */
+            >
+              <p className="text-small" style={{ margin: 0 }}>
+                A multidisciplinary artist building worlds through <br />
+                image, sound, craft, poetry, and memory.
+                <span style={{ fontSize: '0.5rem', opacity: 0.2, marginLeft: '8px' }}>v5-stage-fix</span>
+              </p>
+            </motion.div>
+          )}
+        </AnimatePresence>
         
         {/* Subtle atmospheric overlays */}
         <div className="vignette" />
         <div className="grain" />
       </div>
 
-      <style jsx>{`
+      <style jsx global>{`
         .home-wrapper {
           width: 100%;
           height: 100vh;
           overflow: hidden;
           background: var(--midnight);
+          position: relative;
+        }
+        
+        .stage-intro {
+          position: absolute !important;
+          max-width: fit-content !important;
+          z-index: 100 !important;
+          pointer-events: none !important;
+          line-height: 1.6 !important;
+          letter-spacing: 0.05em !important;
+          padding: 24px 32px !important;
+          border-radius: 16px !important;
+          color: rgba(255, 255, 255, 0.95) !important;
+          box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6) !important;
+          background: rgba(15, 6, 30, 0.8) !important;
+          border: 1px solid rgba(255, 105, 180, 0.4) !important;
+          backdrop-filter: blur(32px) saturate(200%) !important;
+          -webkit-backdrop-filter: blur(32px) saturate(200%) !important;
         }
         
         .home-layout {
