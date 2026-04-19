@@ -8,7 +8,7 @@ export interface ContentBlock {
   url?: string;
   caption?: string;
   items?: string[]; // For gallery or process steps
-  logoItems?: { logoUrl: string; title: string; description: string }[];
+  logoItems?: { logoUrl: string; title: string; description: string; preserveColor?: boolean }[];
   metadata?: Record<string, any>;
 }
 
