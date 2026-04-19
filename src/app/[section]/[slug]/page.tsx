@@ -9,6 +9,7 @@ import SectionHero from '@/components/editorial/SectionHero';
 import MediaGrid from '@/components/editorial/MediaGrid';
 import AudioBlock from '@/components/editorial/AudioBlock';
 import ProseBlock from '@/components/editorial/ProseBlock';
+import LogoGrid from '@/components/editorial/LogoGrid';
 
 export default function ContentPage() {
   const { section: sectionId, slug } = useParams();
@@ -62,6 +63,13 @@ export default function ContentPage() {
                       title={block.caption || 'Untitled Track'} 
                       duration={block.metadata?.duration}
                       platform={block.metadata?.platform}
+                    />
+                  );
+                case 'logo-grid':
+                  return (
+                    <LogoGrid 
+                      key={idx} 
+                      items={block.logoItems || []} 
                     />
                   );
                 default:

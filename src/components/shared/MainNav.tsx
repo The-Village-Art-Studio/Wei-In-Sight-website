@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { NAV_SECTIONS, IDENTITY, FOOTER_LINKS } from '@/lib/constants';
 import { useState, useEffect } from 'react';
@@ -65,7 +66,10 @@ export default function MainNav() {
           className="mobile-brand"
           onClick={() => setIsMenuOpen(false)}
         >
-          <span className="wordmark-sm">WEI IN SIGHT</span>
+          <div className="brand-content-sm">
+            <Image src="/assets/logo-white.png" alt="" width={32} height={32} className="brand-logo-sm" />
+            <span className="wordmark-sm">WEI IN SIGHT</span>
+          </div>
         </Link>
         <button 
           className={`menu-toggle ${isMenuOpen ? 'open' : ''}`}
@@ -101,8 +105,17 @@ export default function MainNav() {
                   setIsMenuOpen(false);
                 }}
               >
-                <h1 className="wordmark">{IDENTITY.wordmark}</h1>
-                <span className="subtitle">{IDENTITY.subtitle}</span>
+                <div className="brand-content" style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                  <img 
+                    src="/assets/logo-white.png" 
+                    alt="Wei In Sight Logo" 
+                    style={{ width: '48px', height: '48px', objectFit: 'contain', flexShrink: 0 }}
+                  />
+                  <div className="brand-text">
+                    <h1 className="wordmark" style={{ margin: 0 }}>{IDENTITY.wordmark}</h1>
+                    <span className="subtitle">{IDENTITY.subtitle}</span>
+                  </div>
+                </div>
               </Link>
             </div>
 
@@ -265,6 +278,29 @@ export default function MainNav() {
           display: flex;
           flex-direction: column;
           gap: var(--spacing-m);
+        }
+        
+        .nav-brand {
+          text-decoration: none;
+          transition: var(--transition-medium);
+        }
+
+        .brand-content {
+          display: flex !important;
+          flex-direction: row !important;
+          align-items: center !important;
+          gap: 16px !important;
+          width: 100%;
+        }
+
+        .brand-logo {
+          flex-shrink: 0;
+          filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
+        }
+
+        .brand-text {
+          display: flex;
+          flex-direction: column;
         }
         
         .wordmark {
@@ -500,6 +536,16 @@ export default function MainNav() {
             left: 0;
             z-index: 1100;
             pointer-events: auto;
+          }
+
+          .brand-content-sm {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+          }
+
+          .brand-logo-sm {
+            filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.2));
           }
 
           .wordmark-sm {

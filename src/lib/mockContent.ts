@@ -1,6 +1,6 @@
 import { SectionKey } from './supabase';
 
-export type BlockType = 'text' | 'image' | 'gallery' | 'audio' | 'video' | 'process' | 'quote';
+export type BlockType = 'text' | 'image' | 'gallery' | 'audio' | 'video' | 'process' | 'quote' | 'logo-grid';
 
 export interface ContentBlock {
   type: BlockType;
@@ -8,6 +8,7 @@ export interface ContentBlock {
   url?: string;
   caption?: string;
   items?: string[]; // For gallery or process steps
+  logoItems?: { logoUrl: string; title: string; description: string }[];
   metadata?: Record<string, any>;
 }
 
@@ -37,6 +38,40 @@ export const MOCK_CONTENT: Record<string, DeepContent> = {
         'https://images.unsplash.com/photo-1578301978693-85fa9c0320b9',
         'https://images.unsplash.com/photo-1582555172866-f73bb12a2ab3'
       ], caption: 'Selected large-scale paintings from the 2024 collection.' }
+    ]
+  },
+
+  // SOUND
+  'sound/streaming-platforms': {
+    id: 'so2',
+    slug: 'streaming-platforms',
+    sectionId: 'sound',
+    title: 'Digital Resonance',
+    subtitle: 'Stream and experience audio across the global atlas.',
+    blocks: [
+      { 
+        type: 'logo-grid', 
+        logoItems: [
+          { 
+            logoUrl: '/assets/spotify-logo.png', 
+            title: 'Spotify', 
+            description: "The world's most popular audio streaming subscription service, bringing your music to hundreds of millions of listeners globally.",
+            preserveColor: true
+          },
+          { 
+            logoUrl: '/assets/apple-music-logo.png', 
+            title: 'Apple Music', 
+            description: 'A premium listening experience with lossless audio and spatial sound, connecting you with listeners across the Apple ecosystem.',
+            preserveColor: true
+          },
+          { 
+            logoUrl: '/assets/youtube-music-logo.png', 
+            title: 'YouTube Music', 
+            description: "Integrates music videos and official tracks, leveraging the world's largest video community to expand your sonic reach.",
+            preserveColor: true
+          }
+        ]
+      }
     ]
   },
 
@@ -91,6 +126,41 @@ export const MOCK_CONTENT: Record<string, DeepContent> = {
     ]
   },
 
+  // PULSE
+  'pulse/buy-art': {
+    id: 'p2',
+    slug: 'buy-art',
+    sectionId: 'pulse',
+    title: 'Acquisition Destinations',
+    subtitle: 'Where technical precision meets artistic craftsmanship.',
+    blocks: [
+      {
+        type: 'logo-grid',
+        logoItems: [
+          { 
+            logoUrl: '/assets/artrewards-logo.png', 
+            title: 'ArtRewards', 
+            description: "Showcase your work through meticulously curated collections and professional presentation that connects you with a global audience." 
+          },
+          { 
+            logoUrl: '/assets/artsy-logo.png', 
+            title: 'Artsy', 
+            description: "The world’s leading online art marketplace, connecting artists with a community of over 3 million collectors." 
+          },
+          { 
+            logoUrl: '/assets/helloart-logo.png', 
+            title: 'HelloArt', 
+            description: "Transforms commercial real estate into dynamic galleries by exhibiting your work in high-traffic professional venues." 
+          },
+          { 
+            logoUrl: '/assets/righttime-logo.png', 
+            title: 'Right Time', 
+            description: "Celebrates horological excellence and the 'art of Swiss watchmaking', where technical precision meets artistic craftsmanship." 
+          }
+        ]
+      }
+    ]
+  },
 };
 
 export function getContent(sectionId: string, slug: string): DeepContent | undefined {

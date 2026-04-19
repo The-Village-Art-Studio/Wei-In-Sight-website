@@ -99,7 +99,7 @@ export const NAV_SECTIONS: Section[] = [
     submenus: [
       { id: 'mixed-media', label: 'Mixed Media', href: '/touch/mixed-media' },
       { id: 'material-experiments', label: 'Material Experiments', href: '/touch/material-experiments' },
-      { id: 'fabric-texture-work', label: 'Fabric & Texture Work', href: '/touch/fabric-texture-work' },
+      { id: 'watchmaking', label: 'Watchmaking', href: '/touch/watchmaking' },
       { id: 'fashion', label: 'Fashion', href: '/touch/fashion' },
     ],
     editorial: {
