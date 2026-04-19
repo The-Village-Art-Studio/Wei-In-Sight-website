@@ -235,6 +235,7 @@ export const MOCK_CONTENT: Record<string, DeepContent> = {
     ]
   },
   'pulse/commissions': {
+    id: 'p3',
     slug: 'commissions',
     sectionId: 'pulse',
     title: 'Sound Commissions',
@@ -251,6 +252,7 @@ export const MOCK_CONTENT: Record<string, DeepContent> = {
     ]
   },
   'pulse/contact': {
+    id: 'p4',
     slug: 'contact',
     sectionId: 'pulse',
     title: 'Inquiries & Resonance',
