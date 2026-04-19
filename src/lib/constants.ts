@@ -47,7 +47,7 @@ export const NAV_SECTIONS: Section[] = [
     href: '/sight',
     bodyAnchor: 'Eyes',
     anchorPos: { x: 50, y: 18 },
-    anchorPos3D: [0, 0.72, 0.15],
+    anchorPos3D: [0, 1.33, 0.1],
     cameraPos3D: [0, 0.72, 1.5],
     cameraTarget3D: [0, 0.72, 0],
     submenus: [
@@ -65,7 +65,7 @@ export const NAV_SECTIONS: Section[] = [
     href: '/sound',
     bodyAnchor: 'Ears',
     anchorPos: { x: 55, y: 22 },
-    anchorPos3D: [0.18, 0.72, 0.05],
+    anchorPos3D: [-0.12, 1.33, 0.05],
     cameraPos3D: [1.2, 0.72, 0.8],
     cameraTarget3D: [0, 0.72, 0],
     submenus: [
@@ -83,7 +83,7 @@ export const NAV_SECTIONS: Section[] = [
     href: '/touch',
     bodyAnchor: 'Hand/Fingertips',
     anchorPos: { x: 30, y: 55 },
-    anchorPos3D: [-0.65, -0.4, 0.4],
+    anchorPos3D: [-0.38, 0.07, 0.1],
     cameraPos3D: [-1.5, -0.4, 1.5],
     cameraTarget3D: [-0.4, -0.4, 0],
     submenus: [
@@ -101,7 +101,7 @@ export const NAV_SECTIONS: Section[] = [
     href: '/voice',
     bodyAnchor: 'Throat',
     anchorPos: { x: 50, y: 28 },
-    anchorPos3D: [0, 0.58, 0.15],
+    anchorPos3D: [0, 1.24, 0.1],
     cameraPos3D: [0, 0.58, 1.2],
     cameraTarget3D: [0, 0.58, 0],
     submenus: [
@@ -119,7 +119,7 @@ export const NAV_SECTIONS: Section[] = [
     href: '/dream',
     bodyAnchor: 'Forehead/Temple',
     anchorPos: { x: 50, y: 12 },
-    anchorPos3D: [0, 0.85, 0.15],
+    anchorPos3D: [0, 1.41, 0.1],
     cameraPos3D: [0, 0.85, 1.5],
     cameraTarget3D: [0, 0.85, 0],
     submenus: [
@@ -137,7 +137,7 @@ export const NAV_SECTIONS: Section[] = [
     href: '/heart',
     bodyAnchor: 'Chest/Heart',
     anchorPos: { x: 50, y: 42 },
-    anchorPos3D: [0, 0.35, 0.3],
+    anchorPos3D: [0, 0.94, 0.15],
     cameraPos3D: [0, 0.35, 2.0],
     cameraTarget3D: [0, 0.35, 0],
     submenus: [
@@ -155,7 +155,7 @@ export const NAV_SECTIONS: Section[] = [
     href: '/pulse',
     bodyAnchor: 'Wrist',
     anchorPos: { x: 65, y: 62 },
-    anchorPos3D: [0.55, -0.3, 0.3],
+    anchorPos3D: [0.28, 0.27, 0.1],
     cameraPos3D: [1.5, -0.3, 1.5],
     cameraTarget3D: [0.5, -0.3, 0],
     submenus: [

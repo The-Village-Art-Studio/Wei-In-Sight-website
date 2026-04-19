@@ -6,38 +6,7 @@ import { useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
 import { useHomepageState } from '@/context/HomepageContext';
 
-function Anchor({ position, id }: { position: [number, number, number], id: string }) {
-  const { hoveredSection, selectedSection } = useHomepageState();
-  const materialRef = useRef<any>(null);
-  
-  const isTargeted = hoveredSection === id || selectedSection === id;
 
-  useFrame(() => {
-    if (materialRef.current) {
-      const targetColor = new THREE.Color(isTargeted ? "#ff69b4" : "#ffffff");
-      materialRef.current.color.lerp(targetColor, 0.05);
-      materialRef.current.opacity = THREE.MathUtils.lerp(
-        materialRef.current.opacity,
-        isTargeted ? 0.3 : 0.0,
-        0.05
-      );
-    }
-  });
-
-  return (
-    <mesh position={position}>
-      <sphereGeometry args={[0.08, 16, 16]} />
-      <meshBasicMaterial 
-        ref={materialRef} 
-        wireframe={false} 
-        transparent 
-        opacity={0.0} 
-        color="#ffffff" 
-        depthTest={false}
-      />
-    </mesh>
-  );
-}
 
 export default function BodyModel() {
   const groupRef = useRef<THREE.Group>(null);
@@ -100,14 +69,6 @@ export default function BodyModel() {
         </group>
       )}
 
-      {/* Invisible anchor helpers for Ears/Eyes/Chest/Wrist matching original behavior */}
-      <Anchor id="dream" position={[0,    1.52, 0.1]} />  {/* Crown of head */}
-      <Anchor id="sight" position={[0,    1.44, 0.15]} /> {/* Eyes/face */}
-      <Anchor id="sound" position={[-0.12, 1.44, 0.1]} /> {/* Left ear */}
-      <Anchor id="voice" position={[0,    1.36, 0.15]} /> {/* Throat/neck */}
-      <Anchor id="heart" position={[0,    1.1,  0.15]} /> {/* Chest/heart */}
-      <Anchor id="touch" position={[-0.38, 0.18, 0.1]} /> {/* Left hand */}
-      <Anchor id="pulse" position={[0.28,  0.38, 0.1]} /> {/* Right hand */}
     </group>
   );
 }
