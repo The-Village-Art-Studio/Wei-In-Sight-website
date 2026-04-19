@@ -194,7 +194,7 @@ h1, h2, h3, h4 {
   margin-right: auto !important;
   padding-left: 8% !important; /* Slightly more balanced lateral space */
   padding-right: 8% !important;
-  padding-top: calc(var(--spacing-xl) * 1.5) !important; /* Centerized site path height */
+  padding-top: 20px !important; /* Precisely aligned with MainNav top margin */
 }
 
 @media (max-width: 1400px) {

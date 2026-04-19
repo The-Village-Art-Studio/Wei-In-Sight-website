@@ -31,13 +31,13 @@ export default function SectionHero({ section, compact = false }: SectionHeroPro
 
       <style jsx>{`
         .section-hero {
-          padding: var(--spacing-xl) 0;
+          padding: var(--spacing-m) 0;
           margin-bottom: var(--spacing-l);
           position: relative;
           z-index: 10;
         }
         .section-hero.compact {
-          padding: var(--spacing-m) 0;
+          padding: 0;
           margin-bottom: var(--spacing-m);
         }
         .hero-meta {
@@ -59,14 +59,16 @@ export default function SectionHero({ section, compact = false }: SectionHeroPro
           opacity: 0.9;
         }
 
-        /* Layout specific adjustments */
-        .layout-prose .hero-content {
-          max-width: 600px;
-          margin: 0 auto;
-          text-align: center;
+        /* Layout specific adjustments (Simplified to ensure consistency) */
+        .layout-prose .hero-content, 
+        .layout-narrative .hero-content {
+          max-width: 800px;
+          margin: 0;
+          text-align: left;
         }
-        .layout-prose .hero-meta {
-          justify-content: center;
+        .layout-prose .hero-meta,
+        .layout-narrative .hero-meta {
+          justify-content: flex-start;
         }
         
         @media (max-width: 768px) {
