@@ -243,6 +243,14 @@ export default function MainNav() {
           
           transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
           pointer-events: auto;
+          display: flex;
+          flex-direction: column;
+        }
+
+        @media (max-height: 850px) {
+          .main-nav {
+            padding: 24px 20px !important;
+          }
         }
         
         .main-nav:hover {
@@ -285,6 +293,12 @@ export default function MainNav() {
         
         .nav-middle {
           margin: var(--spacing-l) 0;
+        }
+
+        @media (max-height: 850px) {
+          .nav-middle {
+            margin: var(--spacing-m) 0 !important;
+          }
         }
         
         .nav-list {
@@ -402,6 +416,13 @@ export default function MainNav() {
           display: flex;
           flex-direction: column;
           gap: 12px;
+          margin-top: auto;
+        }
+
+        @media (max-height: 850px) {
+          .nav-bottom {
+            gap: 8px !important;
+          }
         }
         
         .footer-links {
