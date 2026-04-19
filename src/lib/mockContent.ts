@@ -1,6 +1,6 @@
 import { SectionKey } from './supabase';
 
-export type BlockType = 'text' | 'image' | 'gallery' | 'audio' | 'video' | 'process' | 'quote' | 'logo-grid';
+export type BlockType = 'text' | 'image' | 'gallery' | 'audio' | 'video' | 'process' | 'quote' | 'logo-grid' | 'form';
 
 export interface ContentBlock {
   type: BlockType;
