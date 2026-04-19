@@ -92,21 +92,41 @@ h1, h2, h3, h4 {
   display: flex;
   min-height: 100vh;
   background: var(--midnight);
+  align-items: flex-start; /* CRITICAL for sticky behavior in Flex */
 }
 
 .site-header {
   width: 40%; /* Cinematic split */
   max-width: 480px; /* Cap sidebar width */
   min-width: 320px;
-  position: sticky;
+  position: fixed; /* Forced floating behavior */
   top: 0;
+  left: 0;
   height: 100vh;
-  flex-shrink: 0;
+  z-index: 100;
+  pointer-events: none; /* Allow clicks through the container to the scene if needed */
+}
+
+.site-header * {
+  pointer-events: auto; /* Re-enable clicks for the actual nav elements */
 }
 
 .site-main {
   flex-grow: 1;
   min-height: 100vh;
+  margin-left: 40%; /* Match header width */
+}
+
+@media (min-width: 1200px) { /* Cap at max-width of header */
+  .site-main {
+    margin-left: 480px;
+  }
+}
+
+@media (max-width: 800px) { /* Respect min-width of header */
+  .site-main {
+    margin-left: 320px;
+  }
 }
 
 @media (max-width: 768px) {
@@ -119,14 +139,16 @@ h1, h2, h3, h4 {
     max-width: none;
     min-width: 0;
     height: auto;
-    position: relative;
+    position: relative; /* Revert to relative for mobile stack */
     border-right: none;
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    pointer-events: auto;
   }
   .site-main {
     flex-grow: 1;
     height: auto;
     min-height: 50vh;
+    margin-left: 0; /* Reset margin on mobile */
   }
 }
 
