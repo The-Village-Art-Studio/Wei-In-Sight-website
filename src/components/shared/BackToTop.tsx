@@ -56,7 +56,7 @@ export default function BackToTop() {
               color: #ffffff !important;
               cursor: pointer !important;
               transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
-              border: 1px solid rgba(255, 0, 255, 0.5) !important;
+              border: 1px solid rgba(255, 105, 180, 0.5) !important;
               background: rgba(15, 6, 30, 0.8) !important;
               backdrop-filter: blur(12px) !important;
               -webkit-backdrop-filter: blur(12px) !important;
@@ -64,8 +64,8 @@ export default function BackToTop() {
             
             .back-to-top:hover {
               transform: translateY(-8px) scale(1.1) !important;
-              border-color: #ff00ff !important;
-              box-shadow: 0 0 30px rgba(255, 0, 255, 0.6) !important;
+              border-color: #ff69b4 !important;
+              box-shadow: 0 0 30px rgba(255, 105, 180, 0.6) !important;
             }
             
             .back-to-top .arrow {

@@ -37,7 +37,6 @@ export default function HomePage() {
               exit={{ opacity: 0, y: 20 }}
               transition={{ duration: 1, delay: 0.5 }}
               className="stage-intro glass"
-              style={{ top: '160px', left: '80px' }} /* Forced displacement */
             >
               <p className="text-small" style={{ margin: 0 }}>
                 A multidisciplinary artist building worlds through <br />
@@ -64,6 +63,8 @@ export default function HomePage() {
         .stage-intro {
           position: absolute !important;
           max-width: fit-content !important;
+          top: 160px;
+          left: 80px;
           z-index: 100 !important;
           pointer-events: none !important;
           line-height: 1.6 !important;
@@ -76,6 +77,7 @@ export default function HomePage() {
           border: 1px solid rgba(255, 105, 180, 0.4) !important;
           backdrop-filter: blur(32px) saturate(200%) !important;
           -webkit-backdrop-filter: blur(32px) saturate(200%) !important;
+          transition: all 0.5s ease;
         }
         
         .home-layout {
@@ -126,6 +128,20 @@ export default function HomePage() {
         @media (max-width: 768px) {
           .home-layout.focused {
             transform: none;
+          }
+          
+          .stage-intro {
+            top: 320px !important;
+            left: 50% !important;
+            transform: translateX(-50%) !important;
+            width: calc(100% - 48px) !important;
+            max-width: 400px !important;
+            text-align: center !important;
+            padding: 20px 24px !important;
+          }
+
+          .stage-intro p br {
+            display: none;
           }
         }
       `}</style>

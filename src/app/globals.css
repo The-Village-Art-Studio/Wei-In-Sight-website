@@ -1,8 +1,8 @@
 /* Design Tokens & Global Reset */
 :root {
   --midnight: #050505;
-  --neon-pink: #ff00ff;
-  --neon-pink-glow: rgba(255, 0, 255, 0.4);
+  --neon-pink: #ff69b4;
+  --neon-pink-glow: rgba(255, 105, 180, 0.4);
   --white: #ffffff;
   --gray-subtle: #888888;
   --magenta-depth: #1a001a;

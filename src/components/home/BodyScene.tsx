@@ -2,6 +2,7 @@
 
 import { Canvas } from '@react-three/fiber';
 import { Suspense, useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import * as THREE from 'three';
 import { useHomepageState } from '@/context/HomepageContext';
 import { NAV_SECTIONS } from '@/lib/constants';
@@ -13,6 +14,7 @@ import BodyModel from './BodyModel';
 import CameraController from './CameraController';
 
 function AnchorPoint({ section, isMobile }: { section: typeof NAV_SECTIONS[0], isMobile: boolean }) {
+  const router = useRouter();
   const { hoveredSection, selectedSection, setSelectedSection, setIsFocused } = useHomepageState();
   const isHovered = hoveredSection === section.id;
   const isSelected = selectedSection === section.id;
@@ -60,6 +62,11 @@ function AnchorPoint({ section, isMobile }: { section: typeof NAV_SECTIONS[0], i
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: i * 0.1 }}
+                    onClick={() => {
+                      if (isMobile) {
+                        router.push(sub.href);
+                      }
+                    }}
                   >
                     <Link href={sub.href} className="submenu-item-link">
                       {sub.label}
@@ -138,10 +145,22 @@ function AnchorPoint({ section, isMobile }: { section: typeof NAV_SECTIONS[0], i
 
         .emerging-submenu.mobile {
           left: 50%;
-          top: 25px;
-          transform: translateX(-50%);
-          min-width: 140px;
-          padding: 10px 12px;
+          top: 0;
+          transform: translateX(-50%) translateY(-50%);
+          min-width: 200px;
+          padding: 12px 16px;
+          gap: 8px;
+        }
+
+        .emerging-submenu.mobile .submenu-title {
+          font-size: 0.9rem;
+          padding-bottom: 6px;
+          margin-bottom: 2px;
+        }
+
+        .emerging-submenu.mobile .submenu-item-link {
+          font-size: 1rem;
+          padding: 8px 10px;
         }
         
         .submenu-items {
@@ -210,7 +229,7 @@ function SceneLoader() {
             min-width: 320px;
             background: rgba(15, 6, 30, 0.9);
             backdrop-filter: blur(40px);
-            border: 1px solid rgba(255, 0, 255, 0.2);
+            border: 1px solid rgba(255, 105, 180, 0.2);
             border-radius: 20px;
             display: flex;
             align-items: center;
@@ -276,7 +295,7 @@ export default function BodyScene() {
     >
       <Canvas camera={{ position: [0, 0, 4], fov: 45 }}>
         <ambientLight intensity={0.4} />
-        <pointLight position={[5, 5, 5]} intensity={1} color="#ff00ff" />
+        <pointLight position={[5, 5, 5]} intensity={1} color="#ff69b4" />
         <pointLight position={[-5, 5, 5]} intensity={0.5} color="#ffffff" />
         
         <Suspense fallback={<SceneLoader />}>

@@ -42,11 +42,6 @@ export default function SectionPage() {
           </p>
         </div>
 
-        {/* Dynamic Layout based on section type */}
-        {section.editorial.layoutType === 'gallery' || section.editorial.layoutType === 'process' ? (
-          <MediaGrid items={featuredImages} columns={section.editorial.layoutType === 'gallery' ? 3 : 2} />
-        ) : null}
-
         <div className="section-navigator">
           <h3 className="nav-title text-xs">Deep Destinations</h3>
           <div className="sub-nav-grid">
@@ -66,6 +61,11 @@ export default function SectionPage() {
             ))}
           </div>
         </div>
+
+        {/* Dynamic Layout based on section type */}
+        {section.editorial.layoutType === 'gallery' || section.editorial.layoutType === 'process' ? (
+          <MediaGrid items={featuredImages} columns={section.editorial.layoutType === 'gallery' ? 3 : 2} />
+        ) : null}
       </div>
 
       <style jsx>{`
@@ -79,9 +79,9 @@ export default function SectionPage() {
           line-height: 1.6;
         }
         .section-navigator {
-          margin-top: var(--spacing-xl);
-          border-top: 1px solid rgba(255, 255, 255, 0.05);
-          padding-top: var(--spacing-l);
+          margin-top: var(--spacing-l);
+          margin-bottom: var(--spacing-xl);
+          padding-top: 0;
         }
         .nav-title {
           margin-bottom: var(--spacing-m);

@@ -79,9 +79,9 @@ export default function MainNav() {
       </div>
 
       <AnimatePresence>
-        {(isMenuOpen || !isHome || !isMobile) && (
+        {(isMenuOpen || !isMobile) && (
           <motion.nav 
-            initial={(isHome && isMobile) ? { x: '-100%', opacity: 0 } : false}
+            initial={isMobile ? { x: '-100%', opacity: 0 } : false}
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: '-100%', opacity: 0 }}
             transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
@@ -210,23 +210,23 @@ export default function MainNav() {
           background: rgba(15, 6, 30, 0.85);
           backdrop-filter: blur(32px) saturate(250%);
           -webkit-backdrop-filter: blur(32px) saturate(250%);
-          border: 1px solid rgba(255, 0, 255, 0.4);
+          border: 1px solid rgba(255, 105, 180, 0.4);
           border-radius: 16px;
           box-shadow:
             0 24px 64px rgba(0, 0, 0, 0.9),
             0 0 0 1px rgba(255, 255, 255, 0.15) inset,
-            0 0 40px rgba(255, 0, 255, 0.2) inset;
+            0 0 40px rgba(255, 105, 180, 0.2) inset;
           
           transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
           pointer-events: auto;
         }
         
         .main-nav:hover {
-          border-color: rgba(255, 0, 255, 0.6);
+          border-color: rgba(255, 105, 180, 0.6);
           box-shadow:
             0 32px 80px rgba(0, 0, 0, 0.95),
             0 0 0 1px rgba(255, 255, 255, 0.2) inset,
-            0 0 60px rgba(255, 0, 255, 0.3) inset;
+            0 0 60px rgba(255, 105, 180, 0.3) inset;
         }
         
         .nav-top {
@@ -286,7 +286,7 @@ export default function MainNav() {
         .nav-link-wrapper.hovered,
         .nav-link-wrapper.active {
           opacity: 1;
-          background: rgba(255, 0, 255, 0.15);
+          background: rgba(255, 105, 180, 0.15);
           border-left-color: var(--neon-pink);
           transform: translateX(10px);
           box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
@@ -322,7 +322,7 @@ export default function MainNav() {
           list-style: none !important;
           margin: 24px 0 16px 16px !important;
           padding: 0 !important;
-          border-left: 1px solid rgba(255, 0, 255, 0.3);
+          border-left: 1px solid rgba(255, 105, 180, 0.3);
           display: flex;
           flex-direction: column;
           gap: 16px !important;
@@ -363,7 +363,7 @@ export default function MainNav() {
           opacity: 1 !important;
           color: var(--neon-pink) !important;
           transform: translateX(12px);
-          text-shadow: 0 0 15px rgba(255, 0, 255, 0.8);
+          text-shadow: 0 0 15px rgba(255, 105, 180, 0.8);
         }
 
         .submenu-link:hover::before,
@@ -407,11 +407,11 @@ export default function MainNav() {
           background: rgba(255, 255, 255, 0.02);
         }
         .main-nav::-webkit-scrollbar-thumb {
-          background: rgba(255, 0, 255, 0.2);
+          background: rgba(255, 105, 180, 0.2);
           border-radius: 4px;
         }
         .main-nav::-webkit-scrollbar-thumb:hover {
-          background: rgba(255, 0, 255, 0.4);
+          background: rgba(255, 105, 180, 0.4);
         }
 
         @media (max-width: 768px) {
@@ -503,14 +503,14 @@ export default function MainNav() {
             width: 100% !important;
             height: 100vh !important;
             margin: 0 !important;
-            padding: 100px 32px 40px !important;
+            padding: 85px 24px 40px !important;
             border-radius: 0 !important;
             border: none !important;
             border-bottom: 2px solid var(--neon-pink-glow) !important;
             z-index: 1050;
             display: flex !important;
             flex-direction: column;
-            background: rgba(15, 6, 30, 0.95) !important;
+            background: rgba(15, 6, 30, 0.98) !important;
             backdrop-filter: blur(40px) saturate(200%) !important;
             pointer-events: auto !important;
           }
@@ -535,6 +535,18 @@ export default function MainNav() {
 
           .intro-copy {
             display: none;
+          }
+
+          .nav-brand .wordmark {
+            display: none;
+          }
+
+          .nav-brand .subtitle {
+            margin-top: 0;
+            font-size: 0.8rem;
+            opacity: 1;
+            color: var(--neon-pink);
+            text-shadow: 0 0 10px var(--neon-pink-glow);
           }
         }
 

@@ -63,7 +63,7 @@ export const NAV_SECTIONS: Section[] = [
     ],
     editorial: {
       layoutType: 'gallery',
-      accentColor: '#ff00ff',
+      accentColor: '#ff69b4',
     },
   },
   {
