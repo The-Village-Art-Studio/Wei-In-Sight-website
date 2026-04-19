@@ -292,12 +292,14 @@ export default function MainNav() {
         }
         
         .nav-middle {
-          margin: var(--spacing-l) 0;
+          margin-top: var(--spacing-l);
+          margin-bottom: var(--spacing-m);
         }
 
         @media (max-height: 850px) {
           .nav-middle {
-            margin: var(--spacing-m) 0 !important;
+            margin-top: var(--spacing-m) !important;
+            margin-bottom: var(--spacing-s) !important;
           }
         }
         
@@ -416,18 +418,13 @@ export default function MainNav() {
           display: flex;
           flex-direction: column;
           gap: 6px;
-          margin-top: auto;
+          margin-top: var(--spacing-m);
         }
 
         @media (max-height: 850px) {
           .nav-bottom {
+            margin-top: var(--spacing-s) !important;
             gap: 4px !important;
-          }
-        }
-
-        @media (max-height: 850px) {
-          .nav-bottom {
-            gap: 8px !important;
           }
         }
         
