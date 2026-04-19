@@ -192,18 +192,19 @@ h1, h2, h3, h4 {
 /* Global Content Layout Refinements */
 .section-page, .content-page {
   width: 100% !important;
-  max-width: 1200px !important;
+  max-width: 1800px !important;
   margin-left: auto !important;
   margin-right: auto !important;
-  padding-left: 8% !important; /* Slightly more balanced lateral space */
-  padding-right: 8% !important;
-  padding-top: 20px !important; /* Precisely aligned with MainNav top margin */
+  padding-left: 5% !important;
+  padding-right: 5% !important;
+  padding-top: 20px !important;
 }
 
-@media (max-width: 1400px) {
+@media (max-width: 1600px) {
   .section-page, .content-page {
     padding-left: 5% !important;
     padding-right: 5% !important;
+    max-width: 1200px !important;
   }
 }
 
