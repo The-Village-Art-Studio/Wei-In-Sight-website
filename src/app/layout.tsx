@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Outfit } from "next/font/google";
 import "./globals.css";
 import MainNav from "@/components/shared/MainNav";
+import BackToTop from "@/components/shared/BackToTop";
 import { HomepageProvider } from "@/context/HomepageContext";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
@@ -28,6 +29,7 @@ export default function RootLayout({
             <main className="site-main">
               {children}
             </main>
+            <BackToTop />
           </div>
         </HomepageProvider>
       </body>

@@ -48,7 +48,7 @@ export default function MainNav() {
           setSelectedSection(null);
           setIsFocused(false);
         }}>
-          <h1 className="wordmark">{IDENTITY.wordmark}</h1>
+          <h1 className="wordmark">{IDENTITY.wordmark} <span style={{fontSize: '0.6rem', opacity: 0.3}}>v4-fix</span></h1>
           <span className="subtitle">{IDENTITY.subtitle}</span>
         </Link>
         
@@ -97,13 +97,16 @@ export default function MainNav() {
                     animate={{ opacity: 1, x: 0 }}
                     className="sidebar-submenu"
                   >
-                    {section.submenus.map((sub) => (
-                      <li key={sub.id}>
-                        <Link href={sub.href} className="submenu-link">
-                          {sub.label}
-                        </Link>
-                      </li>
-                    ))}
+                    {section.submenus.map((sub) => {
+                      const isActive = pathname === sub.href;
+                      return (
+                        <li key={sub.id}>
+                          <Link href={sub.href} className={`submenu-link ${isActive ? 'active' : ''}`}>
+                            {sub.label}
+                          </Link>
+                        </li>
+                      );
+                    })}
                   </motion.ul>
                 )}
               </li>
@@ -127,7 +130,7 @@ export default function MainNav() {
         </div>
       </div>
 
-      <style jsx>{`
+      <style jsx global>{`
         .main-nav {
           padding: 40px 32px;
           height: calc(100vh - 40px);
@@ -137,25 +140,26 @@ export default function MainNav() {
           justify-content: space-between;
           
           /* Premium Glass Panel Effect */
-          background: rgba(15, 6, 30, 0.8);
-          backdrop-filter: blur(24px) saturate(200%);
-          -webkit-backdrop-filter: blur(24px) saturate(200%);
-          border: 1px solid rgba(255, 0, 255, 0.3);
+          background: rgba(15, 6, 30, 0.85);
+          backdrop-filter: blur(32px) saturate(250%);
+          -webkit-backdrop-filter: blur(32px) saturate(250%);
+          border: 1px solid rgba(255, 0, 255, 0.4);
           border-radius: 16px;
-          box-shadow:
-            0 16px 48px rgba(0, 0, 0, 0.8),
-            0 0 0 1px rgba(255, 255, 255, 0.1) inset,
-            0 0 24px rgba(255, 0, 255, 0.1) inset;
-          
-          transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        
-        .main-nav:hover {
-          border-color: rgba(255, 0, 255, 0.5);
           box-shadow:
             0 24px 64px rgba(0, 0, 0, 0.9),
             0 0 0 1px rgba(255, 255, 255, 0.15) inset,
-            0 0 32px rgba(255, 0, 255, 0.2) inset;
+            0 0 40px rgba(255, 0, 255, 0.2) inset;
+          
+          transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+          pointer-events: auto;
+        }
+        
+        .main-nav:hover {
+          border-color: rgba(255, 0, 255, 0.6);
+          box-shadow:
+            0 32px 80px rgba(0, 0, 0, 0.95),
+            0 0 0 1px rgba(255, 255, 255, 0.2) inset,
+            0 0 60px rgba(255, 0, 255, 0.3) inset;
         }
         
         .nav-top {
@@ -193,10 +197,12 @@ export default function MainNav() {
         }
         
         .nav-list {
-          list-style: none;
+          list-style: none !important;
           display: flex;
           flex-direction: column;
-          gap: 12px;
+          gap: 16px;
+          padding: 0 !important;
+          margin: 0 !important;
         }
         
         .nav-link-wrapper {
@@ -205,7 +211,7 @@ export default function MainNav() {
           opacity: 0.5;
           display: flex;
           flex-direction: column;
-          padding: 10px 16px;
+          padding: 12px 20px;
           border-radius: 8px;
           border-left: 2px solid transparent;
         }
@@ -213,10 +219,10 @@ export default function MainNav() {
         .nav-link-wrapper.hovered,
         .nav-link-wrapper.active {
           opacity: 1;
-          background: rgba(255, 0, 255, 0.1);
+          background: rgba(255, 0, 255, 0.15);
           border-left-color: var(--neon-pink);
-          transform: translateX(8px);
-          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+          transform: translateX(10px);
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
         }
         
         .nav-link-main {
@@ -226,49 +232,79 @@ export default function MainNav() {
         
         .poetic-label {
           font-family: var(--font-poetic);
-          font-size: 1.1rem;
+          font-size: 1.2rem;
           text-transform: uppercase;
-          letter-spacing: 0.1em;
+          letter-spacing: 0.15em;
           transition: var(--transition-medium);
         }
         
         .nav-link-wrapper.hovered .poetic-label,
         .nav-link-wrapper.active .poetic-label {
           color: var(--neon-pink);
-          text-shadow: 0 0 10px var(--neon-pink);
+          text-shadow: 0 0 15px var(--neon-pink);
         }
         
         .practical-label {
-          font-size: 0.6rem;
+          font-size: 0.65rem;
           text-transform: uppercase;
-          letter-spacing: 0.05em;
+          letter-spacing: 0.08em;
           opacity: 0.6;
         }
         
         .sidebar-submenu {
-          list-style: none;
-          margin-top: 12px;
-          padding-left: 16px;
-          border-left: 1px solid rgba(255, 0, 255, 0.2);
+          list-style: none !important;
+          margin: 32px 0 16px 20px !important;
+          padding: 0 !important;
+          border-left: 2px solid rgba(255, 0, 255, 0.3);
           display: flex;
           flex-direction: column;
-          gap: 8px;
+          gap: 24px !important; /* Extremely aggressive gap */
         }
         
+        .sidebar-submenu li {
+          list-style: none !important;
+          margin: 0 !important;
+          padding: 0 !important;
+        }
+
         .submenu-link {
-          font-size: 0.75rem;
-          opacity: 0.5;
-          transition: all 0.3s ease;
-          display: block;
-          padding: 4px 8px;
-          border-radius: 4px;
+          font-family: var(--font-main);
+          font-size: 1.25rem !important; /* Cinematic large sub-menu */
+          font-weight: 300;
+          color: rgba(255, 255, 255, 0.8) !important;
+          text-decoration: none;
+          transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+          display: flex;
+          align-items: center;
+          gap: 15px;
+          position: relative;
+          padding: 8px 0;
         }
         
-        .submenu-link:hover {
-          opacity: 1;
-          color: var(--neon-pink);
-          background: rgba(255, 0, 255, 0.05);
-          transform: translateX(4px);
+        .submenu-link::before {
+          content: '';
+          width: 8px;
+          height: 8px;
+          border: 1.5px solid rgba(255, 255, 255, 0.5);
+          border-radius: 50%;
+          transition: all 0.4s ease;
+          flex-shrink: 0;
+        }
+        
+        .submenu-link:hover,
+        .submenu-link.active {
+          opacity: 1 !important;
+          color: var(--neon-pink) !important;
+          transform: translateX(12px);
+          text-shadow: 0 0 15px rgba(255, 0, 255, 0.8);
+        }
+
+        .submenu-link:hover::before,
+        .submenu-link.active::before {
+          background: var(--neon-pink);
+          border-color: var(--neon-pink);
+          box-shadow: 0 0 15px var(--neon-pink);
+          transform: scale(1.5);
         }
         
         .nav-bottom {
@@ -281,17 +317,19 @@ export default function MainNav() {
           list-style: none;
           display: flex;
           flex-direction: column;
-          gap: 8px;
+          gap: 12px;
         }
         
         .footer-link {
           opacity: 0.5;
           transition: var(--transition-medium);
+          font-size: 0.8rem;
         }
         
         .footer-link:hover {
           opacity: 1;
           color: var(--neon-pink);
+          transform: translateX(4px);
         }
         
         @media (max-width: 768px) {
@@ -300,10 +338,14 @@ export default function MainNav() {
             height: auto;
             padding: var(--spacing-m);
             border-radius: 0;
-            border-bottom: 1px solid rgba(255, 0, 255, 0.2);
+            border-bottom: 2px solid rgba(255, 0, 255, 0.4);
           }
           .intro-copy {
             display: none;
+          }
+          .sidebar-submenu {
+            gap: 16px !important;
+            margin-top: 20px !important;
           }
         }
       `}</style>
