@@ -42,20 +42,28 @@ export default function MainNav() {
   };
 
   return (
-    <nav className={`main-nav glass`}>
+    <nav 
+      className={`main-nav glass`}
+      role="navigation"
+      aria-label="Main Portfolio Navigation"
+    >
       <div className="nav-top">
-        <Link href="/" className="nav-brand" onClick={() => {
-          setSelectedSection(null);
-          setIsFocused(false);
-        }}>
-          <h1 className="wordmark">{IDENTITY.wordmark} <span style={{fontSize: '0.6rem', opacity: 0.3}}>v4-fix</span></h1>
+        <Link 
+          href="/" 
+          className="nav-brand" 
+          aria-label="Wei In Sight - Home"
+          onClick={() => {
+            setSelectedSection(null);
+            setIsFocused(false);
+          }}
+        >
+          <h1 className="wordmark">{IDENTITY.wordmark}</h1>
           <span className="subtitle">{IDENTITY.subtitle}</span>
         </Link>
-        
       </div>
 
       <div className="nav-middle">
-        <ul className="nav-list">
+        <ul className="nav-list" role="list">
           {NAV_SECTIONS.map((section) => {
             const isPersistentlyActive = pathname.startsWith(section.href);
             const isHomeSelected = selectedSection === section.id;
@@ -69,7 +77,17 @@ export default function MainNav() {
                 onMouseLeave={handleMouseLeave}
               >
                 <div 
+                  role="button"
+                  tabIndex={0}
+                  aria-pressed={isPersistentlyActive || isHomeSelected}
+                  aria-label={`View ${section.label} section: ${section.poeticLabel}`}
                   onClick={() => handleClick(section.id, section.href)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      handleClick(section.id, section.href);
+                    }
+                  }}
                   className={`nav-link-wrapper ${isPersistentlyActive || isHomeSelected ? 'active' : ''} ${isHovered ? 'hovered' : ''}`}
                 >
                   <div className="nav-link-main">
@@ -84,12 +102,18 @@ export default function MainNav() {
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
                     className="sidebar-submenu"
+                    role="list"
+                    aria-label={`${section.label} sub-navigation`}
                   >
                     {section.submenus.map((sub) => {
                       const isActive = pathname === sub.href;
                       return (
                         <li key={sub.id}>
-                          <Link href={sub.href} className={`submenu-link ${isActive ? 'active' : ''}`}>
+                          <Link 
+                            href={sub.href} 
+                            className={`submenu-link ${isActive ? 'active' : ''}`}
+                            aria-current={isActive ? 'page' : undefined}
+                          >
                             {sub.label}
                           </Link>
                         </li>
@@ -104,16 +128,20 @@ export default function MainNav() {
       </div>
 
       <div className="nav-bottom">
-        <ul className="footer-links">
+        <ul className="footer-links" role="list">
           {FOOTER_LINKS.map((link) => (
             <li key={link.label}>
-              <Link href={link.href} className="footer-link text-xs">
+              <Link 
+                href={link.href} 
+                className="footer-link text-xs"
+                aria-label={`Visit my ${link.label}`}
+              >
                 {link.label}
               </Link>
             </li>
           ))}
         </ul>
-        <div className="identity-note text-xs text-gray-subtle">
+        <div className="identity-note text-xs text-gray-subtle" aria-hidden="true">
           {IDENTITY.manifesto}
         </div>
       </div>

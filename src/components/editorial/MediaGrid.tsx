@@ -25,7 +25,13 @@ export default function MediaGrid({ items, columns = 3 }: MediaGridProps) {
           className="grid-item"
         >
           <div className="image-container">
-            <img src={url} alt={`Gallery item ${index}`} loading="lazy" />
+            <Image 
+              src={url} 
+              alt={`Gallery item ${index}`} 
+              fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              className="grid-image"
+            />
           </div>
         </motion.div>
       ))}

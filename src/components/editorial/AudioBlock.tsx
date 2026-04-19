@@ -13,11 +13,15 @@ export default function AudioBlock({ url, title, duration, platform }: AudioBloc
   return (
     <div className="audio-block">
       <div className="audio-info">
-        <div className="play-btn">
-          <svg width="12" height="14" viewBox="0 0 12 14" fill="none">
+        <button 
+          className="play-btn" 
+          aria-label={`Play ${title}`}
+          onClick={() => console.log('Playing:', title)}
+        >
+          <svg width="12" height="14" viewBox="0 0 12 14" fill="none" aria-hidden="true">
             <path d="M1 1L11 7L1 13V1Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
           </svg>
-        </div>
+        </button>
         <div className="details">
           <h4 className="text-base">{title}</h4>
           <span className="text-xs opacity-50">{duration} • {platform}</span>

@@ -7,7 +7,7 @@ import { useHomepageState } from '@/context/HomepageContext';
 import { NAV_SECTIONS } from '@/lib/constants';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Html } from '@react-three/drei';
+import { Html, useProgress } from '@react-three/drei';
 
 import BodyModel from './BodyModel';
 import CameraController from './CameraController';
@@ -25,12 +25,22 @@ function AnchorPoint({ section, isMobile }: { section: typeof NAV_SECTIONS[0], i
       zIndexRange={[100, 0]}
     >
       <div className={`anchor-point-container ${isVisible ? 'visible' : ''} ${isSelected ? 'selected' : ''}`}>
-        <div 
+        <button 
           className="anchor-dot"
+          aria-label={`Select ${section.label} perspective`}
+          aria-pressed={isSelected}
+          tabIndex={0}
           onClick={(e) => {
             e.stopPropagation();
             setSelectedSection(isSelected ? null : section.id);
             setIsFocused(!isSelected);
+          }}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              setSelectedSection(isSelected ? null : section.id);
+              setIsFocused(!isSelected);
+            }
           }}
         />
         
@@ -78,6 +88,17 @@ function AnchorPoint({ section, isMobile }: { section: typeof NAV_SECTIONS[0], i
           transition: all 0.3s ease;
           opacity: 0.25;
           box-shadow: 0 0 6px rgba(255, 105, 180, 0.3);
+          position: relative; /* For tap target */
+        }
+
+        /* Expanded tap target for mobile */
+        .anchor-dot::after {
+          content: '';
+          position: absolute;
+          top: -20px;
+          left: -20px;
+          right: -20px;
+          bottom: -20px;
         }
         
         .anchor-point-container.visible .anchor-dot {
@@ -93,24 +114,24 @@ function AnchorPoint({ section, isMobile }: { section: typeof NAV_SECTIONS[0], i
         
         .emerging-submenu {
           position: absolute;
-          left: 30px;
+          left: 24px;
           top: 50%;
           transform: translateY(-50%);
-          min-width: 300px;
+          min-width: 240px;
           width: max-content;
-          padding: 24px 32px;
+          padding: 19px 26px;
           background: rgba(15, 6, 30, 0.85); /* Much stronger glass background */
           backdrop-filter: blur(24px) saturate(200%);
           -webkit-backdrop-filter: blur(24px) saturate(200%);
           border: 1px solid rgba(255, 105, 180, 0.6); /* Very visible border */
-          border-radius: 16px;
+          border-radius: 12px;
           box-shadow:
             0 16px 48px rgba(0, 0, 0, 0.9),
             0 0 0 1px rgba(255, 255, 255, 0.15) inset,
             0 0 32px rgba(255, 105, 180, 0.3) inset;
           display: flex;
           flex-direction: column;
-          gap: 16px;
+          gap: 13px;
           z-index: 100;
           pointer-events: auto; /* Fully force hover reception */
         }
@@ -127,7 +148,7 @@ function AnchorPoint({ section, isMobile }: { section: typeof NAV_SECTIONS[0], i
           list-style: none;
           display: flex;
           flex-direction: column;
-          gap: 4px;
+          gap: 3px;
           margin: 0;
           padding: 0;
         }
@@ -138,9 +159,9 @@ function AnchorPoint({ section, isMobile }: { section: typeof NAV_SECTIONS[0], i
           white-space: nowrap;
           text-decoration: none;
           display: block;
-          font-size: 2.34rem; /* 3x of 0.78rem */
+          font-size: 1.87rem; 
           letter-spacing: 0.05em;
-          padding: 8px 12px;
+          padding: 6px 10px;
           border-bottom: 1px solid rgba(255, 255, 255, 0.1);
           border-radius: 6px;
         }
@@ -149,7 +170,7 @@ function AnchorPoint({ section, isMobile }: { section: typeof NAV_SECTIONS[0], i
           opacity: 1;
           color: #fff;
           background: rgba(255, 105, 180, 0.2);
-          padding-left: 20px;
+          padding-left: 15px;
           border-bottom-color: transparent;
           text-shadow: 0 0 10px #ff69b4, 0 0 20px #ff69b4;
           box-shadow: inset 4px 0 0 #ff69b4;
@@ -158,15 +179,78 @@ function AnchorPoint({ section, isMobile }: { section: typeof NAV_SECTIONS[0], i
         .submenu-title {
           letter-spacing: 0.18em;
           text-transform: uppercase;
-          font-size: 1.95rem; /* 3x of 0.65rem */
+          font-size: 1.56rem; 
           font-weight: 800;
           color: #ff69b4;
           text-shadow: 0 0 16px rgba(255, 105, 180, 0.9);
-          margin-bottom: 4px;
-          padding-bottom: 12px;
+          margin-bottom: 3px;
+          padding-bottom: 10px;
           border-bottom: 2px solid rgba(255, 105, 180, 0.3);
         }
       `}</style>
+    </Html>
+  );
+}
+
+function SceneLoader() {
+  const { progress } = useProgress();
+  return (
+    <Html center zIndexRange={[1000, 0]}>
+      <div className="scene-loader glass">
+        <div className="loader-content">
+          <div className="loader-title">Synchronizing Atlas</div>
+          <div className="loader-bar-container">
+            <div className="loader-bar" style={{ width: `${progress}%` }} />
+          </div>
+          <div className="loader-label text-xs">{Math.round(progress)}% — COHERENCE SEEKING</div>
+        </div>
+        <style>{`
+          .scene-loader {
+            padding: 40px;
+            min-width: 320px;
+            background: rgba(15, 6, 30, 0.9);
+            backdrop-filter: blur(40px);
+            border: 1px solid rgba(255, 0, 255, 0.2);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+          }
+          .loader-content {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+          }
+          .loader-title {
+            font-family: var(--font-poetic);
+            font-size: 1.5rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--neon-pink);
+            text-shadow: 0 0 15px var(--neon-pink-glow);
+          }
+          .loader-bar-container {
+            width: 100%;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.05);
+            overflow: hidden;
+            border-radius: 1px;
+          }
+          .loader-bar {
+            height: 100%;
+            background: var(--neon-pink);
+            box-shadow: 0 0 10px var(--neon-pink);
+            transition: width 0.4s ease-out;
+          }
+          .loader-label {
+            opacity: 0.5;
+            letter-spacing: 0.1em;
+          }
+        `}</style>
+      </div>
     </Html>
   );
 }
@@ -195,13 +279,16 @@ export default function BodyScene() {
         <pointLight position={[5, 5, 5]} intensity={1} color="#ff00ff" />
         <pointLight position={[-5, 5, 5]} intensity={0.5} color="#ffffff" />
         
-        <BodyModel />
-        <CameraController />
+        <Suspense fallback={<SceneLoader />}>
+          <BodyModel />
+          
+          {/* 3D-Anchored navigation points */}
+          {NAV_SECTIONS.map((section) => (
+            <AnchorPoint key={section.id} section={section} isMobile={isMobile} />
+          ))}
+        </Suspense>
         
-        {/* 3D-Anchored navigation points */}
-        {NAV_SECTIONS.map((section) => (
-          <AnchorPoint key={section.id} section={section} isMobile={isMobile} />
-        ))}
+        <CameraController />
       </Canvas>
     </div>
   );

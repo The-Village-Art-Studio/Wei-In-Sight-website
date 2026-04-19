@@ -69,8 +69,8 @@ export default function ContentPage() {
               }
             })
           ) : (
-            <div className="placeholder-message">
-              <ProseBlock content={`This is a placeholder for ${activeSubmenu.label}. The deep content for this subsection is being curated.`} />
+            <div className="placeholder-message glass" style={{ padding: '40px', borderRadius: '12px', textAlign: 'center', opacity: 0.8 }}>
+              <ProseBlock content={`### THE ARCHIVE IS AWAKENING\n\nThe documentation for **${activeSubmenu.label}** is currently being processed and curated. Please check back as the atlas expands.`} />
             </div>
           )}
         </div>

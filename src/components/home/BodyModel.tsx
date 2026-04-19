@@ -1,17 +1,26 @@
 'use client';
 
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
 import { useHomepageState } from '@/context/HomepageContext';
 
-
-
 export default function BodyModel() {
   const groupRef = useRef<THREE.Group>(null);
   const materialRef = useRef<THREE.MeshBasicMaterial>(null);
   const { hoveredSection, selectedSection } = useHomepageState();
+  const [shouldReduceMotion, setShouldReduceMotion] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+      setShouldReduceMotion(mediaQuery.matches);
+      const handler = (event: MediaQueryListEvent) => setShouldReduceMotion(event.matches);
+      mediaQuery.addEventListener('change', handler);
+      return () => mediaQuery.removeEventListener('change', handler);
+    }
+  }, []);
 
   // Load the realistic mannequin GLB
   const { scene } = useGLTF('/models/human%20form.glb') as any;
@@ -23,7 +32,8 @@ export default function BodyModel() {
         color: "#ff69b4",
         wireframe: true,
         transparent: true,
-        opacity: 0.5
+        opacity: 0.15,
+        blending: THREE.AdditiveBlending
       });
     }
     
@@ -37,8 +47,8 @@ export default function BodyModel() {
   }, [scene]);
 
   useFrame((state) => {
-    // Subtle idle sway — rotation only, no Y drift (keeps mesh aligned with anchor dots)
-    if (groupRef.current) {
+    // Subtle idle sway — disabled if prefers-reduced-motion: reduce
+    if (groupRef.current && !shouldReduceMotion) {
       const t = state.clock.getElapsedTime();
       groupRef.current.rotation.y = Math.sin(t * 0.2) * 0.04;
     }
@@ -54,7 +64,7 @@ export default function BodyModel() {
       materialRef.current.color.lerp(targetColor, 0.05);
       materialRef.current.opacity = THREE.MathUtils.lerp(
         materialRef.current.opacity,
-        isTargeted ? 0.6 : 0.1, 
+        isTargeted ? 0.7 : 0.15, 
         0.05
       );
     }

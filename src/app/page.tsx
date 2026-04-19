@@ -42,7 +42,6 @@ export default function HomePage() {
               <p className="text-small" style={{ margin: 0 }}>
                 A multidisciplinary artist building worlds through <br />
                 image, sound, craft, poetry, and memory.
-                <span style={{ fontSize: '0.5rem', opacity: 0.2, marginLeft: '8px' }}>v5-stage-fix</span>
               </p>
             </motion.div>
           )}
