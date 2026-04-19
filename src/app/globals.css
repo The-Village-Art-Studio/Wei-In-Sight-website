@@ -7,8 +7,8 @@
   --gray-subtle: #888888;
   --magenta-depth: #1a001a;
   
-  --font-main: 'Inter', system-ui, -apple-system, sans-serif;
-  --font-poetic: 'serif'; /* Will refine with specific fonts in later stages */
+  --font-main: var(--font-inter), system-ui, -apple-system, sans-serif;
+  --font-poetic: var(--font-outfit), serif;
   
   --spacing-xs: 0.5rem;
   --spacing-s: 1rem;
@@ -95,7 +95,9 @@ h1, h2, h3, h4 {
 }
 
 .site-header {
-  width: 300px; /* Fixed width for left panel on desktop */
+  width: 40%; /* Cinematic split */
+  max-width: 480px; /* Cap sidebar width */
+  min-width: 320px;
   border-right: 1px solid rgba(255, 255, 255, 0.05);
   position: sticky;
   top: 0;
@@ -111,12 +113,20 @@ h1, h2, h3, h4 {
 @media (max-width: 768px) {
   .site-wrapper {
     flex-direction: column;
+    overflow-y: auto;
   }
   .site-header {
     width: 100%;
+    max-width: none;
+    min-width: 0;
     height: auto;
     position: relative;
     border-right: none;
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+  .site-main {
+    flex-grow: 1;
+    height: auto;
+    min-height: 50vh;
   }
 }

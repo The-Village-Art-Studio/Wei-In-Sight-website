@@ -1,84 +1,96 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import BodyScene from '@/components/home/BodyScene';
+import { useHomepageState } from '@/context/HomepageContext';
+import { useEffect, useState } from 'react';
 
 export default function HomePage() {
+  const { isFocused } = useHomepageState();
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  useEffect(() => {
+    // Artificial delay to ensure "ceremonial" reveal
+    const timer = setTimeout(() => setIsLoaded(true), 500);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
-    <div className="home-container">
-      <div className="gateway-content">
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.2, ease: 'easeOut' }}
-          className="hero-text"
-        >
-          <h2 className="text-display line-1">WEI IN</h2>
-          <h2 className="text-display line-2 text-neon">SIGHT</h2>
-          
-          <div className="manifesto">
-            <p className="text-base">
-              A cinematic universe of multidiscipliary arts. Exploring the intersections 
-              of sight, sound, and the human form.
-            </p>
-          </div>
-        </motion.div>
-      </div>
-      
-      <div className="scene-container">
-        <BodyScene />
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: isLoaded ? 1 : 0 }}
+      transition={{ duration: 1.5, ease: 'easeInOut' }}
+      className="home-wrapper"
+    >
+      <div className={`home-layout ${isFocused ? 'focused' : ''}`}>
+        <div className="scene-area">
+          <BodyScene />
+        </div>
+        
+        {/* Subtle atmospheric overlays */}
+        <div className="vignette" />
+        <div className="grain" />
       </div>
 
       <style jsx>{`
-        .home-container {
-          display: flex;
-          height: 100vh;
+        .home-wrapper {
           width: 100%;
+          height: 100vh;
           overflow: hidden;
+          background: var(--midnight);
         }
-        .gateway-content {
-          flex: 1;
-          display: flex;
-          align-items: center;
-          padding: var(--spacing-xl) var(--spacing-m);
-          z-index: 2;
-          pointer-events: none;
+        
+        .home-layout {
+          position: relative;
+          width: 100%;
+          height: 100%;
+          transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .hero-text {
-          pointer-events: auto;
+        
+        .home-layout.focused {
+          /* Subtle shift when an anchor is selected */
+          transform: scale(1.02);
         }
-        .manifesto {
-          margin-top: var(--spacing-m);
-          max-width: 400px;
-          opacity: 0.8;
-        }
-        .scene-container {
+        
+        .scene-area {
           position: absolute;
           top: 0;
-          right: 0;
+          left: 0;
           width: 100%;
           height: 100%;
           z-index: 1;
         }
         
-        .line-1 { font-family: var(--font-main); }
-        .line-2 { font-family: var(--font-poetic); }
+        .vignette {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: radial-gradient(circle, transparent 20%, var(--midnight) 100%);
+          pointer-events: none;
+          z-index: 2;
+          opacity: 0.6;
+        }
+        
+        .grain {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background-image: url("https://grainy-gradients.vercel.app/noise.svg");
+          opacity: 0.03;
+          pointer-events: none;
+          z-index: 3;
+        }
 
         @media (max-width: 768px) {
-          .home-container {
-            flex-direction: column;
-            overflow: auto;
-          }
-          .gateway-content {
-            height: 100vh;
-            padding: var(--spacing-m);
-          }
-          .scene-container {
-            position: relative;
-            height: 60vh;
+          .home-layout.focused {
+            transform: none;
           }
         }
       `}</style>
-    </div>
+    </motion.div>
   );
 }

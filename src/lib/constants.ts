@@ -4,6 +4,13 @@ export interface SubMenu {
   href: string;
 }
 
+export interface AnchorPosition {
+  x: number; // percentage from left
+  y: number; // percentage from top
+}
+
+export type Point3D = [number, number, number];
+
 export interface Section {
   id: string;
   label: string;
@@ -11,8 +18,25 @@ export interface Section {
   practicalMeaning: string;
   href: string;
   bodyAnchor: string;
+  anchorPos: AnchorPosition;
+  anchorPos3D: Point3D;
+  cameraPos3D: Point3D;
+  cameraTarget3D: Point3D;
   submenus: SubMenu[];
 }
+
+export const IDENTITY = {
+  wordmark: 'WEI IN SIGHT',
+  subtitle: 'The creative atlas of Jacky Ho',
+  intro: 'A multidisciplinary artist building worlds through image, sound, craft, poetry, and memory.',
+  manifesto: 'Artist. Maker. Storyteller.',
+};
+
+export const FOOTER_LINKS = [
+  { label: 'Instagram', href: 'https://instagram.com' },
+  { label: 'Email', href: 'mailto:contact@weiinsight.com' },
+  { label: 'Collect / Inquire', href: '/pulse/contact' },
+];
 
 export const NAV_SECTIONS: Section[] = [
   {
@@ -22,6 +46,10 @@ export const NAV_SECTIONS: Section[] = [
     practicalMeaning: 'Visual Arts',
     href: '/sight',
     bodyAnchor: 'Eyes',
+    anchorPos: { x: 50, y: 18 },
+    anchorPos3D: [0, 0.72, 0.15],
+    cameraPos3D: [0, 0.72, 1.5],
+    cameraTarget3D: [0, 0.72, 0],
     submenus: [
       { id: 'paintings', label: 'Paintings', href: '/sight/paintings' },
       { id: 'photography', label: 'Photography', href: '/sight/photography' },
@@ -36,6 +64,10 @@ export const NAV_SECTIONS: Section[] = [
     practicalMeaning: 'Music & Audio',
     href: '/sound',
     bodyAnchor: 'Ears',
+    anchorPos: { x: 55, y: 22 },
+    anchorPos3D: [0.18, 0.72, 0.05],
+    cameraPos3D: [1.2, 0.72, 0.8],
+    cameraTarget3D: [0, 0.72, 0],
     submenus: [
       { id: 'streaming-platforms', label: 'Streaming Platforms', href: '/sound/streaming-platforms' },
       { id: 'original-songs', label: 'Original Songs', href: '/sound/original-songs' },
@@ -50,6 +82,10 @@ export const NAV_SECTIONS: Section[] = [
     practicalMeaning: 'Mixed Media & Process',
     href: '/touch',
     bodyAnchor: 'Hand/Fingertips',
+    anchorPos: { x: 30, y: 55 },
+    anchorPos3D: [-0.65, -0.4, 0.4],
+    cameraPos3D: [-1.5, -0.4, 1.5],
+    cameraTarget3D: [-0.4, -0.4, 0],
     submenus: [
       { id: 'mixed-media', label: 'Mixed Media', href: '/touch/mixed-media' },
       { id: 'material-experiments', label: 'Material Experiments', href: '/touch/material-experiments' },
@@ -64,6 +100,10 @@ export const NAV_SECTIONS: Section[] = [
     practicalMeaning: 'Poems & Lyrics',
     href: '/voice',
     bodyAnchor: 'Throat',
+    anchorPos: { x: 50, y: 28 },
+    anchorPos3D: [0, 0.58, 0.15],
+    cameraPos3D: [0, 0.58, 1.2],
+    cameraTarget3D: [0, 0.58, 0],
     submenus: [
       { id: 'poems', label: 'Poems', href: '/voice/poems' },
       { id: 'lyrics', label: 'Lyrics', href: '/voice/lyrics' },
@@ -78,6 +118,10 @@ export const NAV_SECTIONS: Section[] = [
     practicalMeaning: 'Novel & Story World',
     href: '/dream',
     bodyAnchor: 'Forehead/Temple',
+    anchorPos: { x: 50, y: 12 },
+    anchorPos3D: [0, 0.85, 0.15],
+    cameraPos3D: [0, 0.85, 1.5],
+    cameraTarget3D: [0, 0.85, 0],
     submenus: [
       { id: 'the-novel', label: 'The Novel', href: '/dream/the-novel' },
       { id: 'story-world', label: 'Story World', href: '/dream/story-world' },
@@ -92,6 +136,10 @@ export const NAV_SECTIONS: Section[] = [
     practicalMeaning: 'About / Philosophy / Journey',
     href: '/heart',
     bodyAnchor: 'Chest/Heart',
+    anchorPos: { x: 50, y: 42 },
+    anchorPos3D: [0, 0.35, 0.3],
+    cameraPos3D: [0, 0.35, 2.0],
+    cameraTarget3D: [0, 0.35, 0],
     submenus: [
       { id: 'about', label: 'About', href: '/heart/about' },
       { id: 'philosophy', label: 'Philosophy', href: '/heart/philosophy' },
@@ -106,6 +154,10 @@ export const NAV_SECTIONS: Section[] = [
     practicalMeaning: 'Buy Art / Commissions / Contact',
     href: '/pulse',
     bodyAnchor: 'Wrist',
+    anchorPos: { x: 65, y: 62 },
+    anchorPos3D: [0.55, -0.3, 0.3],
+    cameraPos3D: [1.5, -0.3, 1.5],
+    cameraTarget3D: [0.5, -0.3, 0],
     submenus: [
       { id: 'buy-art', label: 'Buy Art', href: '/pulse/buy-art' },
       { id: 'available-works', label: 'Available Works', href: '/pulse/available-works' },
