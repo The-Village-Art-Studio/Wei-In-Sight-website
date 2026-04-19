@@ -52,7 +52,7 @@ function AnchorPoint({ section, isMobile }: { section: typeof NAV_SECTIONS[0], i
               initial={{ opacity: 0, scale: 0.8, x: section.id === 'touch' ? -20 : 20 }}
               animate={{ opacity: 1, scale: 1, x: 0 }}
               exit={{ opacity: 0, scale: 0.8, x: section.id === 'touch' ? -20 : 20 }}
-              className={`emerging-submenu ${isMobile ? 'mobile' : ''} ${section.id === 'touch' ? 'align-left' : ''}`}
+              className={`emerging-submenu ${isMobile ? 'mobile' : ''} ${['touch', 'heart', 'sound', 'pulse'].includes(section.id) ? 'align-left' : ''}`}
             >
               <div className="submenu-title">{section.label}</div>
               <ul className="submenu-items">
@@ -133,8 +133,9 @@ function AnchorPoint({ section, isMobile }: { section: typeof NAV_SECTIONS[0], i
           top: 50%;
           transform: translateY(-50%);
           min-width: 240px;
+          max-width: 280px;
           width: max-content;
-          padding: 19px 26px;
+          padding: 19px 24px;
           background: rgba(15, 6, 30, 0.85); /* Much stronger glass background */
           backdrop-filter: blur(24px) saturate(200%);
           -webkit-backdrop-filter: blur(24px) saturate(200%);
@@ -192,11 +193,13 @@ function AnchorPoint({ section, isMobile }: { section: typeof NAV_SECTIONS[0], i
           white-space: nowrap;
           text-decoration: none;
           display: block;
-          font-size: 1.87rem; 
+          font-size: 1.6rem; 
           letter-spacing: 0.05em;
           padding: 6px 10px;
           border-bottom: 1px solid rgba(255, 255, 255, 0.1);
           border-radius: 6px;
+          white-space: normal;
+          line-height: 1.2;
         }
         
         .submenu-item-link:hover {
