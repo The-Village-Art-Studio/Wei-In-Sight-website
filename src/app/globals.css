@@ -96,9 +96,9 @@ h1, h2, h3, h4 {
 }
 
 .site-header {
-  width: 40%; /* Cinematic split */
-  max-width: 480px; /* Cap sidebar width */
-  min-width: 320px;
+  width: 30%; /* Narrower split */
+  max-width: 400px; /* Scaled down sidebar width */
+  min-width: 280px;
   position: fixed; /* Forced floating behavior */
   top: 0;
   left: 0;
@@ -114,18 +114,18 @@ h1, h2, h3, h4 {
 .site-main {
   flex-grow: 1;
   min-height: 100vh;
-  margin-left: 40%; /* Match header width */
+  margin-left: 30%; /* Match header width */
 }
 
-@media (min-width: 1200px) { /* Cap at max-width of header */
+@media (min-width: 1333px) { /* 400px / 0.3 = 1333px */
   .site-main {
-    margin-left: 480px;
+    margin-left: 400px;
   }
 }
 
-@media (max-width: 800px) { /* Respect min-width of header */
+@media (max-width: 933px) { /* 280px / 0.3 = 933px */
   .site-main {
-    margin-left: 320px;
+    margin-left: 280px;
   }
 }
 
@@ -184,5 +184,22 @@ h1, h2, h3, h4 {
   mix-blend-mode: screen;
   border-radius: 50%;
   transform: translate(-50%, -50%);
+}
+
+/* Global Content Layout Refinements */
+.section-page, .content-page {
+  width: 100% !important;
+  max-width: 1200px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding-left: 10% !important; /* Extremely aggressive lateral space */
+  padding-right: 10% !important; /* Extremely aggressive lateral space */
+}
+
+@media (max-width: 1400px) {
+  .section-page, .content-page {
+    padding-left: 4rem !important;
+    padding-right: 4rem !important;
+  }
 }
 

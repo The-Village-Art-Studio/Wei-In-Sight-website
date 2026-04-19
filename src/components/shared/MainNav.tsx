@@ -132,12 +132,16 @@ export default function MainNav() {
 
       <style jsx global>{`
         .main-nav {
-          padding: 40px 32px;
+          padding: 32px 24px;
           height: calc(100vh - 40px);
           margin: 20px;
           display: flex;
           flex-direction: column;
-          justify-content: space-between;
+          
+          /* Enable scrolling for deep menus */
+          overflow-y: auto;
+          overflow-x: hidden;
+          scrollbar-gutter: stable;
           
           /* Premium Glass Panel Effect */
           background: rgba(15, 6, 30, 0.85);
@@ -170,9 +174,9 @@ export default function MainNav() {
         
         .wordmark {
           font-family: var(--font-poetic);
-          font-size: 1.5rem;
+          font-size: 1.25rem;
           font-weight: 400;
-          letter-spacing: 0.2em;
+          letter-spacing: 0.15em;
           color: var(--white);
           text-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
         }
@@ -200,7 +204,7 @@ export default function MainNav() {
           list-style: none !important;
           display: flex;
           flex-direction: column;
-          gap: 16px;
+          gap: 12px;
           padding: 0 !important;
           margin: 0 !important;
         }
@@ -211,7 +215,7 @@ export default function MainNav() {
           opacity: 0.5;
           display: flex;
           flex-direction: column;
-          padding: 12px 20px;
+          padding: 10px 16px;
           border-radius: 8px;
           border-left: 2px solid transparent;
         }
@@ -232,9 +236,9 @@ export default function MainNav() {
         
         .poetic-label {
           font-family: var(--font-poetic);
-          font-size: 1.2rem;
+          font-size: 1rem;
           text-transform: uppercase;
-          letter-spacing: 0.15em;
+          letter-spacing: 0.12em;
           transition: var(--transition-medium);
         }
         
@@ -253,12 +257,12 @@ export default function MainNav() {
         
         .sidebar-submenu {
           list-style: none !important;
-          margin: 32px 0 16px 20px !important;
+          margin: 24px 0 16px 16px !important;
           padding: 0 !important;
-          border-left: 2px solid rgba(255, 0, 255, 0.3);
+          border-left: 1px solid rgba(255, 0, 255, 0.3);
           display: flex;
           flex-direction: column;
-          gap: 24px !important; /* Extremely aggressive gap */
+          gap: 16px !important;
         }
         
         .sidebar-submenu li {
@@ -269,9 +273,9 @@ export default function MainNav() {
 
         .submenu-link {
           font-family: var(--font-main);
-          font-size: 1.25rem !important; /* Cinematic large sub-menu */
+          font-size: 0.9rem !important;
           font-weight: 300;
-          color: rgba(255, 255, 255, 0.8) !important;
+          color: rgba(255, 255, 255, 0.7) !important;
           text-decoration: none;
           transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
           display: flex;
@@ -332,6 +336,21 @@ export default function MainNav() {
           transform: translateX(4px);
         }
         
+        /* Premium Scrollbar */
+        .main-nav::-webkit-scrollbar {
+          width: 4px;
+        }
+        .main-nav::-webkit-scrollbar-track {
+          background: rgba(255, 255, 255, 0.02);
+        }
+        .main-nav::-webkit-scrollbar-thumb {
+          background: rgba(255, 0, 255, 0.2);
+          border-radius: 4px;
+        }
+        .main-nav::-webkit-scrollbar-thumb:hover {
+          background: rgba(255, 0, 255, 0.4);
+        }
+
         @media (max-width: 768px) {
           .main-nav {
             margin: 0;
@@ -339,6 +358,7 @@ export default function MainNav() {
             padding: var(--spacing-m);
             border-radius: 0;
             border-bottom: 2px solid rgba(255, 0, 255, 0.4);
+            overflow: visible;
           }
           .intro-copy {
             display: none;

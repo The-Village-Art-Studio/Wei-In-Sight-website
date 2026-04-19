@@ -70,9 +70,7 @@ export default function SectionPage() {
 
       <style jsx>{`
         .section-page {
-          padding: calc(var(--spacing-xl) * 2) var(--spacing-m) var(--spacing-xl);
-          max-width: 1200px;
-          margin: 0 auto;
+          /* Layout managed globally in globals.css */
         }
         .editorial-intro {
           margin-bottom: var(--spacing-xl);
