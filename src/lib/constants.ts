@@ -75,8 +75,8 @@ export const NAV_SECTIONS: Section[] = [
     bodyAnchor: 'Ears',
     anchorPos: { x: 55, y: 22 },
     anchorPos3D: [-0.12, 1.33, 0.05],
-    cameraPos3D: [-0.12, 1.33, 1.8],
-    cameraTarget3D: [-0.12, 1.33, 0.05],
+    cameraPos3D: [-0.8, 1.1, -1.0],
+    cameraTarget3D: [-0.1, 1.25, 0],
     submenus: [
       { id: 'streaming-platforms', label: 'Streaming Platforms', href: '/sound/streaming-platforms' },
       { id: 'original-songs', label: 'Original Songs', href: '/sound/original-songs' },
@@ -97,8 +97,8 @@ export const NAV_SECTIONS: Section[] = [
     bodyAnchor: 'Hand/Fingertips',
     anchorPos: { x: 30, y: 55 },
     anchorPos3D: [-0.38, 0.07, 0.1],
-    cameraPos3D: [-0.38, 0.07, 1.8],
-    cameraTarget3D: [-0.38, 0.07, 0.1],
+    cameraPos3D: [-1.2, 0.0, -1.2],
+    cameraTarget3D: [-0.1, 0.1, 0],
     submenus: [
       { id: 'mixed-media', label: 'Mixed Media', href: '/touch/mixed-media' },
       { id: 'material-experiments', label: 'Material Experiments', href: '/touch/material-experiments' },
@@ -141,8 +141,8 @@ export const NAV_SECTIONS: Section[] = [
     bodyAnchor: 'Forehead/Temple',
     anchorPos: { x: 50, y: 12 },
     anchorPos3D: [0, 1.41, 0.1],
-    cameraPos3D: [0, 1.41, 1.8],
-    cameraTarget3D: [0, 1.41, 0.1],
+    cameraPos3D: [-0.4, 1.45, 1.0],
+    cameraTarget3D: [0.1, 1.35, 0],
     submenus: [
       { id: 'the-novel', label: 'The Novel', href: '/dream/the-novel' },
       { id: 'story-world', label: 'Story World', href: '/dream/story-world' },
@@ -185,8 +185,8 @@ export const NAV_SECTIONS: Section[] = [
     bodyAnchor: 'Wrist',
     anchorPos: { x: 75, y: 62 },
     anchorPos3D: [0.38, 0.27, 0.1],
-    cameraPos3D: [0.38, 0.27, 1.8],
-    cameraTarget3D: [0.38, 0.27, 0.1],
+    cameraPos3D: [1.2, 0.0, -1.2],
+    cameraTarget3D: [0.1, 0.2, 0],
     submenus: [
       { id: 'buy-art', label: 'Buy Art', href: '/pulse/buy-art' },
       { id: 'available-works', label: 'Available Works', href: '/pulse/available-works' },

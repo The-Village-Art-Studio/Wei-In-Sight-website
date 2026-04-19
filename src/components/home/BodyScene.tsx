@@ -49,10 +49,10 @@ function AnchorPoint({ section, isMobile }: { section: typeof NAV_SECTIONS[0], i
         <AnimatePresence>
           {isSelected && (
             <motion.div 
-              initial={{ opacity: 0, scale: 0.8, x: 20 }}
+              initial={{ opacity: 0, scale: 0.8, x: section.id === 'touch' ? -20 : 20 }}
               animate={{ opacity: 1, scale: 1, x: 0 }}
-              exit={{ opacity: 0, scale: 0.8, x: 20 }}
-              className={`emerging-submenu ${isMobile ? 'mobile' : ''}`}
+              exit={{ opacity: 0, scale: 0.8, x: section.id === 'touch' ? -20 : 20 }}
+              className={`emerging-submenu ${isMobile ? 'mobile' : ''} ${section.id === 'touch' ? 'align-left' : ''}`}
             >
               <div className="submenu-title">{section.label}</div>
               <ul className="submenu-items">
@@ -143,10 +143,16 @@ function AnchorPoint({ section, isMobile }: { section: typeof NAV_SECTIONS[0], i
           pointer-events: auto; /* Fully force hover reception */
         }
 
+        .emerging-submenu.align-left {
+          left: auto !important;
+          right: 24px !important;
+          transform: translateY(-50%) !important;
+        }
+
         .emerging-submenu.mobile {
           left: 50%;
-          top: 0;
-          transform: translateX(-50%) translateY(-50%);
+          top: -40px;
+          transform: translateX(-50%) translateY(-100%);
           min-width: 200px;
           padding: 12px 16px;
           gap: 8px;
@@ -299,10 +305,7 @@ export default function BodyScene() {
         <pointLight position={[-5, 5, 5]} intensity={0.5} color="#ffffff" />
         
         <Suspense fallback={<SceneLoader />}>
-          <group 
-            scale={isMobile ? (1.1 / 1.5) : 1}
-            position={isMobile ? [0, 0.08, 0] : [0, 0, 0]}
-          >
+          <group scale={isMobile ? (1.1 / 1.5) : 1}>
             <BodyModel />
             
             {/* 3D-Anchored navigation points */}

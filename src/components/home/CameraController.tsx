@@ -23,7 +23,7 @@ export default function CameraController() {
     }
   }, []);
   
-  const isMobile = useMemo(() => size.width < 768, [size.width]);
+
   const activeSection = useMemo(() => 
     NAV_SECTIONS.find(s => s.id === selectedSection), 
     [selectedSection]
@@ -36,31 +36,41 @@ export default function CameraController() {
   useFrame(() => {
     const lerpFactor = shouldReduceMotion ? 0.5 : 0.03; // Slower, more cinematic default
 
-    if (isMobile) {
-      // Static centered view for mobile to avoid jitter
-      camera.position.lerp(defaultPos, lerpFactor);
-      if (controlsRef.current) {
-        controlsRef.current.target.lerp(defaultTarget, lerpFactor);
-      }
-      return;
-    }
+    const targetPos = activeSection ? new THREE.Vector3(...activeSection.cameraPos3D) : defaultPos;
+    const targetLookAtOrigin = activeSection ? new THREE.Vector3(...activeSection.cameraTarget3D) : defaultTarget;
+    
+    // On mobile, frame the model HIGHER only when a section is active to fit submenus.
+    // Otherwise, keep it centered on the hero page.
+    const mobileOffset = (size.width < 768 && activeSection) ? -0.4 : 0;
+    const targetLookAt = targetLookAtOrigin.clone().add(new THREE.Vector3(0, mobileOffset, 0));
 
-    if (activeSection) {
-      // Focus transition
-      const targetPos = new THREE.Vector3(...activeSection.cameraPos3D);
-      const targetLookAt = new THREE.Vector3(...activeSection.cameraTarget3D);
-      
-      camera.position.lerp(targetPos, lerpFactor);
-      if (controlsRef.current) {
-        controlsRef.current.target.lerp(targetLookAt, lerpFactor);
-      }
-    } else {
-      // Return to base
-      camera.position.lerp(defaultPos, lerpFactor);
-      if (controlsRef.current) {
-        controlsRef.current.target.lerp(defaultTarget, lerpFactor);
-      }
+    // Smoothly track the focal point
+    if (controlsRef.current) {
+      controlsRef.current.target.lerp(targetLookAt, lerpFactor);
     }
+    const currentTarget = controlsRef.current?.target || defaultTarget;
+
+    // Convert positions to relative Spherical coordinates
+    const currentSpherical = new THREE.Spherical().setFromVector3(
+      camera.position.clone().sub(currentTarget)
+    );
+    const targetSpherical = new THREE.Spherical().setFromVector3(
+      targetPos.clone().sub(targetLookAt)
+    );
+
+    // Interpolate spherical properties for a perfect orbital arc
+    currentSpherical.radius = THREE.MathUtils.lerp(currentSpherical.radius, targetSpherical.radius, lerpFactor);
+    currentSpherical.phi = THREE.MathUtils.lerp(currentSpherical.phi, targetSpherical.phi, lerpFactor);
+    
+    // Calculate shortest path for angular rotation (theta)
+    let dTheta = targetSpherical.theta - currentSpherical.theta;
+    while (dTheta > Math.PI) dTheta -= Math.PI * 2;
+    while (dTheta < -Math.PI) dTheta += Math.PI * 2;
+    currentSpherical.theta += dTheta * lerpFactor;
+
+    // Apply converted orbital position back to the Cartesian camera
+    const newPos = new THREE.Vector3().setFromSpherical(currentSpherical).add(currentTarget);
+    camera.position.copy(newPos);
   });
 
   return (
