@@ -37,8 +37,8 @@ export default function BackgroundMusic() {
 
       <style jsx>{`
         .audio-control-wrapper {
-          padding-top: 12px;
-          margin-top: 12px;
+          padding-top: 8px;
+          margin-top: 0;
           border-top: 1px solid rgba(255, 255, 255, 0.05);
         }
 

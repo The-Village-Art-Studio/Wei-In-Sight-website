@@ -173,6 +173,28 @@ export default function MainNav() {
             </div>
 
             <div className="nav-bottom">
+              <div className="social-bar">
+                <a 
+                  href="https://instagram.com/jackyho" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="social-icon-link"
+                  aria-label="Follow on Instagram"
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                </a>
+                <a 
+                  href="https://tiktok.com/@jackyho" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="social-icon-link"
+                  aria-label="Follow on TikTok"
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12.525.02c1.31 0 2.59.18 3.82.51V5a7.33 7.33 0 0 1-3.82-1.07v11.53a5.52 5.52 0 1 1-5.52-5.52c.28 0 .54.02.81.07V12.1a3.42 3.42 0 1 0 2.61 3.32V1.07C10.43.38 11.45 0 12.525 0z"/>
+                  </svg>
+                </a>
+              </div>
               <ul className="footer-links" role="list">
                 {FOOTER_LINKS.map((link) => (
                   <li key={link.label}>
@@ -269,7 +291,7 @@ export default function MainNav() {
           list-style: none !important;
           display: flex;
           flex-direction: column;
-          gap: 12px;
+          gap: 6px;
           padding: 0 !important;
           margin: 0 !important;
         }
@@ -280,7 +302,7 @@ export default function MainNav() {
           opacity: 0.5;
           display: flex;
           flex-direction: column;
-          padding: 10px 16px;
+          padding: 6px 12px;
           border-radius: 8px;
           border-left: 2px solid transparent;
         }
@@ -322,12 +344,12 @@ export default function MainNav() {
         
         .sidebar-submenu {
           list-style: none !important;
-          margin: 24px 0 16px 16px !important;
+          margin: 12px 0 8px 16px !important;
           padding: 0 !important;
           border-left: 1px solid rgba(255, 105, 180, 0.3);
           display: flex;
           flex-direction: column;
-          gap: 16px !important;
+          gap: 6px !important;
         }
         
         .sidebar-submenu li {
@@ -347,7 +369,7 @@ export default function MainNav() {
           align-items: center;
           gap: 15px;
           position: relative;
-          padding: 8px 0;
+          padding: 4px 0;
         }
         
         .submenu-link::before {
@@ -379,14 +401,14 @@ export default function MainNav() {
         .nav-bottom {
           display: flex;
           flex-direction: column;
-          gap: var(--spacing-m);
+          gap: 12px;
         }
         
         .footer-links {
           list-style: none;
           display: flex;
           flex-direction: column;
-          gap: 12px;
+          gap: 6px;
         }
         
         .footer-link {
@@ -399,6 +421,29 @@ export default function MainNav() {
           opacity: 1;
           color: var(--neon-pink);
           transform: translateX(4px);
+        }
+
+        .social-bar {
+          display: flex;
+          gap: 20px;
+          margin-bottom: 0px;
+          padding-left: 4px;
+        }
+
+        .social-icon-link {
+          color: white;
+          opacity: 0.5;
+          transition: all 0.3s ease;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .social-icon-link:hover {
+          opacity: 1;
+          color: var(--neon-pink);
+          transform: scale(1.15) translateY(-2px);
+          filter: drop-shadow(0 0 8px var(--neon-pink));
         }
         
         /* Premium Scrollbar */

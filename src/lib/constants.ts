@@ -38,8 +38,6 @@ export const IDENTITY = {
 };
 
 export const FOOTER_LINKS = [
-  { label: 'Instagram', href: 'https://instagram.com' },
-  { label: 'Email', href: 'mailto:contact@weiinsight.com' },
   { label: 'Collect / Inquire', href: '/pulse/contact' },
 ];
 
