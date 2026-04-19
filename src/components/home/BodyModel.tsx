@@ -70,11 +70,25 @@ export default function BodyModel() {
     }
   });
 
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
+
   return (
     <group ref={groupRef}>
       {scene && (
         <group rotation={[0, 0, 0]}>
-          <primitive object={scene} scale={1.5} position={[0, -1.2, 0]} rotation={[0, 0, 0]} />
+          <primitive 
+            object={scene} 
+            scale={isMobile ? 1.1 : 1.5} 
+            position={isMobile ? [0, -0.8, 0] : [0, -1.2, 0]} 
+            rotation={[0, 0, 0]} 
+          />
         </group>
       )}
 

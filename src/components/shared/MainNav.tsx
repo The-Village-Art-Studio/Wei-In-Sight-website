@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { NAV_SECTIONS, IDENTITY, FOOTER_LINKS } from '@/lib/constants';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useHomepageState } from '@/context/HomepageContext';
 
@@ -18,6 +19,18 @@ export default function MainNav() {
     setIsFocused 
   } = useHomepageState();
 
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 769);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
+
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+
   const handleMouseEnter = (id: string) => {
     if (isHome) setHoveredSection(id);
   };
@@ -27,6 +40,8 @@ export default function MainNav() {
   };
 
   const handleClick = (id: string, href: string) => {
+    if (isMenuOpen) setIsMenuOpen(false); // Close menu on click
+    
     if (isHome) {
       if (selectedSection === id) {
         setSelectedSection(null);
@@ -36,116 +51,148 @@ export default function MainNav() {
         setIsFocused(true);
       }
     } else {
-      // If not on home, clicking a section should navigate to its landing page
       router.push(href);
     }
   };
 
   return (
-    <nav 
-      className={`main-nav glass`}
-      role="navigation"
-      aria-label="Main Portfolio Navigation"
-    >
-      <div className="nav-top">
+    <>
+      {/* Mobile Menu Toggle */}
+      <div className="mobile-header-bar">
         <Link 
           href="/" 
-          className="nav-brand" 
-          aria-label="Wei In Sight - Home"
-          onClick={() => {
-            setSelectedSection(null);
-            setIsFocused(false);
-          }}
+          className="mobile-brand"
+          onClick={() => setIsMenuOpen(false)}
         >
-          <h1 className="wordmark">{IDENTITY.wordmark}</h1>
-          <span className="subtitle">{IDENTITY.subtitle}</span>
+          <span className="wordmark-sm">WEI IN SIGHT</span>
         </Link>
+        <button 
+          className={`menu-toggle ${isMenuOpen ? 'open' : ''}`}
+          onClick={toggleMenu}
+          aria-expanded={isMenuOpen}
+          aria-label="Toggle Navigation Menu"
+        >
+          <div className="hamburger-box">
+            <div className="hamburger-inner"></div>
+          </div>
+        </button>
       </div>
 
-      <div className="nav-middle">
-        <ul className="nav-list" role="list">
-          {NAV_SECTIONS.map((section) => {
-            const isPersistentlyActive = pathname.startsWith(section.href);
-            const isHomeSelected = selectedSection === section.id;
-            const isHovered = hoveredSection === section.id;
-            
-            return (
-              <li 
-                key={section.id} 
-                className="nav-item"
-                onMouseEnter={() => handleMouseEnter(section.id)}
-                onMouseLeave={handleMouseLeave}
-              >
-                <div 
-                  role="button"
-                  tabIndex={0}
-                  aria-pressed={isPersistentlyActive || isHomeSelected}
-                  aria-label={`View ${section.label} section: ${section.poeticLabel}`}
-                  onClick={() => handleClick(section.id, section.href)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault();
-                      handleClick(section.id, section.href);
-                    }
-                  }}
-                  className={`nav-link-wrapper ${isPersistentlyActive || isHomeSelected ? 'active' : ''} ${isHovered ? 'hovered' : ''}`}
-                >
-                  <div className="nav-link-main">
-                    <span className="poetic-label">{section.label}</span>
-                    <span className="practical-label">— {section.poeticLabel}</span>
-                  </div>
-                </div>
-                
-                {/* Subsection visibility (on dedicated pages only for now) */}
-                {isPersistentlyActive && !isHome && (
-                  <motion.ul 
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    className="sidebar-submenu"
-                    role="list"
-                    aria-label={`${section.label} sub-navigation`}
-                  >
-                    {section.submenus.map((sub) => {
-                      const isActive = pathname === sub.href;
-                      return (
-                        <li key={sub.id}>
-                          <Link 
-                            href={sub.href} 
-                            className={`submenu-link ${isActive ? 'active' : ''}`}
-                            aria-current={isActive ? 'page' : undefined}
-                          >
-                            {sub.label}
-                          </Link>
-                        </li>
-                      );
-                    })}
-                  </motion.ul>
-                )}
-              </li>
-            );
-          })}
-        </ul>
-      </div>
-
-      <div className="nav-bottom">
-        <ul className="footer-links" role="list">
-          {FOOTER_LINKS.map((link) => (
-            <li key={link.label}>
+      <AnimatePresence>
+        {(isMenuOpen || !isHome || !isMobile) && (
+          <motion.nav 
+            initial={(isHome && isMobile) ? { x: '-100%', opacity: 0 } : false}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: '-100%', opacity: 0 }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            className={`main-nav glass ${isMenuOpen ? 'mobile-open' : ''}`}
+            role="navigation"
+            aria-label="Main Portfolio Navigation"
+          >
+            <div className="nav-top">
               <Link 
-                href={link.href} 
-                className="footer-link text-xs"
-                aria-label={`Visit my ${link.label}`}
+                href="/" 
+                className="nav-brand" 
+                aria-label="Wei In Sight - Home"
+                onClick={() => {
+                  setSelectedSection(null);
+                  setIsFocused(false);
+                  setIsMenuOpen(false);
+                }}
               >
-                {link.label}
+                <h1 className="wordmark">{IDENTITY.wordmark}</h1>
+                <span className="subtitle">{IDENTITY.subtitle}</span>
               </Link>
-            </li>
-          ))}
-        </ul>
-        <div className="identity-note text-xs text-gray-subtle" aria-hidden="true">
-          {IDENTITY.manifesto}
-        </div>
-      </div>
+            </div>
 
+            <div className="nav-middle">
+              <ul className="nav-list" role="list">
+                {NAV_SECTIONS.map((section) => {
+                  const isPersistentlyActive = pathname.startsWith(section.href);
+                  const isHomeSelected = selectedSection === section.id;
+                  const isHovered = hoveredSection === section.id;
+                  
+                  return (
+                    <li 
+                      key={section.id} 
+                      className="nav-item"
+                      onMouseEnter={() => handleMouseEnter(section.id)}
+                      onMouseLeave={handleMouseLeave}
+                    >
+                      <div 
+                        role="button"
+                        tabIndex={0}
+                        aria-pressed={isPersistentlyActive || isHomeSelected}
+                        aria-label={`View ${section.label} section: ${section.poeticLabel}`}
+                        onClick={() => handleClick(section.id, section.href)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            handleClick(section.id, section.href);
+                          }
+                        }}
+                        className={`nav-link-wrapper ${isPersistentlyActive || isHomeSelected ? 'active' : ''} ${isHovered ? 'hovered' : ''}`}
+                      >
+                        <div className="nav-link-main">
+                          <span className="poetic-label">{section.label}</span>
+                          <span className="practical-label">— {section.poeticLabel}</span>
+                        </div>
+                      </div>
+                      
+                      {/* Subsection visibility */}
+                      {(isPersistentlyActive && !isHome) && (
+                        <motion.ul 
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          className="sidebar-submenu"
+                          role="list"
+                          aria-label={`${section.label} sub-navigation`}
+                        >
+                          {section.submenus.map((sub) => {
+                            const isActive = pathname === sub.href;
+                            return (
+                              <li key={sub.id}>
+                                <Link 
+                                  href={sub.href} 
+                                  className={`submenu-link ${isActive ? 'active' : ''}`}
+                                  aria-current={isActive ? 'page' : undefined}
+                                  onClick={() => setIsMenuOpen(false)}
+                                >
+                                  {sub.label}
+                                </Link>
+                              </li>
+                            );
+                          })}
+                        </motion.ul>
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+
+            <div className="nav-bottom">
+              <ul className="footer-links" role="list">
+                {FOOTER_LINKS.map((link) => (
+                  <li key={link.label}>
+                    <Link 
+                      href={link.href} 
+                      className="footer-link text-xs"
+                      aria-label={`Visit my ${link.label}`}
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+              <div className="identity-note text-xs text-gray-subtle" aria-hidden="true">
+                {IDENTITY.manifesto}
+              </div>
+            </div>
+          </motion.nav>
+        )}
+      </AnimatePresence>
       <style jsx global>{`
         .main-nav {
           padding: 32px 24px;
@@ -368,23 +415,135 @@ export default function MainNav() {
         }
 
         @media (max-width: 768px) {
-          .main-nav {
-            margin: 0;
-            height: auto;
-            padding: var(--spacing-m);
-            border-radius: 0;
-            border-bottom: 2px solid rgba(255, 0, 255, 0.4);
-            overflow: visible;
+          .mobile-header-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            height: 70px;
+            width: 100%;
+            background: rgba(5, 5, 5, 0.4);
+            backdrop-filter: blur(8px);
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1100;
+            pointer-events: auto;
           }
+
+          .wordmark-sm {
+            font-family: var(--font-poetic);
+            font-size: 0.9rem;
+            letter-spacing: 0.2em;
+            color: var(--white);
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+          }
+
+          .menu-toggle {
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: none;
+            border: none;
+            cursor: pointer;
+            z-index: 1200;
+          }
+
+          .hamburger-box {
+            width: 24px;
+            height: 24px;
+            position: relative;
+          }
+
+          .hamburger-inner,
+          .hamburger-inner::before,
+          .hamburger-inner::after {
+            width: 24px;
+            height: 1px;
+            background-color: var(--white);
+            position: absolute;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.4s ease;
+          }
+
+          .hamburger-inner {
+            top: 50%;
+            transform: translateY(-50%);
+          }
+
+          .hamburger-inner::before {
+            content: '';
+            top: -8px;
+          }
+
+          .hamburger-inner::after {
+            content: '';
+            top: 8px;
+          }
+
+          .menu-toggle.open .hamburger-inner {
+            background-color: transparent;
+          }
+
+          .menu-toggle.open .hamburger-inner::before {
+            transform: translateY(8px) rotate(45deg);
+            background-color: var(--neon-pink);
+          }
+
+          .menu-toggle.open .hamburger-inner::after {
+            transform: translateY(-8px) rotate(-45deg);
+            background-color: var(--neon-pink);
+          }
+
+          .main-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100% !important;
+            height: 100vh !important;
+            margin: 0 !important;
+            padding: 100px 32px 40px !important;
+            border-radius: 0 !important;
+            border: none !important;
+            border-bottom: 2px solid var(--neon-pink-glow) !important;
+            z-index: 1050;
+            display: flex !important;
+            flex-direction: column;
+            background: rgba(15, 6, 30, 0.95) !important;
+            backdrop-filter: blur(40px) saturate(200%) !important;
+            pointer-events: auto !important;
+          }
+
+          .nav-link-wrapper {
+            padding: 15px 20px;
+            opacity: 0.8;
+          }
+
+          .nav-link-wrapper.active {
+            transform: translateX(5px);
+          }
+
+          .sidebar-submenu {
+            margin: 15px 0 10px 20px !important;
+            gap: 12px !important;
+          }
+
+          .submenu-link {
+            font-size: 1.1rem !important;
+          }
+
           .intro-copy {
             display: none;
           }
-          .sidebar-submenu {
-            gap: 16px !important;
-            margin-top: 20px !important;
+        }
+
+        @media (min-width: 769px) {
+          .mobile-header-bar {
+            display: none;
           }
         }
       `}</style>
-    </nav>
+    </>
   );
 }

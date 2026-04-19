@@ -138,17 +138,20 @@ h1, h2, h3, h4 {
     width: 100%;
     max-width: none;
     min-width: 0;
-    height: auto;
-    position: relative; /* Revert to relative for mobile stack */
+    height: 70px; /* Standard mobile header height */
+    position: fixed; /* Keep fixed to allow content to flow under as background */
+    top: 0;
+    left: 0;
     border-right: none;
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    pointer-events: auto;
+    pointer-events: none; /* Allow interaction with scene behind */
+    z-index: 1000;
   }
   .site-main {
     flex-grow: 1;
-    height: auto;
-    min-height: 50vh;
-    margin-left: 0; /* Reset margin on mobile */
+    width: 100%;
+    margin-left: 0;
+    padding-top: 0; /* Content flows from top */
   }
 }
 
