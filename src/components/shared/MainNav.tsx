@@ -6,6 +6,7 @@ import { NAV_SECTIONS, IDENTITY, FOOTER_LINKS } from '@/lib/constants';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useHomepageState } from '@/context/HomepageContext';
+import BackgroundMusic from './BackgroundMusic';
 
 export default function MainNav() {
   const pathname = usePathname();
@@ -186,6 +187,7 @@ export default function MainNav() {
                   </li>
                 ))}
               </ul>
+              <BackgroundMusic />
               <div className="identity-note text-xs text-gray-subtle" aria-hidden="true">
                 {IDENTITY.manifesto}
               </div>

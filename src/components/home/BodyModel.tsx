@@ -85,8 +85,8 @@ export default function BodyModel() {
         <group rotation={[0, 0, 0]}>
           <primitive 
             object={scene} 
-            scale={isMobile ? 1.1 : 1.5} 
-            position={isMobile ? [0, -0.8, 0] : [0, -1.2, 0]} 
+            scale={1.5} 
+            position={[0, -1.2, 0]} 
             rotation={[0, 0, 0]} 
           />
         </group>

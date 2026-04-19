@@ -299,12 +299,17 @@ export default function BodyScene() {
         <pointLight position={[-5, 5, 5]} intensity={0.5} color="#ffffff" />
         
         <Suspense fallback={<SceneLoader />}>
-          <BodyModel />
-          
-          {/* 3D-Anchored navigation points */}
-          {NAV_SECTIONS.map((section) => (
-            <AnchorPoint key={section.id} section={section} isMobile={isMobile} />
-          ))}
+          <group 
+            scale={isMobile ? (1.1 / 1.5) : 1}
+            position={isMobile ? [0, 0.08, 0] : [0, 0, 0]}
+          >
+            <BodyModel />
+            
+            {/* 3D-Anchored navigation points */}
+            {NAV_SECTIONS.map((section) => (
+              <AnchorPoint key={section.id} section={section} isMobile={isMobile} />
+            ))}
+          </group>
         </Suspense>
         
         <CameraController />

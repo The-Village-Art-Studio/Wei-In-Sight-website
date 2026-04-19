@@ -4,6 +4,7 @@ import "./globals.css";
 import MainNav from "@/components/shared/MainNav";
 import BackToTop from "@/components/shared/BackToTop";
 import { HomepageProvider } from "@/context/HomepageContext";
+import { AudioProvider } from "@/context/AudioContext";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit" });
@@ -22,15 +23,17 @@ export default function RootLayout({
     <html lang="en" className={`${inter.variable} ${outfit.variable}`}>
       <body>
         <HomepageProvider>
-          <div className="site-wrapper">
-            <header className="site-header">
-              <MainNav />
-            </header>
-            <main className="site-main">
-              {children}
-            </main>
-            <BackToTop />
-          </div>
+          <AudioProvider>
+            <div className="site-wrapper">
+              <header className="site-header">
+                <MainNav />
+              </header>
+              <main className="site-main">
+                {children}
+              </main>
+              <BackToTop />
+            </div>
+          </AudioProvider>
         </HomepageProvider>
       </body>
     </html>
