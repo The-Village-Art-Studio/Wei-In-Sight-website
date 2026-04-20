@@ -19,41 +19,55 @@ interface LogoGridProps {
 export default function LogoGrid({ items, columns = 3 }: LogoGridProps) {
   return (
     <div className={`logo-grid-container cols-${columns}`}>
-      {items.map((item, index) => (
-        <motion.div 
-          key={item.title + index}
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ 
-            duration: 0.8, 
-            delay: index * 0.1,
-            ease: [0.16, 1, 0.3, 1] 
-          }}
-          className="logo-item"
-        >
-          <div className="logo-square glass">
-            <div className="logo-wrapper">
-              <Image 
-                src={item.logoUrl} 
-                alt={`${item.title} logo`} 
-                fill
-                className="logo-image"
-                style={{ 
-                  objectFit: 'contain', 
-                  padding: '20%',
-                  filter: item.preserveColor ? 'none' : 'brightness(0) invert(1) contrast(1.2)'
-                }}
-              />
+      {items.map((item, index) => {
+        const content = (
+          <>
+            <div className="logo-square glass">
+              <div className="logo-wrapper">
+                <Image 
+                  src={item.logoUrl} 
+                  alt={`${item.title} logo`} 
+                  fill
+                  className="logo-image"
+                  style={{ 
+                    objectFit: 'contain', 
+                    padding: '20%',
+                    filter: item.preserveColor ? 'none' : 'brightness(0) invert(1) contrast(1.2)'
+                  }}
+                />
+              </div>
             </div>
-          </div>
-          
-          <div className="logo-info">
-            <h4 className="logo-title text-base">{item.title}</h4>
-            <p className="logo-description text-xs opacity-60">{item.description}</p>
-          </div>
-        </motion.div>
-      ))}
+            
+            <div className="logo-info">
+              <h4 className="logo-title text-base">{item.title}</h4>
+              <p className="logo-description text-xs opacity-60">{item.description}</p>
+            </div>
+          </>
+        );
+
+        return (
+          <motion.div 
+            key={item.title + index}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ 
+              duration: 0.8, 
+              delay: index * 0.1,
+              ease: [0.16, 1, 0.3, 1] 
+            }}
+            className={`logo-item ${item.link ? 'clickable' : ''}`}
+          >
+            {item.link ? (
+              <a href={item.link} target="_blank" rel="noopener noreferrer" className="logo-link">
+                {content}
+              </a>
+            ) : (
+              content
+            )}
+          </motion.div>
+        );
+      })}
 
       <style jsx>{`
         .logo-grid-container {
@@ -68,6 +82,20 @@ export default function LogoGrid({ items, columns = 3 }: LogoGridProps) {
           flex-direction: column;
           gap: var(--spacing-s);
           cursor: default;
+        }
+
+        .logo-item.clickable {
+          cursor: pointer;
+        }
+
+        .logo-link {
+          text-decoration: none;
+          color: inherit;
+          display: flex;
+          flex-direction: column;
+          gap: var(--spacing-s);
+          width: 100%;
+          height: 100%;
         }
 
         .logo-square {
@@ -120,6 +148,10 @@ export default function LogoGrid({ items, columns = 3 }: LogoGridProps) {
         }
 
         .logo-item:hover .logo-wrapper {
+          transform: scale(1.1);
+        }
+
+        .logo-link:hover .logo-wrapper {
           transform: scale(1.1);
         }
 

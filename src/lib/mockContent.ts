@@ -8,7 +8,7 @@ export interface ContentBlock {
   url?: string;
   caption?: string;
   items?: string[]; // For gallery or process steps
-  logoItems?: { logoUrl: string; title: string; description: string; preserveColor?: boolean }[];
+  logoItems?: { logoUrl: string; title: string; description: string; link?: string; preserveColor?: boolean }[];
   formType?: 'contact' | 'commission';
   metadata?: Record<string, any>;
 }
@@ -129,18 +129,21 @@ export const MOCK_CONTENT: Record<string, DeepContent> = {
             logoUrl: '/assets/spotify-logo.png', 
             title: 'Spotify', 
             description: "Stream my latest conceptual soundscapes, original albums, and immersive audio explorations.",
+            link: 'https://open.spotify.com/artist/4DebGnDY4FnrE3cy6PrWWK?si=GohtblluTIeLIvGUnB-etQ',
             preserveColor: true
           },
           { 
             logoUrl: '/assets/apple-music-logo.png', 
             title: 'Apple Music', 
             description: "Find my entire discography and narratively-driven scores in high-fidelity spatial audio.",
+            link: 'https://music.apple.com/ca/artist/the-prof/1733168743',
             preserveColor: true
           },
           { 
             logoUrl: '/assets/youtube-music-logo.png', 
             title: 'YouTube Music', 
             description: "A centralized hub to watch my audio-visual projects and listen to my official track releases.",
+            link: 'https://music.youtube.com/channel/UCfG9SAkCC8sNDAKV5qbOSZA?si=-gBjmrbJhLyaCCia',
             preserveColor: true
           }
         ]

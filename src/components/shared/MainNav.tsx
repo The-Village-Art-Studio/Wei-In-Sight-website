@@ -188,7 +188,7 @@ export default function MainNav() {
             <div className="nav-bottom">
               <div className="social-bar">
                 <a 
-                  href="https://instagram.com/jackyho" 
+                  href="https://www.instagram.com/weiinsight/" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="social-icon-link"
@@ -197,7 +197,7 @@ export default function MainNav() {
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
                 </a>
                 <a 
-                  href="https://tiktok.com/@jackyho" 
+                  href="https://www.tiktok.com/@weiinsight?_r=1&_t=ZP-95gL2kgWQmt" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="social-icon-link"
