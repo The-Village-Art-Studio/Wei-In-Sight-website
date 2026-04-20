@@ -52,7 +52,7 @@ function AnchorPoint({ section, isMobile }: { section: typeof NAV_SECTIONS[0], i
               initial={{ opacity: 0, scale: 0.8, x: section.id === 'touch' ? -20 : 20 }}
               animate={{ opacity: 1, scale: 1, x: 0 }}
               exit={{ opacity: 0, scale: 0.8, x: section.id === 'touch' ? -20 : 20 }}
-              className={`emerging-submenu ${isMobile ? 'mobile' : ''} ${['touch', 'heart', 'sound'].includes(section.id) ? 'align-left' : ''}`}
+              className={`emerging-submenu ${isMobile ? 'mobile' : ''} ${['touch', 'heart', 'sound'].includes(section.id) ? 'align-left' : ''} ${isMobile && ['sound', 'heart'].includes(section.id) ? 'align-bottom' : ''}`}
             >
               <div className="submenu-title">{section.label}</div>
               <ul className="submenu-items">
@@ -165,6 +165,15 @@ function AnchorPoint({ section, isMobile }: { section: typeof NAV_SECTIONS[0], i
           min-width: 200px;
           padding: 12px 16px;
           gap: 8px;
+        }
+
+        /* Specific alignment for Sound and Heart sections on mobile to move panels below the dots */
+        .emerging-submenu.mobile.align-bottom {
+          top: 40px !important;
+          bottom: auto !important;
+          left: 50% !important;
+          right: auto !important;
+          transform: translateX(-50%) translateY(0) !important;
         }
 
         .emerging-submenu.mobile .submenu-title {

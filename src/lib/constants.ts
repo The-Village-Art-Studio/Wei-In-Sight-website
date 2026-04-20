@@ -94,8 +94,8 @@ export const NAV_SECTIONS: Section[] = [
     bodyAnchor: 'Hand/Fingertips',
     anchorPos: { x: 30, y: 55 },
     anchorPos3D: [-0.38, 0.07, 0.1],
-    cameraPos3D: [-1.2, 0.0, -1.2],
-    cameraTarget3D: [-0.1, 0.1, 0],
+    cameraPos3D: [-1.2, 0.3, -1.2],
+    cameraTarget3D: [-0.1, 0.4, 0],
     submenus: [
       { id: 'mixed-media', label: 'Mixed Media', href: '/touch/mixed-media' },
       { id: 'material-experiments', label: 'Material Experiments', href: '/touch/material-experiments' },

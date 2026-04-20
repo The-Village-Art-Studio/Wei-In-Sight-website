@@ -655,7 +655,7 @@ export default function MainNav() {
           }
 
           .nav-brand .wordmark {
-            display: none;
+            display: none !important;
           }
 
           .nav-brand .subtitle {
