@@ -620,7 +620,7 @@ export default function MainNav() {
             width: 100% !important;
             height: 100vh !important;
             margin: 0 !important;
-            padding: 85px 24px 40px !important;
+            padding: 85px 24px 120px !important;
             border-radius: 0 !important;
             border: none !important;
             border-bottom: 2px solid var(--neon-pink-glow) !important;
@@ -630,6 +630,8 @@ export default function MainNav() {
             background: rgba(15, 6, 30, 0.98) !important;
             backdrop-filter: blur(40px) saturate(200%) !important;
             pointer-events: auto !important;
+            overflow-y: auto !important;
+            -webkit-overflow-scrolling: touch;
           }
 
           .nav-link-wrapper {

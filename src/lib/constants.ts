@@ -180,8 +180,8 @@ export const NAV_SECTIONS: Section[] = [
     bodyAnchor: 'Wrist',
     anchorPos: { x: 75, y: 62 },
     anchorPos3D: [0.38, 0.27, 0.1],
-    cameraPos3D: [1.2, 0.0, -1.2],
-    cameraTarget3D: [0.1, 0.2, 0],
+    cameraPos3D: [1.2, 0.3, -1.2],
+    cameraTarget3D: [0.1, 0.5, 0],
     submenus: [
       { id: 'buy-art', label: 'Buy Art', href: '/pulse/buy-art' },
       { id: 'commissions', label: 'Commissions', href: '/pulse/commissions' },
