@@ -1,8 +1,14 @@
-'use client';
+"use client"
 
-import { useState, useEffect, useCallback, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { GalleryItem } from '@/lib/mockContent';
+import React, { useRef, useEffect } from "react"
+import { motion, AnimatePresence } from "framer-motion"
+import { ArtworkCard } from "./slider/artwork-card"
+import { NavigationDots } from "./slider/navigation-dots"
+import { useSliderNavigation } from "@/hooks/use-slider-navigation"
+import { useSliderDrag } from "@/hooks/use-slider-drag"
+import { useSliderWheel } from "@/hooks/use-slider-wheel"
+import { useColorExtraction, useCurrentColors } from "@/hooks/use-color-extraction"
+import { GalleryItem } from "@/lib/mockContent"
 
 interface SlideshowPanelProps {
   items: GalleryItem[];
@@ -12,240 +18,195 @@ interface SlideshowPanelProps {
 }
 
 export default function SlideshowPanel({ items, initialIndex, isOpen, onClose }: SlideshowPanelProps) {
-  const [currentIndex, setCurrentIndex] = useState(initialIndex);
-  const [direction, setDirection] = useState(0);
+  const sliderRef = useRef<HTMLDivElement>(null)
 
+  const { currentIndex, goToNext, goToPrev, goToSlide } = useSliderNavigation({
+    totalSlides: items.length,
+    enableKeyboard: isOpen, // only when open
+  })
+
+  // Sync initialIndex when opening
   useEffect(() => {
     if (isOpen) {
-      setCurrentIndex(initialIndex);
-      document.body.style.overflow = 'hidden';
+      goToSlide(initialIndex)
+      document.body.style.overflow = 'hidden'
     } else {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = 'unset'
     }
-    return () => { document.body.style.overflow = 'unset'; };
-  }, [isOpen, initialIndex]);
+    return () => { document.body.style.overflow = 'unset' }
+  }, [isOpen, initialIndex, goToSlide])
 
-  const paginate = useCallback((newDirection: number) => {
-    const nextIndex = (currentIndex + newDirection + items.length) % items.length;
-    setDirection(newDirection);
-    setCurrentIndex(nextIndex);
-  }, [currentIndex, items.length]);
+  const { isDragging, dragX, handleDragStart, handleDragMove, handleDragEnd } = useSliderDrag({
+    onSwipeLeft: goToNext,
+    onSwipeRight: goToPrev,
+  })
 
-  // Keyboard navigation
+  useSliderWheel({
+    sliderRef,
+    onScrollLeft: goToNext,
+    onScrollRight: goToPrev,
+  })
+
+  // Escape to close
   useEffect(() => {
     if (!isOpen) return;
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowRight') paginate(1);
-      if (e.key === 'ArrowLeft') paginate(-1);
       if (e.key === 'Escape') onClose();
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, paginate, onClose]);
+  }, [isOpen, onClose]);
 
-  const currentItem = items[currentIndex];
+  const colors = useColorExtraction(items)
+  const currentColors = useCurrentColors(colors, items[currentIndex]?.id)
+  const currentItem = items[currentIndex]
 
-  if (!isOpen || !currentItem) return null;
+  if (!isOpen) return null
 
   return (
     <AnimatePresence>
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="slideshow-overlay"
+        className="fixed inset-0 z-[2000] overflow-hidden bg-black/90"
       >
-        <div className="slideshow-content glass">
-          <button className="close-button" onClick={onClose}>✕</button>
+        {/* Animated ambient background */}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentIndex}
+            initial={{ opacity: 0, scale: 1.1 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ duration: 0.6, ease: [0.32, 0.72, 0, 1] }}
+            className="absolute inset-0"
+            style={{
+              background: `
+                radial-gradient(ellipse at 30% 20%, ${currentColors[0]}66 0%, transparent 50%),
+                radial-gradient(ellipse at 70% 80%, ${currentColors[1]}66 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, ${currentColors[2]}44 0%, transparent 70%),
+                linear-gradient(180deg, #0a0a0a 0%, #111111 100%)
+              `,
+            }}
+          />
+        </AnimatePresence>
 
-          <div className="slideshow-layout">
-            {/* Left Side: Image */}
-            <div className="image-section">
-              <AnimatePresence initial={false} custom={direction} mode="wait">
-                <motion.div
-                  key={currentIndex}
-                  custom={direction}
-                  initial={{ opacity: 0, x: direction > 0 ? 100 : -100 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: direction > 0 ? -100 : 100 }}
-                  transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                  className="image-wrapper"
-                >
-                  <img src={currentItem.url} alt={currentItem.title} className="main-image" />
-                </motion.div>
-              </AnimatePresence>
+        {/* Blur overlay */}
+        <div className="absolute inset-0 backdrop-blur-[60px]" />
 
-              <div className="nav-controls">
-                <button onClick={() => paginate(-1)} className="nav-btn">←</button>
-                <span className="counter text-xs">
-                  {currentIndex + 1} / {items.length}
-                </span>
-                <button onClick={() => paginate(1)} className="nav-btn">→</button>
-              </div>
-            </div>
+        {/* Header / Close Button */}
+        <header className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between p-8">
+          <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+            <h1 className="font-serif text-2xl tracking-widest text-white/90 uppercase" style={{ color: 'var(--neon-pink)' }}>Gallery</h1>
+          </motion.div>
+          <div className="flex items-center gap-4">
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 backdrop-blur-md"
+            >
+              <span className="text-sm text-white/60">{String(currentIndex + 1).padStart(2, "0")}</span>
+              <span className="text-white/30">/</span>
+              <span className="text-sm text-white/40">{String(items.length).padStart(2, "0")}</span>
+            </motion.div>
+            <motion.button 
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+              onClick={onClose}
+              className="rounded-full border border-white/10 bg-white/5 p-2 px-4 backdrop-blur-md hover:bg-white/10 transition-colors"
+            >
+              Close
+            </motion.button>
+          </div>
+        </header>
 
-            {/* Right Side: Info */}
-            <div className="info-section">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={currentIndex}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.4, delay: 0.1 }}
-                  className="info-content"
-                >
-                  <h3 className="art-title text-xl">{currentItem.title}</h3>
-                  <div className="art-meta text-xs">
-                    <span className="year">{currentItem.year}</span>
-                    <span className="sep">•</span>
-                    <span className="medium">{currentItem.medium}</span>
+        {/* Main Layout: Slider (Left/Center) + Info Panel (Right) */}
+        <div className="absolute inset-0 flex items-center z-10 pt-20 pb-20">
+          
+          {/* Slider Area */}
+          <div
+            ref={sliderRef}
+            className="relative flex h-full flex-1 cursor-grab items-center active:cursor-grabbing overflow-hidden"
+            onMouseDown={handleDragStart}
+            onMouseMove={handleDragMove}
+            onMouseUp={handleDragEnd}
+            onMouseLeave={handleDragEnd}
+            onTouchStart={handleDragStart}
+            onTouchMove={handleDragMove}
+            onTouchEnd={handleDragEnd}
+          >
+            <motion.div
+              className="flex items-center gap-8 px-[calc(40vw-200px)] md:gap-16 md:px-[calc(40vw-250px)]"
+              animate={{
+                x: -currentIndex * (typeof window !== 'undefined' && window.innerWidth > 768 ? 564 : 432) + dragX,
+              }}
+              transition={isDragging ? { duration: 0 } : { duration: 0.6, ease: [0.32, 0.72, 0, 1] }}
+            >
+              {items.map((item, index) => (
+                <ArtworkCard
+                  key={item.id}
+                  artwork={item}
+                  isActive={index === currentIndex}
+                  dragOffset={dragX}
+                  index={index}
+                  currentIndex={currentIndex}
+                />
+              ))}
+            </motion.div>
+          </div>
+
+          {/* Info Panel (Right Side) */}
+          <div className="w-[400px] h-full flex items-center pr-12 hidden lg:flex relative z-20 pointer-events-none">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentIndex}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.4, delay: 0.2 }}
+                className="w-full rounded-2xl border border-white/10 bg-black/40 backdrop-blur-xl p-8 pointer-events-auto"
+                style={{
+                  boxShadow: `0 20px 40px -10px ${currentColors[0]}44`
+                }}
+              >
+                <div className="flex flex-col gap-6">
+                  <div>
+                    <h2 className="text-3xl font-serif text-white mb-2 leading-tight">{currentItem?.title}</h2>
+                    <div className="flex gap-3 text-sm tracking-widest uppercase opacity-60">
+                      <span>{currentItem?.year}</span>
+                      <span>•</span>
+                      <span>{currentItem?.medium}</span>
+                    </div>
                   </div>
-                  <div className="art-description text-base opacity-70">
-                    <p>{currentItem.description}</p>
-                  </div>
-                </motion.div>
-              </AnimatePresence>
-
-              <div className="info-footer">
-                <p className="text-xs opacity-30 uppercase tracking-widest">Wei In Sight Archive</p>
-              </div>
-            </div>
+                  
+                  <div className="h-px w-full bg-white/10" />
+                  
+                  <p className="text-white/70 leading-relaxed text-sm">
+                    {currentItem?.description}
+                  </p>
+                </div>
+              </motion.div>
+            </AnimatePresence>
           </div>
         </div>
 
-        <style jsx>{`
-          .slideshow-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(5, 5, 5, 0.95);
-            z-index: 2000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 40px;
-          }
-          .slideshow-content {
-            width: 100%;
-            max-width: 1400px;
-            height: 80vh;
-            background: #0a0a0a;
-            border-radius: 12px;
-            position: relative;
-            overflow: hidden;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-          }
-          .close-button {
-            position: absolute;
-            top: 24px;
-            right: 24px;
-            z-index: 10;
-            font-size: 24px;
-            opacity: 0.5;
-            transition: 0.3s;
-          }
-          .close-button:hover {
-            opacity: 1;
-            color: var(--neon-pink);
-          }
-          .slideshow-layout {
-            display: flex;
-            height: 100%;
-          }
-          .image-section {
-            flex: 1.5;
-            position: relative;
-            background: #000;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-          }
-          .image-wrapper {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 40px;
-          }
-          .main-image {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
-          }
-          .nav-controls {
-            position: absolute;
-            bottom: 30px;
-            display: flex;
-            align-items: center;
-            gap: 24px;
-            background: rgba(0,0,0,0.5);
-            padding: 8px 20px;
-            border-radius: 100px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.1);
-          }
-          .nav-btn {
-            font-size: 20px;
-            opacity: 0.6;
-            transition: 0.3s;
-          }
-          .nav-btn:hover {
-            opacity: 1;
-            color: var(--neon-pink);
-          }
-          .info-section {
-            flex: 1;
-            padding: 60px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            border-left: 1px solid rgba(255, 255, 255, 0.05);
-            background: #0a0a0a;
-          }
-          .info-content {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-          }
-          .art-title {
-            letter-spacing: 0.05em;
-            color: var(--white);
-          }
-          .art-meta {
-            display: flex;
-            gap: 12px;
-            opacity: 0.5;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-          }
-          .art-description {
-            line-height: 1.8;
-            max-width: 500px;
-          }
-          .info-footer {
-            margin-top: auto;
-            padding-top: 40px;
-          }
+        {/* Navigation dots */}
+        <NavigationDots total={items.length} current={currentIndex} onSelect={goToSlide} colors={currentColors} />
 
-          @media (max-width: 1024px) {
-            .slideshow-layout {
-              flex-direction: column;
-            }
-            .info-section {
-              padding: 30px;
-              border-left: none;
-              border-top: 1px solid rgba(255, 255, 255, 0.05);
-            }
-            .slideshow-content {
-              height: 95vh;
-            }
-          }
-        `}</style>
+        {/* Keyboard hint */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1 }}
+          className="absolute bottom-8 left-8 hidden items-center gap-3 text-white/30 md:flex z-20"
+        >
+          <kbd className="rounded border border-white/10 bg-white/5 px-2 py-1 font-mono text-xs">←</kbd>
+          <kbd className="rounded border border-white/10 bg-white/5 px-2 py-1 font-mono text-xs">→</kbd>
+          <span className="text-xs">navigate</span>
+        </motion.div>
       </motion.div>
     </AnimatePresence>
-  );
+  )
 }

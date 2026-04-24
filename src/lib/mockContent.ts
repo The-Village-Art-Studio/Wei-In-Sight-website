@@ -293,6 +293,54 @@ export const MOCK_CONTENT: Record<string, DeepContent> = {
       }
     ]
   },
+  'touch/mixed-media': {
+    id: 't2',
+    slug: 'mixed-media',
+    sectionId: 'touch',
+    title: 'Mixed Media',
+    subtitle: 'Exploring the intersection of physical and digital materials.',
+    blocks: [
+      { type: 'text', content: 'A collection of works that blend traditional painting techniques with modern digital fabrication.' }
+    ],
+    albums: [
+      {
+        id: 'synthetic-nature',
+        title: 'Synthetic Nature',
+        description: 'Blending organic forms with artificial materials.',
+        coverImages: ['/assets/art/sight_paintings_2_1776627384437.png'],
+        items: [
+          {
+            id: 'sn-1',
+            url: '/assets/art/sight_paintings_2_1776627384437.png',
+            title: 'Resin & Wood',
+            year: '2023',
+            medium: 'Mixed Media',
+            description: 'Exploration of natural wood textures encased in synthetic resin.'
+          }
+        ]
+      }
+    ]
+  },
+  'touch/watchmaking': {
+    id: 't3',
+    slug: 'watchmaking',
+    sectionId: 'touch',
+    title: 'Watchmaking',
+    subtitle: 'Precision, time, and micro-mechanics.',
+    blocks: [
+      { type: 'text', content: 'The art of horology and micro-mechanical engineering as a form of expression.' }
+    ]
+  },
+  'touch/fashion': {
+    id: 't4',
+    slug: 'fashion',
+    sectionId: 'touch',
+    title: 'Fashion',
+    subtitle: 'Wearable art and textile exploration.',
+    blocks: [
+      { type: 'text', content: 'Translating visual concepts into wearable garments and fashion artifacts.' }
+    ]
+  },
   // DREAM
   'dream/the-novel': {
     id: 'd1',
