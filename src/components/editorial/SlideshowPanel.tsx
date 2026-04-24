@@ -61,11 +61,10 @@ export default function SlideshowPanel({ items, initialIndex, isOpen, onClose }:
 
   if (!isOpen) return null
 
-  // Layout Constants
-  const IMAGE_WIDTH = 650;
-  const INFO_WIDTH = 500;
+  // Layout Constants (Maximums)
+  const MAX_IMAGE_SIZE = 650;
+  const MAX_INFO_WIDTH = 500;
   const GAP = 48;
-  const TOTAL_WIDTH = IMAGE_WIDTH + INFO_WIDTH + GAP;
 
   return (
     <AnimatePresence>
@@ -158,10 +157,13 @@ export default function SlideshowPanel({ items, initialIndex, isOpen, onClose }:
           )}
 
           {/* Centered Side-by-Side Pair */}
-          <div className="relative flex items-center justify-center gap-12 px-8 md:px-12">
+          <div className="relative flex flex-col lg:flex-row items-center justify-center gap-6 lg:gap-12 w-full max-w-6xl px-4 md:px-8 max-h-[80vh]">
             
-            {/* Info Panel (Left) */}
-            <div style={{ width: `${INFO_WIDTH}px`, flexShrink: 0 }}>
+            {/* Info Panel (Left on Desktop, Bottom on Mobile) */}
+            <div 
+              className="flex-shrink-1 lg:flex-shrink-0 w-full max-h-[40vh] lg:max-h-[70vh] overflow-y-auto custom-scrollbar"
+              style={{ maxWidth: `${MAX_INFO_WIDTH}px` }}
+            >
               <AnimatePresence mode="wait">
                 <motion.div
                   key={currentIndex}
@@ -169,7 +171,7 @@ export default function SlideshowPanel({ items, initialIndex, isOpen, onClose }:
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 10 }}
                   transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                  className="rounded-2xl border border-pink-500/40 p-12 md:p-16 flex flex-col items-center justify-center text-center min-h-[500px] md:min-h-[650px]"
+                  className="rounded-2xl border border-pink-500/40 p-6 md:p-10 lg:p-14 flex flex-col items-center justify-center text-center"
                   style={{
                     background: 'rgba(15, 6, 30, 0.5)',
                     backdropFilter: 'blur(32px) saturate(250%)',
@@ -177,10 +179,10 @@ export default function SlideshowPanel({ items, initialIndex, isOpen, onClose }:
                     boxShadow: '0 32px 80px rgba(0, 0, 0, 0.95), 0 0 0 1px rgba(255, 255, 255, 0.1) inset, 0 0 60px rgba(255, 105, 180, 0.2) inset'
                   }}
                 >
-                  <div className="flex flex-col items-center gap-12">
-                    <div className="space-y-8 flex flex-col items-center">
+                  <div className="flex flex-col items-center gap-6 lg:gap-10">
+                    <div className="space-y-3 lg:space-y-6 flex flex-col items-center">
                       <h2 
-                        className="text-4xl md:text-5xl tracking-tight leading-tight uppercase" 
+                        className="text-xl md:text-3xl lg:text-4xl tracking-tight leading-tight uppercase" 
                         style={{ 
                           fontFamily: 'var(--font-poetic)',
                           textShadow: '0 0 20px rgba(255,255,255,0.2)',
@@ -189,17 +191,17 @@ export default function SlideshowPanel({ items, initialIndex, isOpen, onClose }:
                       >
                         {currentItem?.title}
                       </h2>
-                      <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-3 text-xs tracking-[0.3em] font-medium uppercase" style={{ fontFamily: 'var(--font-main)' }}>
+                      <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-[9px] lg:text-xs tracking-[0.3em] font-medium uppercase" style={{ fontFamily: 'var(--font-main)' }}>
                         <span className="text-pink-500 font-bold" style={{ textShadow: '0 0 10px var(--neon-pink)' }}>{currentItem?.year}</span>
-                        <span className="w-1.5 h-1.5 rounded-full bg-white/20" />
+                        <span className="w-1 h-1 rounded-full bg-white/20" />
                         <span className="text-white/40">{currentItem?.medium}</span>
                       </div>
                     </div>
                     
-                    <div className="h-px w-24 bg-gradient-to-r from-transparent via-pink-500/40 to-transparent" />
+                    <div className="h-px w-12 lg:w-20 bg-gradient-to-r from-transparent via-pink-500/40 to-transparent" />
                     
                     <p 
-                      className="text-white/60 leading-relaxed text-base md:text-lg font-light italic max-w-sm"
+                      className="text-white/60 leading-relaxed text-xs md:text-sm lg:text-base font-light italic max-w-sm"
                       style={{ fontFamily: 'var(--font-main)' }}
                     >
                       &ldquo;{currentItem?.description}&rdquo;
@@ -209,11 +211,15 @@ export default function SlideshowPanel({ items, initialIndex, isOpen, onClose }:
               </AnimatePresence>
             </div>
 
-            {/* Image (Right) */}
+            {/* Image (Right on Desktop, Top on Mobile) */}
             <div 
               ref={sliderRef}
-              className="relative overflow-hidden cursor-grab active:cursor-grabbing"
-              style={{ width: `${IMAGE_WIDTH}px`, height: `${IMAGE_WIDTH}px`, flexShrink: 0 }}
+              className="relative overflow-hidden cursor-grab active:cursor-grabbing flex-shrink-1 w-full order-first lg:order-none"
+              style={{ 
+                maxWidth: `${MAX_IMAGE_SIZE}px`,
+                maxHeight: '60vh',
+                aspectRatio: '1/1'
+              }}
               onMouseDown={handleDragStart}
               onMouseMove={handleDragMove}
               onMouseUp={handleDragEnd}
@@ -234,7 +240,7 @@ export default function SlideshowPanel({ items, initialIndex, isOpen, onClose }:
                   <img 
                     src={currentItem?.url} 
                     alt={currentItem?.title}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-contain bg-black/20"
                     draggable={false}
                   />
                 </motion.div>
