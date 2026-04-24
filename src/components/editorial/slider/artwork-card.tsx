@@ -35,8 +35,7 @@ export function ArtworkCard({ artwork, isActive, dragOffset, index, currentIndex
       <motion.div
         className="group relative overflow-hidden rounded-2xl"
         animate={{
-          y: isHovered && isActive ? -10 : 0,
-          boxShadow: isHovered && isActive ? "0 40px 80px -20px rgba(0,0,0,0.8)" : "0 20px 40px -10px rgba(0,0,0,0.5)",
+          boxShadow: "0 20px 40px -10px rgba(0,0,0,0.5)",
         }}
         transition={{ duration: 0.3, ease: "easeOut" }}
       >
@@ -44,66 +43,25 @@ export function ArtworkCard({ artwork, isActive, dragOffset, index, currentIndex
         <div className="absolute inset-0 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm" />
 
         {/* Image container */}
-        <div className="relative h-[400px] w-[400px] overflow-hidden rounded-2xl p-3 md:h-[500px] md:w-[500px]">
+        <div className="relative h-[500px] w-[500px] overflow-hidden rounded-2xl p-3 md:h-[650px] md:w-[650px]">
           <motion.img
             src={artwork.url}
             alt={artwork.title}
             className="h-full w-full rounded-xl object-cover"
-            animate={{
-              scale: isHovered && isActive ? 1.05 : 1,
-            }}
-            transition={{ duration: 0.4, ease: "easeOut" }}
             crossOrigin="anonymous"
             draggable={false}
           />
-
-          {/* Gradient overlay for text */}
-          <motion.div
-            className="absolute inset-x-3 bottom-3 rounded-b-xl bg-gradient-to-t from-black/80 via-black/40 to-transparent"
-            initial={{ opacity: 0, height: "30%" }}
-            animate={{
-              opacity: isActive ? 1 : 0,
-              height: isHovered ? "50%" : "30%",
-            }}
-            transition={{ duration: 0.3 }}
-          />
-
-          {/* Artwork info */}
-          <motion.div
-            className="absolute inset-x-3 bottom-3 select-none p-6"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{
-              opacity: isActive ? 1 : 0,
-              y: isActive ? 0 : 20,
-            }}
-            transition={{ duration: 0.4, delay: isActive ? 0.1 : 0 }}
-          >
-            <motion.p
-              className="mb-1 font-mono text-xs uppercase tracking-widest text-white/50"
-              animate={{ y: isHovered ? -5 : 0 }}
-              transition={{ duration: 0.3 }}
-            >
-              {artwork.year}
-            </motion.p>
-            <motion.h2
-              className="font-serif text-2xl font-bold text-white md:text-3xl"
-              animate={{ y: isHovered ? -5 : 0 }}
-              transition={{ duration: 0.3, delay: 0.05 }}
-            >
-              {artwork.title}
-            </motion.h2>
-          </motion.div>
         </div>
       </motion.div>
 
       {/* Reflection effect */}
       <motion.div
-        className="absolute -bottom-20 left-3 right-3 h-20 overflow-hidden rounded-2xl opacity-20 blur-sm"
+        className="absolute -bottom-20 left-3 right-3 h-20 overflow-hidden rounded-2xl opacity-10 blur-sm"
         style={{
           background: `linear-gradient(to bottom, rgba(255,255,255,0.1), transparent)`,
           transform: "scaleY(-1)",
         }}
-        animate={{ opacity: isActive ? 0.15 : 0.05 }}
+        animate={{ opacity: isActive ? 0.1 : 0.02 }}
       />
     </motion.div>
   )

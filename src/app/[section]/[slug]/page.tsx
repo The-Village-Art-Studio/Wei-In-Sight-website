@@ -47,22 +47,20 @@ export default function ContentPage() {
       <SectionHero section={section} compact />
 
       <article className="content-container">
-        {content?.heroImage && (
-          <motion.div 
-            initial={{ opacity: 0, scale: 1.02 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-            className="page-hero"
-          >
-            <div className="hero-image-container">
-              <img 
-                src={content.heroImage} 
-                alt={content.title} 
-                className="hero-image"
-              />
-            </div>
-          </motion.div>
-        )}
+        <motion.div 
+          initial={{ opacity: 0, scale: 1.02 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+          className="page-hero"
+        >
+          <div className="hero-image-container">
+            <img 
+              src={content?.heroImage || '/assets/art/sight_paintings_hero_1776626955531.png'} 
+              alt={content?.title || 'Cover Image'} 
+              className="hero-image"
+            />
+          </div>
+        </motion.div>
 
         <header className="page-header">
           <h2 className="text-xl">{content?.title || activeSubmenu.label}</h2>
@@ -127,19 +125,15 @@ export default function ContentPage() {
           )}
         </div>
 
-        <footer className="page-footer">
-          <Link href={section.href} className="back-link">
-            <span className="arrow">←</span> Back to {section.label}
-          </Link>
-        </footer>
+
       </article>
 
       <style jsx>{`
         .album-grid {
           display: grid;
           grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-          gap: 40px;
-          margin-top: var(--spacing-m);
+          gap: 48px;
+          margin-top: var(--spacing-l);
         }
         @media (min-width: 1200px) {
           .album-grid {

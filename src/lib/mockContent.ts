@@ -219,6 +219,7 @@ export const MOCK_CONTENT: Record<string, DeepContent> = {
     sectionId: 'sound',
     title: 'Digital Resonance',
     subtitle: 'Where to experience my cinematic soundscapes and audio explorations.',
+    heroImage: '/assets/art/sight_photography_preview_1776626984989.png',
     blocks: [
       { 
         type: 'logo-grid', 
@@ -256,6 +257,7 @@ export const MOCK_CONTENT: Record<string, DeepContent> = {
     sectionId: 'voice',
     title: 'Syllables of Light',
     subtitle: 'Selected poetry from the 2023-2025 journals.',
+    heroImage: '/assets/art/sight_paintings_hero_1776626955531.png',
     blocks: [
       { type: 'quote', content: 'The way the shadow falls / tells me where the sun has been / but not where it is going.' },
       { type: 'text', content: 'These poems were written mostly in transit, captured on paper scraps and digital notes during the building of the Wei series.' }
@@ -268,6 +270,7 @@ export const MOCK_CONTENT: Record<string, DeepContent> = {
     sectionId: 'touch',
     title: 'Fabric & Friction',
     subtitle: 'Tactile studies on organic textiles and mineral pigments.',
+    heroImage: 'https://images.unsplash.com/photo-1544256718-3bcf237f3974',
     blocks: [
       { type: 'text', content: 'A study on how different fabrics react to water-based pigments over time.' }
     ],
@@ -299,6 +302,7 @@ export const MOCK_CONTENT: Record<string, DeepContent> = {
     sectionId: 'touch',
     title: 'Mixed Media',
     subtitle: 'Exploring the intersection of physical and digital materials.',
+    heroImage: '/assets/art/sight_paintings_2_1776627384437.png',
     blocks: [
       { type: 'text', content: 'A collection of works that blend traditional painting techniques with modern digital fabrication.' }
     ],
@@ -327,6 +331,7 @@ export const MOCK_CONTENT: Record<string, DeepContent> = {
     sectionId: 'touch',
     title: 'Watchmaking',
     subtitle: 'Precision, time, and micro-mechanics.',
+    heroImage: '/assets/art/sight_photography_1_1776627407211.png',
     blocks: [
       { type: 'text', content: 'The art of horology and micro-mechanical engineering as a form of expression.' }
     ]
@@ -337,6 +342,7 @@ export const MOCK_CONTENT: Record<string, DeepContent> = {
     sectionId: 'touch',
     title: 'Fashion',
     subtitle: 'Wearable art and textile exploration.',
+    heroImage: '/assets/art/sight_sculpture_1_1776627480388.png',
     blocks: [
       { type: 'text', content: 'Translating visual concepts into wearable garments and fashion artifacts.' }
     ]
@@ -348,6 +354,7 @@ export const MOCK_CONTENT: Record<string, DeepContent> = {
     sectionId: 'dream',
     title: 'The Atlas of Unmade Worlds',
     subtitle: 'Insights into the ongoing novel project.',
+    heroImage: '/assets/art/sight_paintings_hero_1776626955531.png',
     blocks: [
       { type: 'text', content: 'The world of Wei is one built on the remnants of forgotten languages.' },
       { type: 'quote', content: 'To dream is to remember a future that hasn\'t happened yet.' }
@@ -360,6 +367,7 @@ export const MOCK_CONTENT: Record<string, DeepContent> = {
     sectionId: 'heart',
     title: 'The Artist',
     subtitle: 'Jacky Ho\'s journey through multidisciplinarity.',
+    heroImage: '/assets/art/sight_photography_preview_1776626984989.png',
     blocks: [
       { type: 'text', content: 'Jacky Ho is an artist based between worlds, focusing on the intersection of memory and technology.' }
     ]
@@ -372,6 +380,7 @@ export const MOCK_CONTENT: Record<string, DeepContent> = {
     sectionId: 'pulse',
     title: 'Acquisition Destinations',
     subtitle: 'Official channels for acquiring my physical works and fine art editions.',
+    heroImage: '/assets/art/sight_collections_preview_1776627027864.png',
     blocks: [
       {
         type: 'logo-grid',
@@ -406,6 +415,7 @@ export const MOCK_CONTENT: Record<string, DeepContent> = {
     sectionId: 'pulse',
     title: 'Sound Commissions',
     subtitle: 'Secure a custom-crafted audio experience for your vision.',
+    heroImage: '/assets/art/sight_sculpture_preview_1776627004575.png',
     blocks: [
       {
         type: 'text',
@@ -423,6 +433,7 @@ export const MOCK_CONTENT: Record<string, DeepContent> = {
     sectionId: 'pulse',
     title: 'Inquiries & Resonance',
     subtitle: 'Initiate a dialogue regarding exhibitions, press, or general inquiries.',
+    heroImage: '/assets/art/sight_photography_2_1776627429953.png',
     blocks: [
       {
         type: 'text',
