@@ -133,63 +133,43 @@ export default function SlideshowPanel({ items, initialIndex, isOpen, onClose }:
         {/* Content Area */}
         <div className="relative flex-1 w-full flex items-center justify-center overflow-hidden">
           
-          {/* Centered Content Wrapper (Locks Image + Info together) */}
-          <div className="relative w-full max-w-[1400px] h-full mx-auto flex items-center px-8 md:px-12">
-            
-            {/* Slider Layer */}
-            <div
-              ref={sliderRef}
-              className="absolute inset-0 flex items-center cursor-grab active:cursor-grabbing z-10"
-              onMouseDown={handleDragStart}
-              onMouseMove={handleDragMove}
-              onMouseUp={handleDragEnd}
-              onMouseLeave={handleDragEnd}
-              onTouchStart={handleDragStart}
-              onTouchMove={handleDragMove}
-              onTouchEnd={handleDragEnd}
+          {/* Left Arrow */}
+          {currentIndex > 0 && (
+            <button
+              onClick={goToPrev}
+              className="absolute left-6 md:left-10 z-30 group flex h-14 w-14 items-center justify-center rounded-full border border-pink-500/30 bg-pink-500/10 backdrop-blur-xl transition-all hover:bg-pink-500/20 hover:scale-110 active:scale-95 shadow-[0_0_15px_rgba(255,105,180,0.2)]"
             >
-              <motion.div
-                className="flex items-center gap-32"
-                animate={{
-                  // Offset calculation to keep the active image exactly in its side-by-side spot
-                  // Spot = (Total Container Width / 2) - (Total Pair Width / 2)
-                  x: (typeof window !== 'undefined' ? (window.innerWidth * 0.5) - (TOTAL_WIDTH * 0.5) : 0) 
-                     - currentIndex * (IMAGE_WIDTH + 128) + dragX,
-                }}
-                transition={isDragging ? { duration: 0 } : { duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-              >
-                {items.map((item, index) => (
-                  <ArtworkCard
-                    key={item.id}
-                    artwork={item}
-                    isActive={index === currentIndex}
-                    dragOffset={dragX}
-                    index={index}
-                    currentIndex={currentIndex}
-                  />
-                ))}
-              </motion.div>
-            </div>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-pink-500 group-hover:text-pink-400">
+                <path d="M15 18l-6-6 6-6"/>
+              </svg>
+            </button>
+          )}
 
-            {/* Info Panel Layer (Pinned beside the center point) */}
-            <div 
-              className="absolute z-20 pointer-events-none"
-              style={{
-                left: `calc(50% + ${IMAGE_WIDTH / 2 - (TOTAL_WIDTH / 2) + IMAGE_WIDTH + GAP}px)`,
-                transform: 'translateX(-100%)', // Align right edge to the calculated spot? No.
-                // Let's just use a simpler center-based offset:
-                left: `calc(50% + ${TOTAL_WIDTH/2 - INFO_WIDTH}px)`,
-                width: `${INFO_WIDTH}px`
-              }}
+          {/* Right Arrow */}
+          {currentIndex < items.length - 1 && (
+            <button
+              onClick={goToNext}
+              className="absolute right-6 md:right-10 z-30 group flex h-14 w-14 items-center justify-center rounded-full border border-pink-500/30 bg-pink-500/10 backdrop-blur-xl transition-all hover:bg-pink-500/20 hover:scale-110 active:scale-95 shadow-[0_0_15px_rgba(255,105,180,0.2)]"
             >
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-pink-500 group-hover:text-pink-400">
+                <path d="M9 18l6-6-6-6"/>
+              </svg>
+            </button>
+          )}
+
+          {/* Centered Side-by-Side Pair */}
+          <div className="relative flex items-center justify-center gap-12 px-8 md:px-12">
+            
+            {/* Info Panel (Left) */}
+            <div style={{ width: `${INFO_WIDTH}px`, flexShrink: 0 }}>
               <AnimatePresence mode="wait">
                 <motion.div
                   key={currentIndex}
-                  initial={{ opacity: 0, x: 20 }}
+                  initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -10 }}
+                  exit={{ opacity: 0, x: 10 }}
                   transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                  className="rounded-2xl border border-pink-500/40 pointer-events-auto p-12 md:p-16 flex flex-col items-center justify-center text-center min-h-[500px] md:min-h-[650px]"
+                  className="rounded-2xl border border-pink-500/40 p-12 md:p-16 flex flex-col items-center justify-center text-center min-h-[500px] md:min-h-[650px]"
                   style={{
                     background: 'rgba(15, 6, 30, 0.5)',
                     backdropFilter: 'blur(32px) saturate(250%)',
@@ -222,12 +202,45 @@ export default function SlideshowPanel({ items, initialIndex, isOpen, onClose }:
                       className="text-white/60 leading-relaxed text-base md:text-lg font-light italic max-w-sm"
                       style={{ fontFamily: 'var(--font-main)' }}
                     >
-                      "{currentItem?.description}"
+                      &ldquo;{currentItem?.description}&rdquo;
                     </p>
                   </div>
                 </motion.div>
               </AnimatePresence>
             </div>
+
+            {/* Image (Right) */}
+            <div 
+              ref={sliderRef}
+              className="relative overflow-hidden cursor-grab active:cursor-grabbing"
+              style={{ width: `${IMAGE_WIDTH}px`, height: `${IMAGE_WIDTH}px`, flexShrink: 0 }}
+              onMouseDown={handleDragStart}
+              onMouseMove={handleDragMove}
+              onMouseUp={handleDragEnd}
+              onMouseLeave={handleDragEnd}
+              onTouchStart={handleDragStart}
+              onTouchMove={handleDragMove}
+              onTouchEnd={handleDragEnd}
+            >
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={currentIndex}
+                  initial={{ opacity: 0, scale: 1.02 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.98 }}
+                  transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                  className="absolute inset-0 rounded-2xl overflow-hidden"
+                >
+                  <img 
+                    src={currentItem?.url} 
+                    alt={currentItem?.title}
+                    className="w-full h-full object-cover"
+                    draggable={false}
+                  />
+                </motion.div>
+              </AnimatePresence>
+            </div>
+
           </div>
         </div>
 
