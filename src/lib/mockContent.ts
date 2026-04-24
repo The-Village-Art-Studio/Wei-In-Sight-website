@@ -1,5 +1,7 @@
 import { SectionKey } from './supabase';
 
+export type BlockType = 'text' | 'image' | 'gallery' | 'audio' | 'video' | 'process' | 'quote' | 'logo-grid' | 'form';
+
 export interface GalleryItem {
   id: string;
   url: string;
