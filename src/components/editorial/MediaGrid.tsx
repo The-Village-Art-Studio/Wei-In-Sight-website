@@ -3,17 +3,23 @@
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 
+import { GalleryItem } from '@/lib/mockContent';
+
 interface MediaGridProps {
-  items: string[];
+  items: (string | GalleryItem)[];
   columns?: 2 | 3;
 }
 
 export default function MediaGrid({ items, columns = 3 }: MediaGridProps) {
   return (
     <div className={`media-grid cols-${columns}`}>
-      {items.map((url, index) => (
-        <motion.div 
-          key={url + index}
+      {items.map((item, index) => {
+        const url = typeof item === 'string' ? item : item.url;
+        const key = typeof item === 'string' ? url + index : item.id;
+
+        return (
+          <motion.div 
+            key={key}
           initial={{ opacity: 0, scale: 0.95 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
@@ -34,7 +40,7 @@ export default function MediaGrid({ items, columns = 3 }: MediaGridProps) {
             />
           </div>
         </motion.div>
-      ))}
+      )})}
 
       <style jsx>{`
         .media-grid {

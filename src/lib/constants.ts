@@ -57,7 +57,7 @@ export const NAV_SECTIONS: Section[] = [
       { id: 'paintings', label: 'Paintings', href: '/sight/paintings' },
       { id: 'photography', label: 'Photography', href: '/sight/photography' },
       { id: 'sculpture', label: 'Sculpture', href: '/sight/sculpture' },
-      { id: 'collections', label: 'Collections', href: '/sight/collections' },
+      { id: 'collections', label: 'Digital Arts', href: '/sight/collections' },
     ],
     editorial: {
       layoutType: 'gallery',
@@ -98,7 +98,7 @@ export const NAV_SECTIONS: Section[] = [
     cameraTarget3D: [-0.1, 0.4, 0],
     submenus: [
       { id: 'mixed-media', label: 'Mixed Media', href: '/touch/mixed-media' },
-      { id: 'material-experiments', label: 'Material Experiments', href: '/touch/material-experiments' },
+      { id: 'material-experiments', label: 'Installation/Mural', href: '/touch/material-experiments' },
       { id: 'watchmaking', label: 'Watchmaking', href: '/touch/watchmaking' },
       { id: 'fashion', label: 'Fashion', href: '/touch/fashion' },
     ],

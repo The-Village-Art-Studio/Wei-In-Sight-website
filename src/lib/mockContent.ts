@@ -1,13 +1,28 @@
 import { SectionKey } from './supabase';
 
-export type BlockType = 'text' | 'image' | 'gallery' | 'audio' | 'video' | 'process' | 'quote' | 'logo-grid' | 'form';
+export interface GalleryItem {
+  id: string;
+  url: string;
+  title: string;
+  year: string;
+  medium: string;
+  description: string;
+}
+
+export interface Album {
+  id: string;
+  title: string;
+  description?: string;
+  coverImages: string[];
+  items: GalleryItem[];
+}
 
 export interface ContentBlock {
   type: BlockType;
   content?: string;
   url?: string;
   caption?: string;
-  items?: string[]; // For gallery or process steps
+  items?: string[] | GalleryItem[]; // Updated to support complex items
   logoItems?: { logoUrl: string; title: string; description: string; link?: string; preserveColor?: boolean }[];
   formType?: 'contact' | 'commission';
   metadata?: Record<string, any>;
@@ -21,6 +36,7 @@ export interface DeepContent {
   subtitle?: string;
   heroImage?: string;
   blocks: ContentBlock[];
+  albums?: Album[]; // New field for album-folder views
 }
 
 export const MOCK_CONTENT: Record<string, DeepContent> = {
@@ -35,15 +51,56 @@ export const MOCK_CONTENT: Record<string, DeepContent> = {
     blocks: [
       { 
         type: 'text', 
-        content: `### TEXTURE OF MEMORY\n\nThese works represent a five-year exploration of sensory memory. Each stroke is a translation of a specific moment in time—a vibration captured through heavy impasto and gold leaf. \n\nThe palette is restricted to charcoal, deep violets, and oxidized golds, focusing the viewer's attention on the physical rhythm of the paint.` 
-      },
-      { 
-        type: 'gallery', 
-        items: [
+        content: `### TEXTURE OF MEMORY\n\nThese works represent a five-year exploration of sensory memory. Each stroke is a translation of a specific moment in time—a vibration captured through heavy impasto and gold leaf.` 
+      }
+    ],
+    albums: [
+      {
+        id: 'atmospheric-studies',
+        title: 'Atmospheric Studies',
+        description: 'Large scale oil works focusing on light and depth.',
+        coverImages: [
           '/assets/art/sight_paintings_1_1776627360680.png',
-          '/assets/art/sight_paintings_2_1776627384437.png'
-        ], 
-        caption: 'Selected large-scale oil works on canvas, 2024.' 
+          '/assets/art/sight_paintings_2_1776627384437.png',
+          '/assets/art/sight_paintings_hero_1776626955531.png'
+        ],
+        items: [
+          {
+            id: 'as-1',
+            url: '/assets/art/sight_paintings_1_1776627360680.png',
+            title: 'Nocturne in Gold',
+            year: '2024',
+            medium: 'Oil and Gold Leaf on Canvas',
+            description: 'An exploration of urban light at midnight, translated through heavy impasto.'
+          },
+          {
+            id: 'as-2',
+            url: '/assets/art/sight_paintings_2_1776627384437.png',
+            title: 'Ethereal Drift',
+            year: '2023',
+            medium: 'Mixed Media on Wood',
+            description: 'The tension between atmospheric haze and structured geometry.'
+          }
+        ]
+      },
+      {
+        id: 'memory-fragments',
+        title: 'Memory Fragments',
+        description: 'Small format sketches and process artifacts.',
+        coverImages: [
+          '/assets/art/sight_paintings_hero_1776626955531.png',
+          '/assets/art/sight_paintings_1_1776627360680.png'
+        ],
+        items: [
+          {
+            id: 'mf-1',
+            url: '/assets/art/sight_paintings_hero_1776626955531.png',
+            title: 'Shattered Mirror',
+            year: '2024',
+            medium: 'Acrylic and Charcoal',
+            description: 'Capturing the fragmented nature of childhood memories.'
+          }
+        ]
       }
     ]
   },
@@ -57,16 +114,29 @@ export const MOCK_CONTENT: Record<string, DeepContent> = {
     blocks: [
       { 
         type: 'text', 
-        content: `### THE VOID BEYOND\n\nPhotography, for me, is an exercise in subtractive composition. By removing color and isolating monolithic structures, I seek to reveal the "silent pulse" of the built environment. \n\nThis series focuses on the intersection of concrete, shadow, and a single, unforgiving beam of light.` 
-      },
-      { 
-        type: 'gallery', 
-        items: [
+        content: `### THE VOID BEYOND\n\nPhotography, for me, is an exercise in subtractive composition.` 
+      }
+    ],
+    albums: [
+      {
+        id: 'brutalist-rhythms',
+        title: 'Brutalist Rhythms',
+        description: 'Monolithic studies in shadow and structure.',
+        coverImages: [
           '/assets/art/sight_photography_1_1776627407211.png',
           '/assets/art/sight_photography_2_1776627429953.png',
           '/assets/art/sight_photography_3_1776627454474.png'
-        ], 
-        caption: 'Monolithic studies in shadow and structure.' 
+        ],
+        items: [
+          {
+            id: 'br-1',
+            url: '/assets/art/sight_photography_1_1776627407211.png',
+            title: 'Concrete Echo',
+            year: '2024',
+            medium: 'Digital Photography',
+            description: 'The silent pulse of a brutalist facade.'
+          }
+        ]
       }
     ]
   },
@@ -80,15 +150,28 @@ export const MOCK_CONTENT: Record<string, DeepContent> = {
     blocks: [
       { 
         type: 'text', 
-        content: `### TACTILE BRUTALISM\n\nMy sculptures are physical manifestations of internal friction. Using industrial materials like oxidized steel, cracked glass, and raw concrete, I build forms that feel like they are either emerging from or collapsing into their environment.` 
-      },
-      { 
-        type: 'gallery', 
-        items: [
+        content: `### TACTILE BRUTALISM\n\nMy sculptures are physical manifestations of internal friction.` 
+      }
+    ],
+    albums: [
+      {
+        id: 'glass-steel',
+        title: 'Glass & Steel',
+        description: 'Exploring transparency and weight.',
+        coverImages: [
           '/assets/art/sight_sculpture_1_1776627480388.png',
           '/assets/art/sight_sculpture_2_1776627504199.png'
-        ], 
-        caption: 'Brutalist interventions in space.' 
+        ],
+        items: [
+          {
+            id: 'gs-1',
+            url: '/assets/art/sight_sculpture_1_1776627480388.png',
+            title: 'Tension III',
+            year: '2024',
+            medium: 'Oxidized Steel and Blown Glass',
+            description: 'A study in material fragility versus industrial strength.'
+          }
+        ]
       }
     ]
   },
@@ -96,20 +179,33 @@ export const MOCK_CONTENT: Record<string, DeepContent> = {
     id: 's4',
     slug: 'collections',
     sectionId: 'sight',
-    title: 'Archival Assemblages',
-    subtitle: 'Curated series of artifacts and mixed media studies.',
+    title: 'Digital Arts Archive',
+    subtitle: 'Curated series of digital artifacts and mixed media studies.',
     heroImage: '/assets/art/sight_collections_preview_1776627027864.png',
     blocks: [
       { 
         type: 'text', 
-        content: `### THE CREATIVE ATLAS\n\nCollections represent the connective tissue between my disparate disciplines. These are not just finished works, but the process records—sketches, prototypes, and material fragments—grouped to reveal the thematic throughlines of the Wei In Sight project.` 
-      },
-      { 
-        type: 'gallery', 
-        items: [
+        content: `### THE CREATIVE ATLAS\n\nCollections represent the connective tissue between my disparate disciplines.` 
+      }
+    ],
+    albums: [
+      {
+        id: 'digital-studies',
+        title: 'Digital Studies',
+        description: 'New media interventions.',
+        coverImages: [
           '/assets/art/sight_collections_1_1776627530672.png'
-        ], 
-        caption: 'Thematic groupings of archival process artifacts.' 
+        ],
+        items: [
+          {
+            id: 'ds-1',
+            url: '/assets/art/sight_collections_1_1776627530672.png',
+            title: 'Data Flux',
+            year: '2025',
+            medium: 'Generative Art',
+            description: 'Visualizing memory as a decaying digital stream.'
+          }
+        ]
       }
     ]
   },
@@ -171,11 +267,28 @@ export const MOCK_CONTENT: Record<string, DeepContent> = {
     title: 'Fabric & Friction',
     subtitle: 'Tactile studies on organic textiles and mineral pigments.',
     blocks: [
-      { type: 'text', content: 'A study on how different fabrics react to water-based pigments over time.' },
-      { type: 'gallery', items: [
-        'https://images.unsplash.com/photo-1544256718-3bcf237f3974',
-        'https://images.unsplash.com/photo-1549490349-8643362247b5'
-      ], caption: 'Detail shots of linen and clay experiments.' }
+      { type: 'text', content: 'A study on how different fabrics react to water-based pigments over time.' }
+    ],
+    albums: [
+      {
+        id: 'linen-clay',
+        title: 'Linen & Clay',
+        description: 'Tactile experiments with organic materials.',
+        coverImages: [
+          'https://images.unsplash.com/photo-1544256718-3bcf237f3974',
+          'https://images.unsplash.com/photo-1549490349-8643362247b5'
+        ],
+        items: [
+          {
+            id: 'lc-1',
+            url: 'https://images.unsplash.com/photo-1544256718-3bcf237f3974',
+            title: 'Earthbound I',
+            year: '2024',
+            medium: 'Clay Pigment on Linen',
+            description: 'A study of mineral absorption into organic fibers.'
+          }
+        ]
+      }
     ]
   },
   // DREAM

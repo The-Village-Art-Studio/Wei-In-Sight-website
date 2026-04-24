@@ -12,6 +12,8 @@ import ProseBlock from '@/components/editorial/ProseBlock';
 import LogoGrid from '@/components/editorial/LogoGrid';
 import PulseForm from '@/components/editorial/PulseForm';
 
+import ProjectFolder from '@/components/editorial/ProjectFolder';
+
 export default function ContentPage() {
   const { section: sectionId, slug } = useParams();
   const section = NAV_SECTIONS.find(s => s.id === sectionId);
@@ -23,6 +25,9 @@ export default function ContentPage() {
   if (!section || !activeSubmenu) {
     notFound();
   }
+
+  // Check if we should use the album folder layout
+  const useAlbumLayout = content?.albums && content.albums.length > 0;
 
   return (
     <motion.div 
@@ -65,7 +70,21 @@ export default function ContentPage() {
         </header>
 
         <div className="content-blocks">
-          {content ? (
+          {useAlbumLayout ? (
+            <div className="album-grid">
+              {content!.albums!.map((album, idx) => (
+                <ProjectFolder 
+                  key={album.id}
+                  id={album.id}
+                  title={album.title}
+                  description={album.description}
+                  images={album.items.map(item => item.url)}
+                  href={`/${sectionId}/${slug}/${album.id}`}
+                  index={idx}
+                />
+              ))}
+            </div>
+          ) : content ? (
             content.blocks.map((block, idx) => {
               switch (block.type) {
                 case 'text':
@@ -73,7 +92,7 @@ export default function ContentPage() {
                 case 'quote':
                   return <ProseBlock key={idx} content={block.content!} type="quote" />;
                 case 'gallery':
-                  return <MediaGrid key={idx} items={block.items!} columns={3} />;
+                  return <MediaGrid key={idx} items={block.items as string[]} columns={3} />;
                 case 'audio':
                   return (
                     <AudioBlock 
@@ -116,6 +135,18 @@ export default function ContentPage() {
       </article>
 
       <style jsx>{`
+        .album-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+          gap: 40px;
+          margin-top: var(--spacing-m);
+        }
+        @media (min-width: 1200px) {
+          .album-grid {
+            grid-template-columns: repeat(3, 1fr);
+          }
+        }
+
         .page-hero {
           margin-bottom: var(--spacing-l);
           width: 100%;
