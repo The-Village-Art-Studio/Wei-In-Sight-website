@@ -113,7 +113,7 @@ export default function SlideshowPanel({ items, initialIndex, isOpen, onClose }:
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="flex items-center gap-4 rounded-full border border-white/10 bg-white/5 px-8 py-3 backdrop-blur-xl shadow-lg"
+              className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-10 py-3 backdrop-blur-xl shadow-lg"
             >
               <span className="text-sm font-medium text-white/80">{String(currentIndex + 1).padStart(2, "0")}</span>
               <span className="text-white/20">/</span>
