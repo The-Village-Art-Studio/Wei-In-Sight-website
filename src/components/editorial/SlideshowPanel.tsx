@@ -162,11 +162,11 @@ export default function SlideshowPanel({ items, initialIndex, isOpen, onClose }:
           )}
 
           {/* Centered Side-by-Side Pair */}
-          <div className="relative flex flex-col lg:flex-row items-center justify-center gap-6 lg:gap-10 w-full h-full px-16 md:px-20">
+          <div className="relative flex flex-col lg:flex-row items-center lg:items-stretch justify-center gap-6 lg:gap-10 w-full px-16 md:px-20" style={{ maxHeight: '100%' }}>
             
             {/* Info Panel (Left on Desktop, Bottom on Mobile) */}
             <div 
-              className="flex-1 lg:flex-shrink-0 w-full lg:w-auto lg:h-full flex"
+              className="flex-shrink-0 w-full lg:w-auto flex"
               style={{ maxWidth: `${MAX_INFO_WIDTH}px` }}
             >
               <AnimatePresence mode="wait">
@@ -219,11 +219,11 @@ export default function SlideshowPanel({ items, initialIndex, isOpen, onClose }:
             {/* Image (Right on Desktop, Top on Mobile) */}
             <div 
               ref={sliderRef}
-              className="relative overflow-hidden cursor-grab active:cursor-grabbing flex-1 order-first lg:order-none rounded-2xl"
+              className="relative overflow-hidden cursor-grab active:cursor-grabbing order-first lg:order-none rounded-2xl flex-shrink-0"
               style={{ 
-                maxWidth: `${MAX_IMAGE_SIZE}px`,
+                width: `min(${MAX_IMAGE_SIZE}px, 50%)`,
                 aspectRatio: '1/1',
-                maxHeight: '100%',
+                maxHeight: 'calc(100vh - 200px)',
               }}
               onMouseDown={handleDragStart}
               onMouseMove={handleDragMove}

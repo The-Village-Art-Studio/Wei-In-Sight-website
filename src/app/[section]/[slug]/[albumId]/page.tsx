@@ -146,8 +146,23 @@ export default function AlbumGalleryPage() {
 
         .gallery-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-          gap: 32px; /* More space for the panels */
+          grid-template-columns: repeat(4, 1fr);
+          gap: 24px;
+        }
+        @media (max-width: 1200px) {
+          .gallery-grid {
+            grid-template-columns: repeat(3, 1fr);
+          }
+        }
+        @media (max-width: 900px) {
+          .gallery-grid {
+            grid-template-columns: repeat(2, 1fr);
+          }
+        }
+        @media (max-width: 500px) {
+          .gallery-grid {
+            grid-template-columns: 1fr;
+          }
         }
         .gallery-item-wrapper {
           cursor: pointer;

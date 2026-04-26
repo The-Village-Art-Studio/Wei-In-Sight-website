@@ -116,19 +116,7 @@ h1, h2, h3, h4 {
 .site-main {
   flex-grow: 1;
   min-height: 100vh;
-  margin-left: calc(30% + 60px); /* header width + fixed 60px gap */
-}
-
-@media (min-width: 1333px) {
-  .site-main {
-    margin-left: 460px; /* 400px header max + 60px gap */
-  }
-}
-
-@media (max-width: 933px) {
-  .site-main {
-    margin-left: 340px; /* 280px header min + 60px gap */
-  }
+  margin-left: 460px; /* Fixed gap: always 60px from header's max-width of 400px */
 }
 
 @media (max-width: 768px) {
