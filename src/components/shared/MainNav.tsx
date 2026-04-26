@@ -634,6 +634,10 @@ export default function MainNav() {
             color: var(--neon-pink);
             text-shadow: 0 0 10px var(--neon-pink-glow);
           }
+
+          .brand-content img {
+            display: none !important;
+          }
         }
 
         @media (min-width: 769px) {
