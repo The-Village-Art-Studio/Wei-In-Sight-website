@@ -83,8 +83,12 @@ export default function SlideshowPanel({ items, initialIndex, isOpen, onClose }:
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.98, y: 10 }}
         transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-        className="fixed inset-4 md:inset-8 lg:inset-12 z-[2000] overflow-hidden rounded-2xl flex flex-col"
+        className="fixed z-[2000] overflow-hidden rounded-2xl flex flex-col"
         style={{
+          top: '20px',
+          left: '20px',
+          right: '20px',
+          bottom: '20px',
           background: 'rgba(15, 6, 30, 0.4)',
           backdropFilter: 'blur(32px) saturate(250%)',
           WebkitBackdropFilter: 'blur(32px) saturate(250%)',
@@ -107,7 +111,7 @@ export default function SlideshowPanel({ items, initialIndex, isOpen, onClose }:
         </AnimatePresence>
 
         {/* Header / Actions */}
-        <header className="relative z-30 flex items-center justify-end p-8 md:p-10">
+        <header className="relative z-30 flex items-center justify-end px-6 py-4 md:px-8 md:py-5">
           <div className="flex items-center gap-6">
             <motion.div
               initial={{ opacity: 0 }}
@@ -130,15 +134,15 @@ export default function SlideshowPanel({ items, initialIndex, isOpen, onClose }:
         </header>
 
         {/* Content Area */}
-        <div className="relative flex-1 w-full flex items-center justify-center overflow-hidden">
+        <div className="relative flex-1 w-full flex items-center justify-center overflow-hidden min-h-0">
           
           {/* Left Arrow */}
           {currentIndex > 0 && (
             <button
               onClick={goToPrev}
-              className="absolute left-6 md:left-10 z-30 group flex h-14 w-14 items-center justify-center rounded-full border border-pink-500/30 bg-pink-500/10 backdrop-blur-xl transition-all hover:bg-pink-500/20 hover:scale-110 active:scale-95 shadow-[0_0_15px_rgba(255,105,180,0.2)]"
+              className="absolute left-4 md:left-8 z-30 group flex h-12 w-12 items-center justify-center rounded-full border border-pink-500/30 bg-pink-500/10 backdrop-blur-xl transition-all hover:bg-pink-500/20 hover:scale-110 active:scale-95 shadow-[0_0_15px_rgba(255,105,180,0.2)]"
             >
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-pink-500 group-hover:text-pink-400">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-pink-500 group-hover:text-pink-400">
                 <path d="M15 18l-6-6 6-6"/>
               </svg>
             </button>
@@ -148,20 +152,20 @@ export default function SlideshowPanel({ items, initialIndex, isOpen, onClose }:
           {currentIndex < items.length - 1 && (
             <button
               onClick={goToNext}
-              className="absolute right-6 md:right-10 z-30 group flex h-14 w-14 items-center justify-center rounded-full border border-pink-500/30 bg-pink-500/10 backdrop-blur-xl transition-all hover:bg-pink-500/20 hover:scale-110 active:scale-95 shadow-[0_0_15px_rgba(255,105,180,0.2)]"
+              className="absolute right-4 md:right-8 z-30 group flex h-12 w-12 items-center justify-center rounded-full border border-pink-500/30 bg-pink-500/10 backdrop-blur-xl transition-all hover:bg-pink-500/20 hover:scale-110 active:scale-95 shadow-[0_0_15px_rgba(255,105,180,0.2)]"
             >
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-pink-500 group-hover:text-pink-400">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-pink-500 group-hover:text-pink-400">
                 <path d="M9 18l6-6-6-6"/>
               </svg>
             </button>
           )}
 
           {/* Centered Side-by-Side Pair */}
-          <div className="relative flex flex-col lg:flex-row items-center justify-center gap-6 lg:gap-12 w-full max-w-6xl px-4 md:px-8 max-h-[80vh]">
+          <div className="relative flex flex-col lg:flex-row items-center justify-center gap-6 lg:gap-10 w-full h-full px-16 md:px-20">
             
             {/* Info Panel (Left on Desktop, Bottom on Mobile) */}
             <div 
-              className="flex-shrink-1 lg:flex-shrink-0 w-full max-h-[40vh] lg:max-h-[70vh] overflow-y-auto custom-scrollbar"
+              className="flex-1 lg:flex-shrink-0 w-full lg:w-auto lg:h-full flex"
               style={{ maxWidth: `${MAX_INFO_WIDTH}px` }}
             >
               <AnimatePresence mode="wait">
@@ -171,7 +175,7 @@ export default function SlideshowPanel({ items, initialIndex, isOpen, onClose }:
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 10 }}
                   transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                  className="rounded-2xl border border-pink-500/40 p-6 md:p-10 lg:p-14 flex flex-col items-center justify-center text-center"
+                  className="rounded-2xl border border-pink-500/40 p-6 md:p-10 lg:p-14 flex flex-col items-center justify-center text-center w-full"
                   style={{
                     background: 'rgba(15, 6, 30, 0.5)',
                     backdropFilter: 'blur(32px) saturate(250%)',
@@ -214,11 +218,11 @@ export default function SlideshowPanel({ items, initialIndex, isOpen, onClose }:
             {/* Image (Right on Desktop, Top on Mobile) */}
             <div 
               ref={sliderRef}
-              className="relative overflow-hidden cursor-grab active:cursor-grabbing flex-shrink-1 w-full order-first lg:order-none"
+              className="relative overflow-hidden cursor-grab active:cursor-grabbing flex-1 order-first lg:order-none rounded-2xl"
               style={{ 
                 maxWidth: `${MAX_IMAGE_SIZE}px`,
-                maxHeight: '60vh',
-                aspectRatio: '1/1'
+                aspectRatio: '1/1',
+                maxHeight: '100%',
               }}
               onMouseDown={handleDragStart}
               onMouseMove={handleDragMove}
@@ -251,7 +255,7 @@ export default function SlideshowPanel({ items, initialIndex, isOpen, onClose }:
         </div>
 
         {/* Footer Area */}
-        <footer className="relative z-30 p-12 flex items-center justify-center">
+        <footer className="relative z-30 px-6 py-4 md:py-5 flex items-center justify-center">
           <NavigationDots total={items.length} current={currentIndex} onSelect={goToSlide} colors={currentColors} />
         </footer>
       </motion.div>
