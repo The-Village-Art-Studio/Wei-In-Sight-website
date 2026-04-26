@@ -116,18 +116,18 @@ h1, h2, h3, h4 {
 .site-main {
   flex-grow: 1;
   min-height: 100vh;
-  margin-left: 30%; /* Match header width */
+  margin-left: 32%; /* Increased from 30% */
 }
 
-@media (min-width: 1333px) { /* 400px / 0.3 = 1333px */
+@media (min-width: 1333px) {
   .site-main {
-    margin-left: 400px;
+    margin-left: 480px; /* Increased from 400px */
   }
 }
 
-@media (max-width: 933px) { /* 280px / 0.3 = 933px */
+@media (max-width: 933px) {
   .site-main {
-    margin-left: 280px;
+    margin-left: 320px; /* Increased from 280px */
   }
 }
 
@@ -158,6 +158,19 @@ h1, h2, h3, h4 {
 }
 
 /* Cinematic Utilities */
+.page-container {
+  padding: var(--spacing-l) clamp(24px, 8vw, 120px);
+  max-width: 1800px;
+  margin: 0;
+  width: 100%;
+}
+
+@media (max-width: 1024px) {
+  .page-container {
+    padding: var(--spacing-m) clamp(20px, 5vw, 40px);
+  }
+}
+
 .glass {
   background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(10px);

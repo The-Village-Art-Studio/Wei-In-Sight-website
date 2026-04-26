@@ -31,7 +31,8 @@ export default function AlbumGalleryPage() {
     <motion.div 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="album-gallery-page"
+      className="album-gallery-page page-container"
+      style={{ paddingLeft: 'clamp(60px, 12vw, 160px)', paddingRight: '40px' }}
     >
       <nav className="breadcrumb text-xs">
         <Link href="/">Home</Link> 
@@ -55,28 +56,53 @@ export default function AlbumGalleryPage() {
         </div>
       </header>
 
-      <div className="gallery-grid">
-        {album.items.map((item, idx) => (
-          <motion.div
-            key={item.id}
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            transition={{ delay: idx * 0.05, duration: 0.6 }}
-            className="gallery-item-wrapper"
-            onClick={() => openSlideshow(idx)}
-          >
-            <div className="gallery-item-image-container">
-              <img src={item.url} alt={item.title} className="gallery-item-image" />
-              <div className="item-overlay">
-                <div className="item-info">
-                  <span className="item-title text-small">{item.title}</span>
-                  <span className="item-year text-xs opacity-60">{item.year}</span>
+        <div className="gallery-grid">
+          {album.items.map((item, idx) => (
+            <motion.div
+              key={item.id}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: idx * 0.05, duration: 0.8 }}
+              whileHover={{ 
+                y: -12,
+                scale: 1.02,
+                borderColor: 'rgba(255, 105, 180, 0.8)',
+                boxShadow: `
+                  0 32px 80px rgba(0, 0, 0, 0.9),
+                  0 0 0 1px rgba(255, 255, 255, 0.25) inset,
+                  0 0 50px rgba(255, 105, 180, 0.3) inset
+                `
+              }}
+              className="gallery-item-wrapper"
+              onClick={() => openSlideshow(idx)}
+              style={{
+                background: 'rgba(15, 6, 30, 0.85)',
+                backdropFilter: 'blur(32px) saturate(250%)',
+                WebkitBackdropFilter: 'blur(32px) saturate(250%)',
+                border: '1px solid rgba(255, 105, 180, 0.4)',
+                borderRadius: '16px',
+                padding: '16px',
+                cursor: 'pointer',
+                boxShadow: `
+                  0 24px 48px rgba(0, 0, 0, 0.8),
+                  0 0 0 1px rgba(255, 255, 255, 0.15) inset,
+                  0 0 30px rgba(255, 105, 180, 0.2) inset
+                `
+              }}
+            >
+              <div className="gallery-item-image-container">
+                <img src={item.url} alt={item.title} className="gallery-item-image" />
+                <div className="item-overlay">
+                  <div className="item-info">
+                    <span className="item-title text-small">{item.title}</span>
+                    <span className="item-year text-xs opacity-60">{item.year}</span>
+                  </div>
                 </div>
               </div>
-            </div>
-          </motion.div>
-        ))}
-      </div>
+            </motion.div>
+          ))}
+        </div>
 
       <footer className="page-footer">
         <Link href={`/${sectionId}/${slug}`} className="back-link">
@@ -122,20 +148,26 @@ export default function AlbumGalleryPage() {
         .gallery-grid {
           display: grid;
           grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-          gap: 20px;
+          gap: 32px; /* More space for the panels */
         }
         .gallery-item-wrapper {
           cursor: pointer;
           position: relative;
           aspect-ratio: 1;
-          overflow: hidden;
-          background: #111;
-          border: 1px solid rgba(255, 255, 255, 0.05);
+          transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
         }
+        
+        .gallery-item-wrapper:hover {
+          transform: translateY(-10px);
+          border-color: rgba(255, 105, 180, 1) !important;
+        }
+
         .gallery-item-image-container {
           width: 100%;
           height: 100%;
           position: relative;
+          overflow: hidden;
+          border-radius: 8px;
         }
         .gallery-item-image {
           width: 100%;

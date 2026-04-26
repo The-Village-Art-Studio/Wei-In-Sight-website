@@ -33,7 +33,8 @@ export default function ContentPage() {
     <motion.div 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="content-page"
+      className="content-page page-container"
+      style={{ paddingLeft: 'clamp(60px, 12vw, 160px)', paddingRight: '40px' }}
     >
       <nav className="breadcrumb text-xs">
         <Link href="/">Home</Link> 

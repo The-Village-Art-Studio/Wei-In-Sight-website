@@ -334,6 +334,55 @@ export const MOCK_CONTENT: Record<string, DeepContent> = {
     heroImage: '/assets/art/sight_photography_1_1776627407211.png',
     blocks: [
       { type: 'text', content: 'The art of horology and micro-mechanical engineering as a form of expression.' }
+    ],
+    albums: [
+      {
+        id: 'mechanical-precision',
+        title: 'Mechanical Precision',
+        description: 'Macro studies of custom gears, bridges, and escapements.',
+        coverImages: [
+          'https://images.unsplash.com/photo-1509048191080-d2984bad6ad5',
+          'https://images.unsplash.com/photo-1523275335684-37898b6baf30',
+          'https://images.unsplash.com/photo-1585123334904-845d60e97b29'
+        ],
+        items: [
+          {
+            id: 'mp-1',
+            url: 'https://images.unsplash.com/photo-1509048191080-d2984bad6ad5',
+            title: 'Escapement Wheel',
+            year: '2024',
+            medium: 'Macro Photography',
+            description: 'The heartbeat of a mechanical movement.'
+          },
+          {
+            id: 'mp-2',
+            url: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30',
+            title: 'Tourbillon Cage',
+            year: '2024',
+            medium: 'Technical Render',
+            description: 'Gravity-defying precision.'
+          }
+        ]
+      },
+      {
+        id: 'horological-sculpture',
+        title: 'Horological Sculpture',
+        description: 'Finished timepieces and case architecture.',
+        coverImages: [
+          'https://images.unsplash.com/photo-1614164185128-e4ec99c436d7',
+          'https://images.unsplash.com/photo-1547996160-81dfa63595dd'
+        ],
+        items: [
+          {
+            id: 'hs-1',
+            url: 'https://images.unsplash.com/photo-1614164185128-e4ec99c436d7',
+            title: 'Obsidian Chronograph',
+            year: '2025',
+            medium: 'Mixed Media',
+            description: 'A study in light absorption and time.'
+          }
+        ]
+      }
     ]
   },
   'touch/fashion': {
@@ -345,6 +394,55 @@ export const MOCK_CONTENT: Record<string, DeepContent> = {
     heroImage: '/assets/art/sight_sculpture_1_1776627480388.png',
     blocks: [
       { type: 'text', content: 'Translating visual concepts into wearable garments and fashion artifacts.' }
+    ],
+    albums: [
+      {
+        id: 'textile-narratives',
+        title: 'Textile Narratives',
+        description: 'Explorations in fabric manipulation and organic dyes.',
+        coverImages: [
+          'https://images.unsplash.com/photo-1528459801416-a9e53bbf4e17',
+          'https://images.unsplash.com/photo-1551488831-00ddcb6c6bd3',
+          'https://images.unsplash.com/photo-1576016773324-47c37407ca29'
+        ],
+        items: [
+          {
+            id: 'tn-1',
+            url: 'https://images.unsplash.com/photo-1528459801416-a9e53bbf4e17',
+            title: 'Shattered Silk',
+            year: '2024',
+            medium: 'Distressed Fabric',
+            description: 'A study in material decay and beauty.'
+          },
+          {
+            id: 'tn-2',
+            url: 'https://images.unsplash.com/photo-1551488831-00ddcb6c6bd3',
+            title: 'Indigo Void',
+            year: '2024',
+            medium: 'Hand-dyed Wool',
+            description: 'Depth achieved through 40 layers of indigo.'
+          }
+        ]
+      },
+      {
+        id: 'avant-garde-forms',
+        title: 'Avant-Garde Forms',
+        description: 'Structural garments and conceptual silhouettes.',
+        coverImages: [
+          'https://images.unsplash.com/photo-1539109136881-3be0616acf4b',
+          'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f'
+        ],
+        items: [
+          {
+            id: 'agf-1',
+            url: 'https://images.unsplash.com/photo-1539109136881-3be0616acf4b',
+            title: 'Monolith Cloak',
+            year: '2025',
+            medium: 'Technical Canvas',
+            description: 'Architectural protection for the urban voyager.'
+          }
+        ]
+      }
     ]
   },
   // DREAM

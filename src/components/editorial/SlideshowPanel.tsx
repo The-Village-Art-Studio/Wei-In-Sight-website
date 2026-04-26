@@ -89,10 +89,11 @@ export default function SlideshowPanel({ items, initialIndex, isOpen, onClose }:
           left: '20px',
           right: '20px',
           bottom: '20px',
-          background: 'rgba(15, 6, 30, 0.4)',
+          background: 'rgba(15, 6, 30, 0.85)',
           backdropFilter: 'blur(32px) saturate(250%)',
           WebkitBackdropFilter: 'blur(32px) saturate(250%)',
           border: '1px solid rgba(255, 105, 180, 0.4)',
+          borderRadius: '16px',
           boxShadow: '0 24px 64px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(255, 255, 255, 0.15) inset, 0 0 40px rgba(255, 105, 180, 0.2) inset'
         }}
       >
@@ -177,7 +178,7 @@ export default function SlideshowPanel({ items, initialIndex, isOpen, onClose }:
                   transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                   className="rounded-2xl border border-pink-500/40 p-6 md:p-10 lg:p-14 flex flex-col items-center justify-center text-center w-full"
                   style={{
-                    background: 'rgba(15, 6, 30, 0.5)',
+                    background: 'rgba(15, 6, 30, 0.85)',
                     backdropFilter: 'blur(32px) saturate(250%)',
                     WebkitBackdropFilter: 'blur(32px) saturate(250%)',
                     boxShadow: '0 32px 80px rgba(0, 0, 0, 0.95), 0 0 0 1px rgba(255, 255, 255, 0.1) inset, 0 0 60px rgba(255, 105, 180, 0.2) inset'
