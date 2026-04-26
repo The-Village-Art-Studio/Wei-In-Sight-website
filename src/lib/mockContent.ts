@@ -303,6 +303,53 @@ export const MOCK_CONTENT: Record<string, DeepContent> = {
       }
     ]
   },
+  'voice/lyrics': {
+    id: 'v2',
+    slug: 'lyrics',
+    sectionId: 'voice',
+    title: 'Lyrics',
+    subtitle: 'The skeletal remains of songs.',
+    heroImage: 'https://images.unsplash.com/photo-1511379938547-c1f69419868d',
+    blocks: [
+      {
+        type: 'gallery',
+        items: [
+          {
+            id: 'l-1',
+            url: 'https://images.unsplash.com/photo-1511379938547-c1f69419868d',
+            title: 'Shattered Rhythm',
+            year: '2024',
+            medium: 'Digital Note',
+            description: 'Scrawled in the back of a taxi.'
+          },
+          {
+            id: 'l-2',
+            url: 'https://images.unsplash.com/photo-1493225255756-d9584f8606e9',
+            title: 'Neon Ghost',
+            year: '2025',
+            medium: 'Typewritten',
+            description: 'A study in urban isolation.'
+          },
+          {
+            id: 'l-3',
+            url: 'https://images.unsplash.com/photo-1514525253344-781472993a4a',
+            title: 'The Gutter',
+            year: '2024',
+            medium: 'Handwritten',
+            description: 'Finding beauty in the discarded.'
+          },
+          {
+            id: 'l-4',
+            url: 'https://images.unsplash.com/photo-1459749411177-042180ce673c',
+            title: 'Resonance',
+            year: '2025',
+            medium: 'Digital',
+            description: 'The echo of a forgotten verse.'
+          }
+        ]
+      }
+    ]
+  },
   // TOUCH
   'touch/material-experiments': {
     id: 't1',
@@ -537,6 +584,53 @@ export const MOCK_CONTENT: Record<string, DeepContent> = {
       }
     ]
   },
+  'dream/quotes': {
+    id: 'd2',
+    slug: 'quotes',
+    sectionId: 'dream',
+    title: 'Quotes',
+    subtitle: 'Voices from the world of Wei.',
+    heroImage: 'https://images.unsplash.com/photo-1516979187457-637abb4f9353',
+    blocks: [
+      {
+        type: 'gallery',
+        items: [
+          {
+            id: 'q-1',
+            url: 'https://images.unsplash.com/photo-1516979187457-637abb4f9353',
+            title: 'The First Law',
+            year: '2024',
+            medium: 'Stone Inscription',
+            description: 'To see is to forget.'
+          },
+          {
+            id: 'q-2',
+            url: 'https://images.unsplash.com/photo-1524995997946-a1c2e315a42f',
+            title: 'On Memory',
+            year: '2025',
+            medium: 'Digital Scroll',
+            description: 'We are the sum of what we lose.'
+          },
+          {
+            id: 'q-3',
+            url: 'https://images.unsplash.com/photo-1506466010722-395aa2bef877',
+            title: 'The Weaver',
+            year: '2024',
+            medium: 'Ancient Text',
+            description: 'Silence is the only true translation.'
+          },
+          {
+            id: 'q-4',
+            url: 'https://images.unsplash.com/photo-1505664194779-8beaceb93744',
+            title: 'Void Speak',
+            year: '2025',
+            medium: 'Conceptual Art',
+            description: 'The future is a memory not yet forgotten.'
+          }
+        ]
+      }
+    ]
+  },
   // HEART
   'heart/about': {
     id: 'h1',
@@ -547,6 +641,57 @@ export const MOCK_CONTENT: Record<string, DeepContent> = {
     heroImage: '/assets/art/sight_photography_preview_1776626984989.png',
     blocks: [
       { type: 'text', content: 'Jacky Ho is an artist based between worlds, focusing on the intersection of memory and technology.' }
+    ]
+  },
+  'heart/journey': {
+    id: 'h2',
+    slug: 'journey',
+    sectionId: 'heart',
+    title: 'The Journey',
+    subtitle: 'Milestones of a creative odyssey.',
+    heroImage: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b',
+    blocks: [
+      {
+        type: 'gallery',
+        items: [
+          {
+            id: 'j-1',
+            url: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b',
+            title: 'The Crossing',
+            year: '2023',
+            medium: 'Photography',
+            description: 'Leaving the familiar behind.',
+            link: 'https://jackyho.com/journey/crossing'
+          },
+          {
+            id: 'j-2',
+            url: 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05',
+            title: 'Quiet Peak',
+            year: '2024',
+            medium: 'Digital Study',
+            description: 'The height of creative isolation.',
+            link: 'https://jackyho.com/journey/peak'
+          },
+          {
+            id: 'j-3',
+            url: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e',
+            title: 'Deep Woods',
+            year: '2024',
+            medium: 'Concept Art',
+            description: 'Losing one\'s way to find the path.',
+            link: 'https://jackyho.com/journey/woods'
+          },
+          {
+            id: 'j-4',
+            url: 'https://images.unsplash.com/photo-1501785888041-af3ef285b470',
+            title: 'Return',
+            year: '2025',
+            medium: 'Photography',
+            description: 'Carrying the world back with you.',
+            link: 'https://jackyho.com/journey/return'
+          }
+        ]
+      }
     ]
   },
 

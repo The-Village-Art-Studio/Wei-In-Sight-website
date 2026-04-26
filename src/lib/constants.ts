@@ -121,7 +121,6 @@ export const NAV_SECTIONS: Section[] = [
     submenus: [
       { id: 'poems', label: 'Poems', href: '/voice/poems' },
       { id: 'lyrics', label: 'Lyrics', href: '/voice/lyrics' },
-      { id: 'spoken-word', label: 'Spoken Word', href: '/voice/spoken-word' },
     ],
     editorial: {
       layoutType: 'prose',
@@ -141,8 +140,7 @@ export const NAV_SECTIONS: Section[] = [
     cameraTarget3D: [0.1, 1.35, 0],
     submenus: [
       { id: 'novels', label: 'Novels', href: '/dream/novels' },
-      { id: 'quote', label: 'Quote', href: '/dream/quote' },
-      { id: 'behind-the-story', label: 'Behind the Story', href: '/dream/behind-the-story' },
+      { id: 'quotes', label: 'Quotes', href: '/dream/quotes' },
     ],
     editorial: {
       layoutType: 'narrative',
