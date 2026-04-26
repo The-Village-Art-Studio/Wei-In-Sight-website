@@ -587,7 +587,7 @@ export default function MainNav() {
             width: 100% !important;
             height: 100vh !important;
             margin: 0 !important;
-            padding: 85px 24px 120px !important;
+            padding: 85px 24px 40px !important;
             border-radius: 0 !important;
             border: none !important;
             border-bottom: 2px solid var(--neon-pink-glow) !important;
@@ -598,7 +598,19 @@ export default function MainNav() {
             backdrop-filter: blur(40px) saturate(200%) !important;
             pointer-events: auto !important;
             overflow-y: auto !important;
+            overflow-x: hidden !important;
             -webkit-overflow-scrolling: touch;
+          }
+
+          .nav-middle {
+            flex: 0 0 auto !important;
+            margin-bottom: 24px !important;
+          }
+
+          .nav-bottom {
+            margin-top: 24px !important;
+            flex-shrink: 0 !important;
+            padding-bottom: env(safe-area-inset-bottom, 20px);
           }
 
           .nav-link-wrapper {
