@@ -140,7 +140,7 @@ export const NAV_SECTIONS: Section[] = [
     cameraPos3D: [-0.4, 1.45, 1.0],
     cameraTarget3D: [0.1, 1.35, 0],
     submenus: [
-      { id: 'the-novel', label: 'The Novel', href: '/dream/the-novel' },
+      { id: 'novels', label: 'Novels', href: '/dream/novels' },
       { id: 'quote', label: 'Quote', href: '/dream/quote' },
       { id: 'behind-the-story', label: 'Behind the Story', href: '/dream/behind-the-story' },
     ],

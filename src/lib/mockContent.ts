@@ -9,6 +9,7 @@ export interface GalleryItem {
   year: string;
   medium: string;
   description: string;
+  link?: string;
 }
 
 export interface Album {
@@ -259,8 +260,47 @@ export const MOCK_CONTENT: Record<string, DeepContent> = {
     subtitle: 'Selected poetry from the 2023-2025 journals.',
     heroImage: '/assets/art/sight_paintings_hero_1776626955531.png',
     blocks: [
-      { type: 'quote', content: 'The way the shadow falls / tells me where the sun has been / but not where it is going.' },
-      { type: 'text', content: 'These poems were written mostly in transit, captured on paper scraps and digital notes during the building of the Wei series.' }
+      {
+        type: 'gallery',
+        items: [
+          {
+            id: 'p-1',
+            url: 'https://images.unsplash.com/photo-1476124369491-e7addf5db371',
+            title: 'Syllables of Light',
+            year: '2024',
+            medium: 'Ink on Vellum',
+            description: 'Original manuscript page.',
+            link: 'https://jackyho.com/poems/syllables'
+          },
+          {
+            id: 'p-2',
+            url: 'https://images.unsplash.com/photo-1455390582262-044cdead277a',
+            title: 'Nocturne III',
+            year: '2024',
+            medium: 'Typewritten',
+            description: 'Captured during the midnight watch.',
+            link: 'https://jackyho.com/poems/nocturne'
+          },
+          {
+            id: 'p-3',
+            url: 'https://images.unsplash.com/photo-1512486130939-2c4f79935e4f',
+            title: 'The Void',
+            year: '2023',
+            medium: 'Digital',
+            description: 'Minimalist layout study.',
+            link: 'https://jackyho.com/poems/void'
+          },
+          {
+            id: 'p-4',
+            url: 'https://images.unsplash.com/photo-1471107340929-a87cd0f5b5f3',
+            title: 'Transience',
+            year: '2025',
+            medium: 'Journal Entry',
+            description: 'A study on fading ink.',
+            link: 'https://jackyho.com/poems/transience'
+          }
+        ]
+      }
     ]
   },
   // TOUCH
@@ -446,16 +486,55 @@ export const MOCK_CONTENT: Record<string, DeepContent> = {
     ]
   },
   // DREAM
-  'dream/the-novel': {
+  'dream/novels': {
     id: 'd1',
-    slug: 'the-novel',
+    slug: 'novels',
     sectionId: 'dream',
-    title: 'The Atlas of Unmade Worlds',
+    title: 'Novels',
     subtitle: 'Insights into the ongoing novel project.',
     heroImage: '/assets/art/sight_paintings_hero_1776626955531.png',
     blocks: [
-      { type: 'text', content: 'The world of Wei is one built on the remnants of forgotten languages.' },
-      { type: 'quote', content: 'To dream is to remember a future that hasn\'t happened yet.' }
+      {
+        type: 'gallery',
+        items: [
+          {
+            id: 'd-1',
+            url: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570',
+            title: 'The Atlas Architecture',
+            year: '2025',
+            medium: 'Concept Art',
+            description: 'Visualizing the floating archives.',
+            link: 'https://jackyho.com/novels/atlas'
+          },
+          {
+            id: 'd-2',
+            url: 'https://images.unsplash.com/photo-1519681393784-d120267933ba',
+            title: 'Mountain Pass',
+            year: '2024',
+            medium: 'Digital Matte Painting',
+            description: 'The journey to the North Spires.',
+            link: 'https://jackyho.com/novels/mountain'
+          },
+          {
+            id: 'd-3',
+            url: 'https://images.unsplash.com/photo-1532012197367-275d06cb4941',
+            title: 'Codex Wei',
+            year: '2024',
+            medium: 'Prop Study',
+            description: 'The forbidden book of shadows.',
+            link: 'https://jackyho.com/novels/codex'
+          },
+          {
+            id: 'd-4',
+            url: 'https://images.unsplash.com/photo-1478720568477-152d9b164e26',
+            title: 'Void Station',
+            year: '2025',
+            medium: 'Cinematic Render',
+            description: 'The point where dreams converge.',
+            link: 'https://jackyho.com/novels/void'
+          }
+        ]
+      }
     ]
   },
   // HEART

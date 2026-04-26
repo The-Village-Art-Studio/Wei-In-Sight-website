@@ -90,7 +90,7 @@ export default function ContentPage() {
                 case 'quote':
                   return <ProseBlock key={idx} content={block.content!} type="quote" />;
                 case 'gallery':
-                  return <MediaGrid key={idx} items={block.items as string[]} columns={3} />;
+                  return <MediaGrid key={idx} items={block.items as any[]} columns={4} />;
                 case 'audio':
                   return (
                     <AudioBlock 

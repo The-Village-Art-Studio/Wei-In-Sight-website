@@ -165,10 +165,7 @@ export default function SlideshowPanel({ items, initialIndex, isOpen, onClose }:
           <div className="relative flex flex-col lg:flex-row items-center lg:items-stretch justify-center gap-6 lg:gap-10 w-full px-16 md:px-20" style={{ maxHeight: '100%' }}>
             
             {/* Info Panel (Left on Desktop, Bottom on Mobile) */}
-            <div 
-              className="flex-shrink-0 w-full lg:w-auto flex"
-              style={{ maxWidth: `${MAX_INFO_WIDTH}px` }}
-            >
+            <div className="flex-shrink-0 flex items-center justify-center">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={currentIndex}
@@ -176,22 +173,25 @@ export default function SlideshowPanel({ items, initialIndex, isOpen, onClose }:
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 10 }}
                   transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                  className="rounded-2xl border border-pink-500/40 p-6 md:p-10 lg:p-14 flex flex-col items-center justify-center text-center w-full"
+                  className="rounded-3xl border border-pink-500/40 py-12 flex flex-col items-center justify-center text-center w-fit h-full"
                   style={{
                     background: 'rgba(15, 6, 30, 0.85)',
                     backdropFilter: 'blur(32px) saturate(250%)',
                     WebkitBackdropFilter: 'blur(32px) saturate(250%)',
-                    boxShadow: '0 32px 80px rgba(0, 0, 0, 0.95), 0 0 0 1px rgba(255, 255, 255, 0.1) inset, 0 0 60px rgba(255, 105, 180, 0.2) inset'
+                    boxShadow: '0 32px 80px rgba(0, 0, 0, 0.95), 0 0 0 1px rgba(255, 255, 255, 0.1) inset, 0 0 60px rgba(255, 105, 180, 0.2) inset',
+                    paddingLeft: '100px',
+                    paddingRight: '100px'
                   }}
                 >
-                  <div className="flex flex-col items-center gap-6 lg:gap-10">
+                  <div className="flex flex-col items-center gap-6 lg:gap-10 w-full">
                     <div className="space-y-3 lg:space-y-6 flex flex-col items-center">
                       <h2 
                         className="text-xl md:text-3xl lg:text-4xl tracking-tight leading-tight uppercase" 
                         style={{ 
                           fontFamily: 'var(--font-poetic)',
                           textShadow: '0 0 20px rgba(255,255,255,0.2)',
-                          color: 'var(--white)'
+                          color: 'var(--white)',
+                          whiteSpace: 'nowrap'
                         }}
                       >
                         {currentItem?.title}
@@ -211,6 +211,26 @@ export default function SlideshowPanel({ items, initialIndex, isOpen, onClose }:
                     >
                       &ldquo;{currentItem?.description}&rdquo;
                     </p>
+
+                    {currentItem?.link && (
+                      <motion.a
+                        href={currentItem.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        whileHover={{ 
+                          scale: 1.05,
+                          boxShadow: '0 0 20px rgba(255, 105, 180, 0.4)',
+                          borderColor: 'rgba(255, 105, 180, 0.8)'
+                        }}
+                        whileActive={{ scale: 0.95 }}
+                        className="mt-8 px-10 py-3.5 rounded-full border border-pink-500/30 bg-pink-500/5 backdrop-blur-md text-[10px] uppercase tracking-[0.2em] font-bold text-white/80 transition-colors hover:text-white"
+                        style={{ fontFamily: 'var(--font-main)' }}
+                      >
+                        Explore Project
+                      </motion.a>
+                    )}
                   </div>
                 </motion.div>
               </AnimatePresence>
