@@ -1,6 +1,18 @@
 import { SectionKey } from './supabase';
 
-export type BlockType = 'text' | 'image' | 'gallery' | 'audio' | 'video' | 'process' | 'quote' | 'logo-grid' | 'form';
+export type BlockType = 'text' | 'image' | 'gallery' | 'audio' | 'video' | 'process' | 'quote' | 'logo-grid' | 'form' | 'profile-photo' | 'exhibition-list' | 'pillar-grid' | 'dna-section';
+
+export interface PillarItem {
+  title: string;
+  content: string;
+}
+
+export interface ExhibitionItem {
+  title: string;
+  location: string;
+  year: string;
+  isAward?: boolean;
+}
 
 export interface GalleryItem {
   id: string;
@@ -27,6 +39,9 @@ export interface ContentBlock {
   caption?: string;
   items?: string[] | GalleryItem[]; // Updated to support complex items
   logoItems?: { logoUrl: string; title: string; description: string; link?: string; preserveColor?: boolean }[];
+  exhibitionItems?: ExhibitionItem[];
+  pillarItems?: PillarItem[];
+  dnaItems?: string[];
   formType?: 'contact' | 'commission';
   metadata?: Record<string, any>;
 }
@@ -632,15 +647,118 @@ export const MOCK_CONTENT: Record<string, DeepContent> = {
     ]
   },
   // HEART
+  'heart/exhibitions-features': {
+    id: 'h4',
+    slug: 'exhibitions-features',
+    sectionId: 'heart',
+    title: 'Exhibitions & Features',
+    subtitle: 'Official record of public displays and recognitions.',
+    blocks: [
+      {
+        type: 'exhibition-list',
+        exhibitionItems: [
+          { 
+            title: 'The Great Outdoors by Northern Contemporary Gallery', 
+            location: 'Toronto, Canada', 
+            year: '2026' 
+          },
+          { 
+            title: 'Miami Art Weeks 2025', 
+            location: 'Miami, USA', 
+            year: '2025' 
+          },
+          { 
+            title: 'Trace by PDA at Avant Garde Gallery', 
+            location: 'Toronto, Canada', 
+            year: '2025' 
+          },
+          { 
+            title: 'Natalie Solo Show by La Gloria Mexican Coffee', 
+            location: 'Toronto, Canada', 
+            year: '2025' 
+          },
+          { 
+            title: 'Featured Artist in 101 Artbook Landscape Edition by Arts to Hearts Magazine', 
+            location: 'Worldwide', 
+            year: '2025',
+            isAward: true
+          }
+        ]
+      }
+    ]
+  },
+  'heart/philosophy': {
+    id: 'h2',
+    slug: 'philosophy',
+    sectionId: 'heart',
+    title: 'Philosophy',
+    subtitle: 'The inner compass of a multidisciplinary search.',
+    blocks: [
+      { 
+        type: 'text', 
+        content: `### THE MANIFESTO OF TRACE\n\nArt is not a search for decoration or a pursuit of perfection. It is a form of truth-telling—a way to leave a human trace in a world that often moves too fast to feel. \n\nCreative expression is an act of translation, giving form to the invisible threads of memory, emotion, and presence. It is the bridge between the silent inner world and the visible outer one.` 
+      },
+      {
+        type: 'pillar-grid',
+        pillarItems: [
+          {
+            title: 'Expression Over Perfection',
+            content: 'The heartbeat of the work is not in the flawless line, but in the honest one. Perfection is a destination; expression is a journey toward truth.'
+          },
+          {
+            title: 'Medium as Language',
+            content: 'Painting, sound, material, and word are not separate disciplines, but different dialects of the same search. Each offers a unique way to hold a feeling.'
+          },
+          {
+            title: 'Beauty Must Carry Weight',
+            content: 'Aesthetic grace is only meaningful when it holds a core of truth—a weight of lived experience, a shadow of longing, or a spark of hope.'
+          },
+          {
+            title: 'The Handmade & Imagined',
+            content: 'The friction between the tactile craftsmanship of the hand and the reaches of science fiction creates a space where the past meets the future.'
+          },
+          {
+            title: 'Memory as Material',
+            content: 'Memory is not just a subject; it is a raw material to be shaped, layered, and transformed, much like oil paint, clay, or a haunting melody.'
+          },
+          {
+            title: 'Art as Human Trace',
+            content: 'Each work is an emotional vessel, evidence of existence, and a lasting echo of what it means to be alive and to feel deeply.'
+          }
+        ]
+      },
+      {
+        type: 'dna-section',
+        caption: 'CREATIVE DNA',
+        dnaItems: [
+          'Science Fiction', 'Cinema', 'Romance', 'Migration', 'Memory', 
+          'Craftsmanship', 'Everyday Tenderness', 'Emotional Aftermath', 
+          'Material Experimentation', 'Time', 'Human Connection'
+        ]
+      },
+      {
+        type: 'text',
+        content: `### THE NON-LINEAR PROCESS\n\nThe creative act is rarely linear. It begins as a vibration—a sudden image, a specific texture, a haunting sound, or a single line of writing. \n\nFrom this seed, the work finds its own form, moving fluidly between mediums until it captures the exact frequency of the original feeling. Whether it becomes a painting, a sculpture, or a poem, the search remains the same.`
+      },
+      {
+        type: 'quote',
+        content: 'Art is not about perfection. It is about expression.'
+      },
+      {
+        type: 'text',
+        content: `### THE REMAINING ECHO\n\nIn the intersection of image, sound, and story, art becomes more than an object. It becomes a fragment of life meant not only to appear, but to remain—a quiet evidence of the soul\'s journey through the atlas of existence.`
+      }
+    ]
+  },
   'heart/about': {
     id: 'h1',
     slug: 'about',
     sectionId: 'heart',
     title: 'The Artist',
     subtitle: 'Jacky Ho\'s journey through multidisciplinarity.',
-    heroImage: '/assets/art/sight_photography_preview_1776626984989.png',
     blocks: [
-      { type: 'text', content: 'Jacky Ho is an artist based between worlds, focusing on the intersection of memory and technology.' }
+      { type: 'profile-photo', url: '/assets/art/sight_photography_preview_1776626984989.png' },
+      { type: 'text', content: 'Jacky Ho is a multidisciplinary artist whose practice unfolds across painting, sculpture, photography, music, poetry, design, and object-making. His work moves fluidly between mediums, guided by the belief that each form offers a different way to hold memory, emotion, and presence.\n\nInfluenced by migration, longing, craftsmanship, cinema, romance, and science fiction, Ho creates works that exist in the space between tenderness and structure, intimacy and futurism, the handmade and the imagined. His pieces often carry a quiet cinematic quality, inviting viewers not only to observe but to enter an atmosphere shaped by feeling, texture, and story.\n\nRather than pursuing perfection, Ho approaches art as an act of translation — a way of giving form to what is difficult to name. Through color, material, sound, and image, he builds works that function as emotional vessels, holding traces of what has been lived, remembered, and transformed.\n\nAt the core of his practice is a simple but enduring philosophy: art is not about perfection, but expression. In this way, each work becomes more than an object. It becomes evidence of being, a fragment of the inner world made visible, and a lasting echo of what it means to feel deeply.' }
     ]
   },
   'heart/journey': {

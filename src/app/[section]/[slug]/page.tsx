@@ -11,8 +11,18 @@ import AudioBlock from '@/components/editorial/AudioBlock';
 import ProseBlock from '@/components/editorial/ProseBlock';
 import LogoGrid from '@/components/editorial/LogoGrid';
 import PulseForm from '@/components/editorial/PulseForm';
+import ExhibitionList from '@/components/editorial/ExhibitionList';
 
 import ProjectFolder from '@/components/editorial/ProjectFolder';
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] }
+  }
+};
 
 export default function ContentPage() {
   const { section: sectionId, slug } = useParams();
@@ -47,20 +57,22 @@ export default function ContentPage() {
       <SectionHero section={section} compact />
 
       <article className="content-container">
-        <motion.div 
-          initial={{ opacity: 0, scale: 1.02 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-          className="page-hero"
-        >
-          <div className="hero-image-container">
-            <img 
-              src={content?.heroImage || '/assets/art/sight_paintings_hero_1776626955531.png'} 
-              alt={content?.title || 'Cover Image'} 
-              className="hero-image"
-            />
-          </div>
-        </motion.div>
+        {content?.heroImage && (
+          <motion.div 
+            initial={{ opacity: 0, scale: 1.02 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+            className="page-hero"
+          >
+            <div className="hero-image-container">
+              <img 
+                src={content.heroImage} 
+                alt={content?.title || 'Cover Image'} 
+                className="hero-image"
+              />
+            </div>
+          </motion.div>
+        )}
 
         <header className="page-header">
           <h2 className="text-xl">{content?.title || activeSubmenu.label}</h2>
@@ -114,6 +126,78 @@ export default function ContentPage() {
                       formType={block.formType || 'contact'} 
                     />
                   );
+                case 'pillar-grid':
+                  return (
+                    <motion.div
+                      key={idx}
+                      initial="hidden"
+                      whileInView="visible"
+                      viewport={{ once: true }}
+                      variants={itemVariants}
+                      className="pillar-grid-container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 my-20"
+                    >
+                      {block.pillarItems?.map((pillar, pIdx) => (
+                        <div key={pIdx} className="pillar-card p-10 glass rounded-2xl border border-white/5 hover:border-pink-500/20 transition-all group">
+                          <h4 className="text-pink-500 font-bold uppercase tracking-widest text-sm mb-4 group-hover:text-pink-400 transition-colors">
+                            {pillar.title}
+                          </h4>
+                          <p className="text-white/60 text-base leading-relaxed group-hover:text-white/80 transition-colors">
+                            {pillar.content}
+                          </p>
+                        </div>
+                      ))}
+                    </motion.div>
+                  );
+
+                case 'dna-section':
+                  return (
+                    <motion.div
+                      key={idx}
+                      initial="hidden"
+                      whileInView="visible"
+                      viewport={{ once: true }}
+                      variants={itemVariants}
+                      className="dna-section-container my-16 p-12 glass rounded-3xl text-center border-y border-white/10"
+                    >
+                      <span className="block text-[10px] tracking-[0.3em] uppercase text-white/30 mb-8">{block.caption || 'CREATIVE DNA'}</span>
+                      <div className="flex flex-wrap justify-center gap-x-8 gap-y-4">
+                        {block.dnaItems?.map((item, dIdx) => (
+                          <div key={dIdx} className="flex items-center gap-8">
+                            <span className="text-base md:text-lg tracking-wide uppercase text-white/80 hover:text-pink-500 transition-colors cursor-default">{item}</span>
+                            {dIdx < (block.dnaItems?.length || 0) - 1 && (
+                              <span className="h-1 w-1 rounded-full bg-pink-500/40"></span>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </motion.div>
+                  );
+
+                case 'exhibition-list':
+                  return (
+                    <ExhibitionList 
+                      key={idx} 
+                      items={block.exhibitionItems || []} 
+                    />
+                  );
+                case 'profile-photo':
+                  return (
+                    <motion.div
+                      key={idx}
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+                      className="profile-photo-container"
+                    >
+                      <div className="profile-photo-ring">
+                        <img
+                          src={block.url || ''}
+                          alt="Artist Portrait"
+                          className="profile-photo-img"
+                        />
+                      </div>
+                    </motion.div>
+                  );
                 default:
                   return null;
               }
@@ -158,6 +242,35 @@ export default function ContentPage() {
           height: auto;
           object-fit: cover;
           display: block;
+        }
+
+        .profile-photo-container {
+          display: flex !important;
+          justify-content: center !important;
+          align-items: center !important;
+          width: 100% !important;
+          margin-bottom: var(--spacing-l);
+          padding-top: var(--spacing-m);
+        }
+        .profile-photo-ring {
+          width: 440px;
+          height: 440px;
+          margin: 0 auto !important;
+          border-radius: 50%;
+          padding: 4px;
+          background: linear-gradient(135deg, rgba(255, 105, 180, 0.6), rgba(123, 104, 238, 0.6), rgba(255, 105, 180, 0.3));
+          box-shadow:
+            0 0 40px rgba(255, 105, 180, 0.2),
+            0 0 80px rgba(123, 104, 238, 0.1),
+            0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+        .profile-photo-img {
+          width: 100%;
+          height: 100%;
+          border-radius: 50%;
+          object-fit: cover;
+          display: block;
+          border: 3px solid rgba(15, 6, 30, 0.9);
         }
         
         .content-page {

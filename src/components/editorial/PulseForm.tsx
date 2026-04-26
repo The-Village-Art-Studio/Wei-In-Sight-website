@@ -153,11 +153,10 @@ export default function PulseForm({ formType }: PulseFormProps) {
                 required
               >
                 <option value="">Select focus...</option>
-                <option value="Music Score / Soundtrack">Music Score / Soundtrack</option>
-                <option value="Sound Design">Sound Design</option>
-                <option value="Audio-Visual Project">Audio-Visual Project</option>
-                <option value="Custom Instrumental">Custom Instrumental</option>
-                <option value="Watchmaking Consultation">Watchmaking Consultation</option>
+                <option value="Painting">Painting</option>
+                <option value="Mural">Mural</option>
+                <option value="Installation">Installation</option>
+                <option value="Fashion">Fashion</option>
                 <option value="Other">Other</option>
               </select>
             </div>

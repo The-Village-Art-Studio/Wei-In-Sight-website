@@ -77,11 +77,17 @@ export default function ProseBlock({ content, type = 'standard' }: ProseBlockPro
 
         .type-quote {
           font-family: var(--font-poetic);
-          border-left: 2px solid var(--neon-pink);
-          padding-left: var(--spacing-m);
-          margin: var(--spacing-l) 0;
+          border-top: 1px solid rgba(255, 105, 180, 0.2);
+          border-bottom: 1px solid rgba(255, 105, 180, 0.2);
+          padding: var(--spacing-l) 0;
+          margin: var(--spacing-xl) 0;
           color: var(--white);
           font-style: italic;
+          text-align: center;
+          max-width: 100%;
+          font-size: 1.75rem;
+          line-height: 1.4;
+          text-shadow: 0 0 20px rgba(255, 105, 180, 0.15);
         }
 
         .type-narrative {
