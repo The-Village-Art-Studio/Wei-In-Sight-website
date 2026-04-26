@@ -224,7 +224,7 @@ export default function SlideshowPanel({ items, initialIndex, isOpen, onClose }:
                           boxShadow: '0 0 20px rgba(255, 105, 180, 0.4)',
                           borderColor: 'rgba(255, 105, 180, 0.8)'
                         }}
-                        whileActive={{ scale: 0.95 }}
+                        whileTap={{ scale: 0.95 }}
                         className="mt-8 px-10 py-3.5 rounded-full border border-pink-500/30 bg-pink-500/5 backdrop-blur-md text-[10px] uppercase tracking-[0.2em] font-bold text-white/80 transition-colors hover:text-white"
                         style={{ fontFamily: 'var(--font-main)' }}
                       >
