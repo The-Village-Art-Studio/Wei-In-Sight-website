@@ -225,21 +225,21 @@ export const MOCK_CONTENT: Record<string, DeepContent> = {
         type: 'logo-grid', 
         logoItems: [
           { 
-            logoUrl: '/assets/spotify-logo.png', 
+            logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/8/84/Spotify_icon.svg', 
             title: 'Spotify', 
             description: "Stream my latest conceptual soundscapes, original albums, and immersive audio explorations.",
             link: 'https://open.spotify.com/artist/4DebGnDY4FnrE3cy6PrWWK?si=GohtblluTIeLIvGUnB-etQ',
             preserveColor: true
           },
           { 
-            logoUrl: '/assets/apple-music-logo.png', 
+            logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/f/f8/Apple_Music_icon_iOS_26.svg', 
             title: 'Apple Music', 
             description: "Find my entire discography and narratively-driven scores in high-fidelity spatial audio.",
             link: 'https://music.apple.com/ca/artist/the-prof/1733168743',
             preserveColor: true
           },
           { 
-            logoUrl: '/assets/youtube-music-logo.png', 
+            logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/b/b0/YouTube_Music_icon_2024.svg', 
             title: 'YouTube Music', 
             description: "A centralized hub to watch my audio-visual projects and listen to my official track releases.",
             link: 'https://music.youtube.com/channel/UCfG9SAkCC8sNDAKV5qbOSZA?si=-gBjmrbJhLyaCCia',

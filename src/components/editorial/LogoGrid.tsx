@@ -28,6 +28,7 @@ export default function LogoGrid({ items, columns = 3 }: LogoGridProps) {
                   src={item.logoUrl} 
                   alt={`${item.title} logo`} 
                   fill
+                  unoptimized
                   className="logo-image"
                   style={{ 
                     objectFit: 'contain', 
