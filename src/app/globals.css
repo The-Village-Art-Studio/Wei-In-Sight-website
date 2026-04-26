@@ -116,18 +116,18 @@ h1, h2, h3, h4 {
 .site-main {
   flex-grow: 1;
   min-height: 100vh;
-  margin-left: 32%; /* Increased from 30% */
+  margin-left: calc(30% + 60px); /* header width + fixed 60px gap */
 }
 
 @media (min-width: 1333px) {
   .site-main {
-    margin-left: 480px; /* Increased from 400px */
+    margin-left: 460px; /* 400px header max + 60px gap */
   }
 }
 
 @media (max-width: 933px) {
   .site-main {
-    margin-left: 320px; /* Increased from 280px */
+    margin-left: 340px; /* 280px header min + 60px gap */
   }
 }
 
@@ -159,15 +159,15 @@ h1, h2, h3, h4 {
 
 /* Cinematic Utilities */
 .page-container {
-  padding: var(--spacing-l) clamp(24px, 8vw, 120px);
+  padding: var(--spacing-l) 40px;
   max-width: 1800px;
   margin: 0;
   width: 100%;
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 768px) {
   .page-container {
-    padding: var(--spacing-m) clamp(20px, 5vw, 40px);
+    padding: var(--spacing-m) 20px;
   }
 }
 
