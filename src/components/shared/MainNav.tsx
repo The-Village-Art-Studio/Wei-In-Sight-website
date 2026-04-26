@@ -232,16 +232,13 @@ export default function MainNav() {
       </AnimatePresence>
       <style jsx global>{`
         .main-nav {
-          padding: 32px 24px;
+          padding: clamp(16px, 2.5vh, 32px) clamp(16px, 1.5vw, 24px);
           height: calc(100vh - 40px);
           margin: 20px;
           display: flex;
           flex-direction: column;
           
-          /* Enable scrolling for deep menus */
-          overflow-y: auto;
-          overflow-x: hidden;
-          scrollbar-gutter: stable;
+          overflow: hidden;
           
           /* Premium Glass Panel Effect */
           background: rgba(15, 6, 30, 0.85);
@@ -256,15 +253,9 @@ export default function MainNav() {
           
           transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
           pointer-events: auto;
-          display: flex;
-          flex-direction: column;
         }
 
-        @media (max-height: 850px) {
-          .main-nav {
-            padding: 24px 20px !important;
-          }
-        }
+
         
         .main-nav:hover {
           border-color: rgba(255, 105, 180, 0.6);
@@ -328,22 +319,17 @@ export default function MainNav() {
         }
         
         .nav-middle {
-          margin-top: var(--spacing-l);
-          margin-bottom: var(--spacing-m);
-        }
-
-        @media (max-height: 850px) {
-          .nav-middle {
-            margin-top: var(--spacing-m) !important;
-            margin-bottom: var(--spacing-s) !important;
-          }
+          flex: 1 1 auto;
+          margin-top: clamp(1rem, 2.5vh, 4rem);
+          margin-bottom: clamp(0.5rem, 1.5vh, 2rem);
+          min-height: 0;
         }
         
         .nav-list {
           list-style: none !important;
           display: flex;
           flex-direction: column;
-          gap: 6px;
+          gap: clamp(2px, 0.5vh, 6px);
           padding: 0 !important;
           margin: 0 !important;
         }
@@ -354,7 +340,7 @@ export default function MainNav() {
           opacity: 0.5;
           display: flex;
           flex-direction: column;
-          padding: 6px 12px;
+          padding: clamp(4px, 0.6vh, 6px) 12px;
           border-radius: 8px;
           border-left: 2px solid transparent;
         }
@@ -375,7 +361,7 @@ export default function MainNav() {
         
         .poetic-label {
           font-family: var(--font-poetic);
-          font-size: 1rem;
+          font-size: clamp(0.8rem, 1.2vw, 1rem);
           text-transform: uppercase;
           letter-spacing: 0.12em;
           transition: var(--transition-medium);
@@ -388,7 +374,7 @@ export default function MainNav() {
         }
         
         .practical-label {
-          font-size: 0.65rem;
+          font-size: clamp(0.55rem, 0.7vw, 0.65rem);
           text-transform: uppercase;
           letter-spacing: 0.08em;
           opacity: 0.6;
@@ -453,15 +439,9 @@ export default function MainNav() {
         .nav-bottom {
           display: flex;
           flex-direction: column;
-          gap: 6px;
-          margin-top: var(--spacing-m);
-        }
-
-        @media (max-height: 850px) {
-          .nav-bottom {
-            margin-top: var(--spacing-s) !important;
-            gap: 4px !important;
-          }
+          gap: clamp(4px, 0.6vh, 6px);
+          margin-top: auto;
+          flex-shrink: 0;
         }
         
         .footer-links {
@@ -506,20 +486,7 @@ export default function MainNav() {
           filter: drop-shadow(0 0 8px var(--neon-pink));
         }
         
-        /* Premium Scrollbar */
-        .main-nav::-webkit-scrollbar {
-          width: 4px;
-        }
-        .main-nav::-webkit-scrollbar-track {
-          background: rgba(255, 255, 255, 0.02);
-        }
-        .main-nav::-webkit-scrollbar-thumb {
-          background: rgba(255, 105, 180, 0.2);
-          border-radius: 4px;
-        }
-        .main-nav::-webkit-scrollbar-thumb:hover {
-          background: rgba(255, 105, 180, 0.4);
-        }
+
 
         @media (max-width: 768px) {
           .mobile-header-bar {

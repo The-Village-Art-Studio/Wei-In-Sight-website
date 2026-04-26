@@ -130,8 +130,8 @@ export default function ProjectFolder({ id, title, description, images, href, in
 
         .folder-stack {
           position: relative;
-          height: 320px;
           width: 100%;
+          aspect-ratio: 4 / 3;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -198,8 +198,11 @@ export default function ProjectFolder({ id, title, description, images, href, in
         }
 
         @media (max-width: 768px) {
-          .folder-stack {
-            height: 200px;
+          .folder-back-panel {
+            padding: 20px;
+          }
+          .folder-content {
+            gap: 20px;
           }
         }
       `}</style>
