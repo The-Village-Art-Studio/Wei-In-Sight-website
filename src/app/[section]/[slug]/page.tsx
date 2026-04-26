@@ -3,7 +3,7 @@
 import { useParams, notFound } from 'next/navigation';
 import { NAV_SECTIONS } from '@/lib/constants';
 import { getContent } from '@/lib/mockContent';
-import { motion } from 'framer-motion';
+import { motion, Variants } from 'framer-motion';
 import Link from 'next/link';
 import SectionHero from '@/components/editorial/SectionHero';
 import MediaGrid from '@/components/editorial/MediaGrid';
@@ -15,7 +15,7 @@ import ExhibitionList from '@/components/editorial/ExhibitionList';
 
 import ProjectFolder from '@/components/editorial/ProjectFolder';
 
-const itemVariants = {
+const itemVariants: Variants = {
   hidden: { opacity: 0, y: 20 },
   visible: { 
     opacity: 1, 
