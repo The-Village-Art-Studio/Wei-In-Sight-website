@@ -45,9 +45,7 @@ export default function ExhibitionList({ items }: ExhibitionListProps) {
 
                 {/* Title (Middle) */}
                 <div className="flex items-center gap-6">
-                  {item.isAward && (
-                    <span className="text-xl shrink-0" role="img" aria-label="award">🏆</span>
-                  )}
+                  {/* Text-only layout as requested */}
                   <h4 className="text-base text-white/90 group-hover:text-white transition-colors tracking-wide leading-relaxed">
                     {item.title}
                   </h4>

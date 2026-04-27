@@ -7,6 +7,7 @@ import { motion, Variants } from 'framer-motion';
 import Link from 'next/link';
 import SectionHero from '@/components/editorial/SectionHero';
 import MediaGrid from '@/components/editorial/MediaGrid';
+import VideoGrid from '@/components/editorial/VideoGrid';
 import AudioBlock from '@/components/editorial/AudioBlock';
 import ProseBlock from '@/components/editorial/ProseBlock';
 import LogoGrid from '@/components/editorial/LogoGrid';
@@ -103,6 +104,8 @@ export default function ContentPage() {
                   return <ProseBlock key={idx} content={block.content!} type="quote" />;
                 case 'gallery':
                   return <MediaGrid key={idx} items={block.items as any[]} columns={4} />;
+                case 'video-gallery':
+                  return <VideoGrid key={idx} items={block.items as any[]} columns={3} />;
                 case 'audio':
                   return (
                     <AudioBlock 

@@ -6,6 +6,7 @@ import BackToTop from "@/components/shared/BackToTop";
 import { HomepageProvider } from "@/context/HomepageContext";
 import { AudioProvider } from "@/context/AudioContext";
 import { Analytics } from "@vercel/analytics/react";
+import PublicShell from "@/components/shared/PublicShell";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit" });
@@ -23,20 +24,10 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${outfit.variable}`}>
       <body>
-        <HomepageProvider>
-          <AudioProvider>
-            <div className="site-wrapper">
-              <header className="site-header">
-                <MainNav />
-              </header>
-              <main className="site-main">
-                {children}
-                <Analytics />
-              </main>
-              <BackToTop />
-            </div>
-          </AudioProvider>
-        </HomepageProvider>
+        <PublicShell>
+          {children}
+        </PublicShell>
+        <Analytics />
       </body>
     </html>
   );

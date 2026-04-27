@@ -1,6 +1,6 @@
 import { SectionKey } from './supabase';
 
-export type BlockType = 'text' | 'image' | 'gallery' | 'audio' | 'video' | 'process' | 'quote' | 'logo-grid' | 'form' | 'profile-photo' | 'exhibition-list' | 'pillar-grid' | 'dna-section';
+export type BlockType = 'text' | 'image' | 'gallery' | 'audio' | 'video' | 'video-gallery' | 'process' | 'quote' | 'logo-grid' | 'form' | 'profile-photo' | 'exhibition-list' | 'pillar-grid' | 'dna-section';
 
 export interface PillarItem {
   title: string;
@@ -260,6 +260,92 @@ export const MOCK_CONTENT: Record<string, DeepContent> = {
             description: "A centralized hub to watch my audio-visual projects and listen to my official track releases.",
             link: 'https://music.youtube.com/channel/UCfG9SAkCC8sNDAKV5qbOSZA?si=-gBjmrbJhLyaCCia',
             preserveColor: true
+          }
+        ]
+      }
+    ]
+  },
+  'sound/audio-visual-work': {
+    id: 'so3',
+    slug: 'audio-visual-work',
+    sectionId: 'sound',
+    title: 'Audio-Visual Work',
+    subtitle: 'Cinematic scores and experimental video pieces.',
+    heroImage: '/assets/art/sight_sculpture_preview_1776627004575.png',
+    blocks: [
+      {
+        type: 'video-gallery',
+        items: [
+          {
+            id: 'av-1',
+            url: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+            title: 'Resonance in Void',
+            year: '2025',
+            medium: 'Video',
+            description: 'An exploration of sound and isolated space.'
+          },
+          {
+            id: 'av-2',
+            url: 'https://www.youtube.com/embed/jNQXAC9IVRw',
+            title: 'Neon Pulse',
+            year: '2024',
+            medium: 'Video',
+            description: 'Synthwave visualizer and original score.'
+          },
+          {
+            id: 'av-3',
+            url: 'https://www.youtube.com/embed/ScMzIvxBSi4',
+            title: 'Echoes of the Atlas',
+            year: '2025',
+            medium: 'Video',
+            description: 'Concept trailer for the novel project.'
+          }
+        ]
+      }
+    ]
+  },
+  'sound/music-archive': {
+    id: 'so4',
+    slug: 'music-archive',
+    sectionId: 'sound',
+    title: 'Music Archive',
+    subtitle: 'A historical catalog of past audio experiments.',
+    heroImage: '/assets/art/sight_photography_2_1776627429953.png',
+    blocks: [
+      {
+        type: 'gallery',
+        items: [
+          {
+            id: 'ma-1',
+            url: 'https://images.unsplash.com/photo-1511379938547-c1f69419868d',
+            title: 'Lost Tapes Vol. 1',
+            year: '2023',
+            medium: 'Analog Cassette',
+            description: 'Early electronic sketches.'
+          },
+          {
+            id: 'ma-2',
+            url: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745',
+            title: 'Studio Sessions',
+            year: '2024',
+            medium: 'Digital',
+            description: 'Live performance outtakes.'
+          },
+          {
+            id: 'ma-3',
+            url: 'https://images.unsplash.com/photo-1514525253344-781472993a4a',
+            title: 'Synthesizer Study',
+            year: '2023',
+            medium: 'Modular Synth',
+            description: 'Patch bay experiments.'
+          },
+          {
+            id: 'ma-4',
+            url: 'https://images.unsplash.com/photo-1459749411177-042180ce673c',
+            title: 'Acoustic Fragments',
+            year: '2025',
+            medium: 'Piano',
+            description: 'Unfinished compositions.'
           }
         ]
       }
@@ -758,7 +844,7 @@ export const MOCK_CONTENT: Record<string, DeepContent> = {
     subtitle: 'Jacky Ho\'s journey through multidisciplinarity.',
     blocks: [
       { type: 'profile-photo', url: '/assets/art/sight_photography_preview_1776626984989.png' },
-      { type: 'text', content: 'Jacky Ho is a multidisciplinary artist whose practice unfolds across painting, sculpture, photography, music, poetry, design, and object-making. His work moves fluidly between mediums, guided by the belief that each form offers a different way to hold memory, emotion, and presence.\n\nInfluenced by migration, longing, craftsmanship, cinema, romance, and science fiction, Ho creates works that exist in the space between tenderness and structure, intimacy and futurism, the handmade and the imagined. His pieces often carry a quiet cinematic quality, inviting viewers not only to observe but to enter an atmosphere shaped by feeling, texture, and story.\n\nRather than pursuing perfection, Ho approaches art as an act of translation — a way of giving form to what is difficult to name. Through color, material, sound, and image, he builds works that function as emotional vessels, holding traces of what has been lived, remembered, and transformed.\n\nAt the core of his practice is a simple but enduring philosophy: art is not about perfection, but expression. In this way, each work becomes more than an object. It becomes evidence of being, a fragment of the inner world made visible, and a lasting echo of what it means to feel deeply.' }
+      { type: 'text', content: 'Jacky Ho is a Toronto-based multidisciplinary artist working across painting, sculpture, photography, music, poetry, watchmaking, design, and object-making. His practice moves fluidly between mediums, guided by the belief that each form offers a different way to hold memory, emotion, and presence.\n\nKnown creatively as Wei In Sight, Jacky builds work that lingers. The name reflects his desire to create pieces that remain in people’s sight not merely as decoration, but as memory, atmosphere, and emotional trace. His artistic identity is also rooted in the name Wei Ho, given to him by his grandfather, a fine art teacher whose quiet devotion to art left a lasting mark on the way he sees creation, resilience, and purpose.\n\nInfluenced by migration, longing, craftsmanship, cinema, romance, and science fiction, Jacky creates works that exist in the space between tenderness and structure, intimacy and futurism, the handmade and the imagined. His pieces often carry a cinematic quality, inviting viewers not only to observe, but to step into an atmosphere shaped by feeling, texture, and story.\n\nRather than pursuing perfection, Jacky approaches art as an act of translation — a way of giving form to what is difficult to name. Through color, material, sound, image, and language, he builds works that function as emotional vessels, holding traces of what has been lived, remembered, and transformed. His multidisciplinary practice reflects a continuous search for the right language for each idea, whether that language becomes a painting, a sculpture, a melody, a poem, or an object shaped by hand.\n\nOutside the studio, Jacky is also an entrepreneur and educator who has taught in colleges and universities for years, building spaces where craft, curiosity, and confidence can grow. That same spirit of exploration runs through all of his work, where tradition, technology, and human emotion are often brought into conversation with one another.\n\nHis creative world also extends into literature. Writing a novel had long been one of his childhood dreams, and that dream came to life through The Dinner, a contemporary romance born from a romantic watercolor series and shaped by his enduring interest in intimacy, memory, healing, and human connection. Like the rest of his practice, the work is grounded in the belief that ordinary moments can carry extraordinary emotional weight.\n\nAt the core of Jacky’s philosophy is a simple but enduring truth: art is not about perfection, but expression. In this way, each work becomes more than an object. It becomes evidence of being, a fragment of the inner world made visible, and a lasting echo of what it means to feel deeply.' }
     ]
   },
   'heart/journey': {
