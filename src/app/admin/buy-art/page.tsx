@@ -45,7 +45,25 @@ export default function BuyArtPage() {
       .eq('section_key', 'pulse')
       .eq('slug', 'buy-art')
       .single();
+
+    if (data) {
+      setMeta(data);
+    } else {
+      setMeta(null);
+    }
+  };
+
+  const handleInitializePage = async () => {
+    setSavingMeta(true);
+    const { data } = await supabase.from('pages').insert({
+      section_key: 'pulse',
+      slug: 'buy-art',
+      title: 'Buy Art',
+      subtitle: '',
+      hero_image_url: '',
+    }).select().single();
     if (data) setMeta(data);
+    setSavingMeta(false);
   };
 
   const handleSaveMeta = async () => {
@@ -119,6 +137,25 @@ export default function BuyArtPage() {
       <h1 style={{ fontSize: '28px', fontWeight: 300, color: '#fff', letterSpacing: '0.04em', fontFamily: 'var(--font-outfit)', marginBottom: '32px' }}>
         Buy Art
       </h1>
+
+      {!meta && (
+        <div style={{
+          background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)',
+          borderRadius: '16px', padding: '32px', textAlign: 'center', marginBottom: '32px'
+        }}>
+          <div style={{ color: 'rgba(255,255,255,0.3)', fontSize: '12px', marginBottom: '16px' }}>
+            Page header metadata has not been initialized.
+          </div>
+          <button onClick={handleInitializePage} disabled={savingMeta} style={{
+            padding: '10px 20px', borderRadius: '8px', background: '#a78bfa', color: '#fff',
+            border: 'none', fontSize: '12px', fontWeight: 600, cursor: 'pointer',
+            display: 'inline-flex', alignItems: 'center', gap: '8px', opacity: savingMeta ? 0.7 : 1,
+          }}>
+            {savingMeta ? <Loader2 size={14} className="animate-spin" /> : <CheckCircle size={14} />}
+            Initialize Header
+          </button>
+        </div>
+      )}
 
       {meta && (
         <SectionCard title="Page Header" accent="#a78bfa" style={{ marginBottom: '32px' }}>

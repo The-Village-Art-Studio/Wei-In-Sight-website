@@ -127,6 +127,26 @@ export default function SettingsPage() {
     setTimeout(() => setSaved(false), 2500);
   };
 
+  const handleInitializeSettings = async () => {
+    setSaving(true);
+    const { data } = await supabase.from('site_settings').insert({
+      site_title: 'WEI IN SIGHT',
+      site_subtitle: 'The creative atlas of Jacky Ho',
+      primary_email: '',
+      notification_email: '',
+      favicon_url: '',
+      brand_wordmark_url: '',
+      instagram_url: '',
+      youtube_url: '',
+      spotify_url: '',
+      apple_music_url: '',
+      seo_description: '',
+      seo_keywords: '',
+    }).select().single();
+    if (data) setSettings(data);
+    setSaving(false);
+  };
+
   const update = (field: keyof SiteSettings, value: string) => {
     if (!settings) return;
     setSettings({ ...settings, [field]: value });
@@ -142,8 +162,26 @@ export default function SettingsPage() {
 
   if (!settings) {
     return (
-      <div style={{ textAlign: 'center', padding: '60px', color: 'rgba(255,255,255,0.4)', fontFamily: 'var(--font-inter)' }}>
-        No settings found. Run the database seed script first.
+      <div style={{
+        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+        height: '60vh', textAlign: 'center', background: 'rgba(255,255,255,0.02)', borderRadius: '20px',
+        border: '1px solid rgba(255,255,255,0.07)', margin: '40px',
+      }}>
+        <div style={{ color: 'rgba(255,255,255,0.3)', fontSize: '13px', marginBottom: '24px' }}>
+          Global site settings have not been initialized.
+        </div>
+        <button
+          onClick={handleInitializeSettings}
+          disabled={saving}
+          style={{
+            padding: '12px 24px', borderRadius: '10px', background: '#ff69b4', color: '#fff',
+            border: 'none', fontSize: '13px', fontWeight: 600, cursor: 'pointer',
+            display: 'inline-flex', alignItems: 'center', gap: '10px', opacity: saving ? 0.7 : 1,
+          }}
+        >
+          {saving ? <Loader2 size={16} className="animate-spin" /> : <CheckCircle size={16} />}
+          Initialize Site Settings
+        </button>
       </div>
     );
   }
