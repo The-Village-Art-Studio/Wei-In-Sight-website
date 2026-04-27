@@ -58,10 +58,30 @@ export default function PageContentEditor({ section, submenu }: Props) {
       .from('pages')
       .select('id, title, subtitle, hero_image_url')
       .eq('section_key', section.id)
-      .eq('slug', submenu.id)
-      .single();
-    if (data) setMeta(data);
+      .eq('slug', submenu.id);
+    
+    if (data && data.length > 0) {
+      setMeta(data[0]);
+    } else {
+      setMeta(null);
+    }
     setLoading(false);
+  };
+
+  const handleInitializePage = async () => {
+    setSaving(true);
+    const { data, error } = await supabase.from('pages').insert({
+      section_key: section.id,
+      slug: submenu.id,
+      title: submenu.label,
+      subtitle: '',
+      hero_image_url: '',
+    }).select().single();
+
+    if (data) {
+      setMeta(data);
+    }
+    setSaving(false);
   };
 
   const handleSaveMeta = async () => {
@@ -104,6 +124,42 @@ export default function PageContentEditor({ section, submenu }: Props) {
       <h1 style={{ fontSize: '28px', fontWeight: 300, color: '#fff', letterSpacing: '0.04em', fontFamily: 'var(--font-outfit)', marginBottom: '32px' }}>
         {submenu.label}
       </h1>
+
+      {/* ─── Empty State: Page not initialized ─── */}
+      {!meta && !skipMeta && !isBuyArt && (
+        <div style={{
+          background: 'rgba(255,255,255,0.02)',
+          border: '1px solid rgba(255,255,255,0.07)',
+          borderRadius: '16px',
+          padding: '48px',
+          textAlign: 'center',
+        }}>
+          <div style={{ color: 'rgba(255,255,255,0.3)', fontSize: '13px', marginBottom: '24px' }}>
+            This page has not been initialized in the database yet.
+          </div>
+          <button
+            onClick={handleInitializePage}
+            disabled={saving}
+            style={{
+              padding: '12px 24px',
+              borderRadius: '10px',
+              background: accent,
+              color: '#fff',
+              border: 'none',
+              fontSize: '13px',
+              fontWeight: 600,
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '10px',
+              opacity: saving ? 0.7 : 1,
+            }}
+          >
+            {saving ? <Loader2 size={16} className="animate-spin" /> : <CheckCircle size={16} />}
+            Initialize {submenu.label} Page
+          </button>
+        </div>
+      )}
 
       {/* ─── Section 1: Page Metadata ─── */}
       {!skipMeta && meta && (
