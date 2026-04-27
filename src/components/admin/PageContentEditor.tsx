@@ -3,9 +3,12 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Section, SubMenu } from '@/lib/constants';
-import { Loader2, Save, CheckCircle } from 'lucide-react';
+import { Loader2, Save, CheckCircle, Crop } from 'lucide-react';
 import AlbumManager from './AlbumManager';
 import FlatGalleryManager from './FlatGalleryManager';
+import BuyArtManager from './BuyArtManager';
+import ImageCropper from './ImageCropper';
+import { Area } from 'react-easy-crop';
 
 interface PageMeta {
   id: string;
@@ -20,6 +23,11 @@ const ALBUM_PAGES = ['paintings', 'photography', 'sculpture', 'collections', 'mi
 const GALLERY_PAGES = ['music-archive', 'audio-visual-work', 'poems', 'lyrics', 'novels', 'quotes', 'journey'];
 // Video pages (YouTube URLs)
 const VIDEO_PAGES = ['audio-visual-work'];
+// Special pages with unique editors
+const ABOUT_PAGE = 'about';
+const BUY_ART_PAGE = 'buy-art';
+// Pages that skip the metadata editor entirely
+const SKIP_META_PAGES = ['commissions', 'contact', 'streaming-platforms', 'philosophy', 'exhibitions-features'];
 
 interface Props {
   section: Section;
@@ -31,10 +39,14 @@ export default function PageContentEditor({ section, submenu }: Props) {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [showCropper, setShowCropper] = useState(false);
   const accent = section.editorial.accentColor ?? '#ff69b4';
   const isAlbum = ALBUM_PAGES.includes(submenu.id);
   const isGallery = GALLERY_PAGES.includes(submenu.id);
   const isVideo = VIDEO_PAGES.includes(submenu.id);
+  const isAbout = submenu.id === ABOUT_PAGE;
+  const isBuyArt = submenu.id === BUY_ART_PAGE;
+  const skipMeta = SKIP_META_PAGES.includes(submenu.id);
 
   useEffect(() => {
     fetchMeta();
@@ -65,6 +77,16 @@ export default function PageContentEditor({ section, submenu }: Props) {
     setTimeout(() => setSaved(false), 2500);
   };
 
+  const handleCropComplete = (croppedArea: Area) => {
+    // Store crop data as query params on the URL for server-side processing
+    if (meta) {
+      const baseUrl = meta.hero_image_url.split('?')[0];
+      const cropParams = `?crop=${croppedArea.x},${croppedArea.y},${croppedArea.width},${croppedArea.height}`;
+      setMeta({ ...meta, hero_image_url: baseUrl + cropParams });
+    }
+    setShowCropper(false);
+  };
+
   if (loading) {
     return (
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '60vh' }}>
@@ -84,24 +106,73 @@ export default function PageContentEditor({ section, submenu }: Props) {
       </h1>
 
       {/* ─── Section 1: Page Metadata ─── */}
-      <SectionCard title="Page Metadata" accent={accent}>
-        {meta && (
+      {!skipMeta && meta && (
+        <SectionCard title="Page Metadata" accent={accent}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
             <FieldInput label="Title" value={meta.title} onChange={v => setMeta({ ...meta, title: v })} />
             <FieldInput label="Subtitle" value={meta.subtitle ?? ''} onChange={v => setMeta({ ...meta, subtitle: v })} />
-            <FieldInput label="Hero Cover Image URL" value={meta.hero_image_url ?? ''} onChange={v => setMeta({ ...meta, hero_image_url: v })} />
+            <FieldInput
+              label={isAbout ? 'Profile Photo URL' : 'Hero Cover Image URL'}
+              value={meta.hero_image_url ?? ''}
+              onChange={v => setMeta({ ...meta, hero_image_url: v })}
+            />
+
+            {/* Image Preview + Crop Button */}
             {meta.hero_image_url && (
-              <div style={{ width: '100%', height: '160px', borderRadius: '10px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.08)' }}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={meta.hero_image_url} alt="Hero preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              <div style={{ display: 'flex', gap: '14px', alignItems: 'flex-start' }}>
+                {isAbout ? (
+                  /* Circular profile photo preview */
+                  <div style={{
+                    width: '120px',
+                    height: '120px',
+                    borderRadius: '50%',
+                    overflow: 'hidden',
+                    border: '2px solid rgba(255,105,180,0.3)',
+                    flexShrink: 0,
+                    boxShadow: '0 0 24px rgba(255,105,180,0.15)',
+                  }}>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={meta.hero_image_url.split('?')[0]} alt="Profile preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  </div>
+                ) : (
+                  /* Rectangular hero cover preview */
+                  <div style={{
+                    flex: 1,
+                    height: '160px',
+                    borderRadius: '10px',
+                    overflow: 'hidden',
+                    border: '1px solid rgba(255,255,255,0.08)',
+                  }}>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={meta.hero_image_url.split('?')[0]} alt="Hero preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  </div>
+                )}
+
+                <button onClick={() => setShowCropper(true)} style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  padding: '8px 14px',
+                  borderRadius: '8px',
+                  background: 'rgba(255,255,255,0.04)',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  color: 'rgba(255,255,255,0.55)',
+                  cursor: 'pointer',
+                  fontSize: '11px',
+                  fontFamily: 'var(--font-inter)',
+                  whiteSpace: 'nowrap',
+                }}>
+                  <Crop size={13} /> Scale & Crop
+                </button>
               </div>
             )}
+
             <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
               <SaveButton saving={saving} saved={saved} accent={accent} onClick={handleSaveMeta} />
             </div>
           </div>
-        )}
-      </SectionCard>
+        </SectionCard>
+      )}
 
       {/* ─── Section 2: Album Folders (for Sight / Touch pages) ─── */}
       {isAlbum && meta && (
@@ -115,6 +186,28 @@ export default function PageContentEditor({ section, submenu }: Props) {
         <SectionCard title={isVideo ? 'Videos' : 'Gallery Items'} accent={accent} style={{ marginTop: '20px' }}>
           <FlatGalleryManager pageId={meta.id} isVideo={isVideo} accent={accent} />
         </SectionCard>
+      )}
+
+      {/* ─── Section 4: Buy Art Manager ─── */}
+      {isBuyArt && (
+        <SectionCard title="Acquisition Destinations" accent={accent} style={{ marginTop: meta ? '20px' : '0' }}>
+          <BuyArtManager accent={accent} />
+        </SectionCard>
+      )}
+
+      {/* ─── Cropper Modal ─── */}
+      {showCropper && meta?.hero_image_url && (
+        <ImageCropper
+          imageSrc={meta.hero_image_url.split('?')[0]}
+          aspect={isAbout ? 1 : 16 / 9}
+          cropShape={isAbout ? 'round' : 'rect'}
+          onCropComplete={(dataUrl) => {
+            setMeta({ ...meta, hero_image_url: dataUrl });
+            setShowCropper(false);
+          }}
+          onCancel={() => setShowCropper(false)}
+          accent={accent}
+        />
       )}
     </div>
   );

@@ -8,6 +8,9 @@ import { ChevronDown, LogOut, Settings, LayoutDashboard, Trophy, Users } from 'l
 
 // Maps each section's submenus to the corresponding admin edit page
 function buildAdminHref(sectionId: string, submenuId: string) {
+  if (sectionId === 'heart' && submenuId === 'exhibitions-features') return '/admin/exhibitions';
+  if (sectionId === 'pulse' && submenuId === 'buy-art') return '/admin/buy-art';
+  if (sectionId === 'pulse' && submenuId === 'crm') return '/admin/crm';
   return `/admin/content/${sectionId}/${submenuId}`;
 }
 
@@ -15,7 +18,11 @@ export default function AdminSidebar() {
   const pathname = usePathname();
   const [expanded, setExpanded] = useState<string | null>(
     // Auto-expand the section that matches the current path
-    NAV_SECTIONS.find(s => pathname?.includes(`/admin/content/${s.id}`))?.id ?? null
+    NAV_SECTIONS.find(s => 
+      pathname?.includes(`/admin/content/${s.id}`) ||
+      (s.id === 'heart' && pathname?.includes('/admin/exhibitions')) ||
+      (s.id === 'pulse' && (pathname?.includes('/admin/buy-art') || pathname?.includes('/admin/crm')))
+    )?.id ?? null
   );
 
   const toggleSection = (id: string) => {
@@ -67,7 +74,9 @@ export default function AdminSidebar() {
         {NAV_SECTIONS.map((section) => {
           const isExpanded = expanded === section.id;
           const sectionAccent = section.editorial.accentColor ?? '#ff69b4';
-          const isActiveParent = pathname?.includes(`/admin/content/${section.id}`);
+          const isActiveParent = pathname?.includes(`/admin/content/${section.id}`) ||
+                                 (section.id === 'heart' && pathname?.includes('/admin/exhibitions')) ||
+                                 (section.id === 'pulse' && (pathname?.includes('/admin/buy-art') || pathname?.includes('/admin/crm')));
 
           return (
             <div key={section.id} style={{ marginBottom: '2px' }}>
@@ -146,53 +155,45 @@ export default function AdminSidebar() {
                   marginLeft: '18px',
                   marginBottom: '4px',
                 }}>
-                  {section.submenus.map((sub) => {
-                    const subHref = buildAdminHref(section.id, sub.id);
-                    const isActive = pathname === subHref;
-                    return (
-                      <Link
-                        key={sub.id}
-                        href={subHref}
-                        style={{
-                          display: 'block',
-                          padding: '7px 10px',
-                          borderRadius: '6px',
-                          fontSize: '12px',
-                          color: isActive ? sectionAccent : 'rgba(255,255,255,0.5)',
-                          background: isActive ? `${sectionAccent}10` : 'transparent',
-                          textDecoration: 'none',
-                          letterSpacing: '0.04em',
-                          transition: 'all 0.12s ease',
-                          fontFamily: 'var(--font-inter)',
-                        }}
-                        onMouseEnter={e => { if (!isActive) { (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.85)'; (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.04)'; } }}
-                        onMouseLeave={e => { if (!isActive) { (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.5)'; (e.currentTarget as HTMLElement).style.background = 'transparent'; } }}
-                      >
-                        {sub.label}
-                      </Link>
-                    );
-                  })}
+                  {section.submenus
+                    .filter(sub => {
+                      // For Pulse, we only show Buy Art here because we'll add CRM manually
+                      if (section.id === 'pulse' && (sub.id === 'commissions' || sub.id === 'contact')) return false;
+                      return true;
+                    })
+                    .concat(section.id === 'pulse' ? [{ id: 'crm', label: 'CRM', href: '/admin/crm' }] : [])
+                    .map((sub) => {
+                      const subHref = buildAdminHref(section.id, sub.id);
+                      const isActive = pathname === subHref;
+                      return (
+                        <Link
+                          key={sub.id}
+                          href={subHref}
+                          style={{
+                            display: 'block',
+                            padding: '7px 10px',
+                            borderRadius: '6px',
+                            fontSize: '12px',
+                            color: isActive ? sectionAccent : 'rgba(255,255,255,0.5)',
+                            background: isActive ? `${sectionAccent}10` : 'transparent',
+                            textDecoration: 'none',
+                            letterSpacing: '0.04em',
+                            transition: 'all 0.12s ease',
+                            fontFamily: 'var(--font-inter)',
+                          }}
+                          onMouseEnter={e => { if (!isActive) { (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.85)'; (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.04)'; } }}
+                          onMouseLeave={e => { if (!isActive) { (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.5)'; (e.currentTarget as HTMLElement).style.background = 'transparent'; } }}
+                        >
+                          {sub.label}
+                        </Link>
+                      );
+                    })}
                 </div>
               )}
             </div>
           );
         })}
 
-        {/* Special pages */}
-        <div style={{ marginTop: '12px', paddingTop: '12px', borderTop: '1px solid rgba(255,255,255,0.05)', display: 'flex', flexDirection: 'column', gap: '2px' }}>
-          <NavItem
-            href="/admin/exhibitions"
-            label="Exhibitions & Features"
-            icon={<Trophy size={14} />}
-            active={pathname?.startsWith('/admin/exhibitions') ?? false}
-          />
-          <NavItem
-            href="/admin/crm"
-            label="Inquiries / CRM"
-            icon={<Users size={14} />}
-            active={pathname?.startsWith('/admin/crm') ?? false}
-          />
-        </div>
       </nav>
 
       {/* Footer */}

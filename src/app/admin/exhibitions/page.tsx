@@ -2,8 +2,17 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
-import { Plus, Trash2, Save, Loader2, CheckCircle, GripVertical, Trophy } from 'lucide-react';
-import { FieldInput, SaveButton } from '@/components/admin/PageContentEditor';
+import { Plus, Trash2, Save, Loader2, CheckCircle, GripVertical, Trophy, Crop } from 'lucide-react';
+import { FieldInput, SaveButton, SectionCard } from '@/components/admin/PageContentEditor';
+import ImageCropper from '@/components/admin/ImageCropper';
+import { Area } from 'react-easy-crop';
+
+interface PageMeta {
+  id: string;
+  title: string;
+  subtitle: string;
+  hero_image_url: string;
+}
 
 interface Exhibition {
   id: string;
@@ -16,11 +25,50 @@ interface Exhibition {
 
 export default function ExhibitionsPage() {
   const [items, setItems] = useState<Exhibition[]>([]);
+  const [meta, setMeta] = useState<PageMeta | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState<string | null>(null);
   const [saved, setSaved] = useState<string | null>(null);
+  const [savingMeta, setSavingMeta] = useState(false);
+  const [savedMeta, setSavedMeta] = useState(false);
+  const [showCropper, setShowCropper] = useState(false);
 
-  useEffect(() => { fetchItems(); }, []);
+  useEffect(() => { 
+    fetchItems();
+    fetchMeta();
+  }, []);
+
+  const fetchMeta = async () => {
+    const { data } = await supabase
+      .from('pages')
+      .select('id, title, subtitle, hero_image_url')
+      .eq('section_key', 'heart')
+      .eq('slug', 'exhibitions-features')
+      .single();
+    if (data) setMeta(data);
+  };
+
+  const handleSaveMeta = async () => {
+    if (!meta) return;
+    setSavingMeta(true);
+    await supabase.from('pages').update({
+      title: meta.title,
+      subtitle: meta.subtitle,
+      hero_image_url: meta.hero_image_url,
+    }).eq('id', meta.id);
+    setSavingMeta(false);
+    setSavedMeta(true);
+    setTimeout(() => setSavedMeta(false), 2000);
+  };
+
+  const handleCropComplete = (croppedArea: Area) => {
+    if (meta) {
+      const baseUrl = meta.hero_image_url.split('?')[0];
+      const cropParams = `?crop=${croppedArea.x},${croppedArea.y},${croppedArea.width},${croppedArea.height}`;
+      setMeta({ ...meta, hero_image_url: baseUrl + cropParams });
+    }
+    setShowCropper(false);
+  };
 
   const fetchItems = async () => {
     setLoading(true);
@@ -65,12 +113,42 @@ export default function ExhibitionsPage() {
       <div style={{ marginBottom: '8px', fontSize: '10px', letterSpacing: '0.22em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', fontFamily: 'var(--font-inter)' }}>
         Heart / Exhibitions & Features
       </div>
-      <h1 style={{ fontSize: '28px', fontWeight: 300, color: '#fff', letterSpacing: '0.04em', fontFamily: 'var(--font-outfit)', marginBottom: '8px' }}>
+      <h1 style={{ fontSize: '28px', fontWeight: 300, color: '#fff', letterSpacing: '0.04em', fontFamily: 'var(--font-outfit)', marginBottom: '32px' }}>
         Exhibitions & Features
       </h1>
-      <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.4)', fontFamily: 'var(--font-inter)', marginBottom: '32px' }}>
-        Add, edit, and reorder exhibition entries. Drag handles for ordering coming soon.
-      </p>
+
+      {meta && (
+        <SectionCard title="Page Header" accent="#ff6b6b" style={{ marginBottom: '32px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+            <FieldInput label="Title" value={meta.title} onChange={v => setMeta({ ...meta, title: v })} />
+            <FieldInput label="Subtitle" value={meta.subtitle ?? ''} onChange={v => setMeta({ ...meta, subtitle: v })} />
+            <FieldInput label="Hero Cover Image URL" value={meta.hero_image_url ?? ''} onChange={v => setMeta({ ...meta, hero_image_url: v })} />
+            
+            {meta.hero_image_url && (
+              <div style={{ display: 'flex', gap: '14px', alignItems: 'flex-start' }}>
+                <div style={{ flex: 1, height: '140px', borderRadius: '10px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.08)' }}>
+                  <img src={meta.hero_image_url.split('?')[0]} alt="Hero preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                </div>
+                <button onClick={() => setShowCropper(true)} style={{
+                  display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 14px', borderRadius: '8px',
+                  background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)',
+                  color: 'rgba(255,255,255,0.55)', cursor: 'pointer', fontSize: '11px', fontFamily: 'var(--font-inter)',
+                }}>
+                  <Crop size={13} /> Crop
+                </button>
+              </div>
+            )}
+            
+            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <SaveButton saving={savingMeta} saved={savedMeta} accent="#ff6b6b" onClick={handleSaveMeta} />
+            </div>
+          </div>
+        </SectionCard>
+      )}
+
+      <div style={{ marginBottom: '16px', fontSize: '10px', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#ff6b6b', opacity: 0.8, fontFamily: 'var(--font-inter)' }}>
+        Records & Entries
+      </div>
 
       {loading ? (
         <div style={{ display: 'flex', justifyContent: 'center', padding: '48px' }}>
@@ -140,6 +218,20 @@ export default function ExhibitionsPage() {
       }}>
         <Plus size={14} /> Add Exhibition
       </button>
+      {/* Cropper Modal */}
+      {showCropper && meta?.hero_image_url && (
+        <ImageCropper
+          imageSrc={meta.hero_image_url.split('?')[0]}
+          aspect={16 / 9}
+          cropShape="rect"
+          onCropComplete={(dataUrl) => {
+            setMeta({ ...meta, hero_image_url: dataUrl });
+            setShowCropper(false);
+          }}
+          onCancel={() => setShowCropper(false)}
+          accent="#ff6b6b"
+        />
+      )}
     </div>
   );
 }

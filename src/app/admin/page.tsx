@@ -108,40 +108,53 @@ export default function AdminDashboardPage() {
                   </div>
                 </div>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-                  {section.submenus.map((sub) => (
-                    <Link
-                      key={sub.id}
-                      href={`/admin/content/${section.id}/${sub.id}`}
-                      style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '5px',
-                        padding: '5px 10px',
-                        borderRadius: '6px',
-                        fontSize: '11px',
-                        color: 'rgba(255,255,255,0.5)',
-                        background: 'rgba(255,255,255,0.04)',
-                        border: '1px solid rgba(255,255,255,0.07)',
-                        textDecoration: 'none',
-                        fontFamily: 'var(--font-inter)',
-                        letterSpacing: '0.03em',
-                        transition: 'all 0.12s ease',
-                      }}
-                      onMouseEnter={e => {
-                        (e.currentTarget as HTMLElement).style.color = accent;
-                        (e.currentTarget as HTMLElement).style.background = `${accent}12`;
-                        (e.currentTarget as HTMLElement).style.borderColor = `${accent}30`;
-                      }}
-                      onMouseLeave={e => {
-                        (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.5)';
-                        (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.04)';
-                        (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.07)';
-                      }}
-                    >
-                      {sub.label}
-                      <ArrowUpRight size={10} />
-                    </Link>
-                  ))}
+                  {section.submenus
+                    .filter(sub => {
+                      if (section.id === 'pulse' && (sub.id === 'commissions' || sub.id === 'contact')) return false;
+                      return true;
+                    })
+                    .concat(section.id === 'pulse' ? [{ id: 'crm', label: 'CRM', href: '/admin/crm' } as any] : [])
+                    .map((sub) => {
+                      const subHref = sub.id === 'buy-art' ? '/admin/buy-art' : 
+                                    sub.id === 'exhibitions-features' ? '/admin/exhibitions' :
+                                    sub.id === 'crm' ? '/admin/crm' :
+                                    `/admin/content/${section.id}/${sub.id}`;
+                      
+                      return (
+                        <Link
+                          key={sub.id}
+                          href={subHref}
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '5px',
+                            padding: '5px 10px',
+                            borderRadius: '6px',
+                            fontSize: '11px',
+                            color: 'rgba(255,255,255,0.5)',
+                            background: 'rgba(255,255,255,0.04)',
+                            border: '1px solid rgba(255,255,255,0.07)',
+                            textDecoration: 'none',
+                            fontFamily: 'var(--font-inter)',
+                            letterSpacing: '0.03em',
+                            transition: 'all 0.12s ease',
+                          }}
+                          onMouseEnter={e => {
+                            (e.currentTarget as HTMLElement).style.color = accent;
+                            (e.currentTarget as HTMLElement).style.background = `${accent}12`;
+                            (e.currentTarget as HTMLElement).style.borderColor = `${accent}30`;
+                          }}
+                          onMouseLeave={e => {
+                            (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.5)';
+                            (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.04)';
+                            (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.07)';
+                          }}
+                        >
+                          {sub.label}
+                          <ArrowUpRight size={10} />
+                        </Link>
+                      );
+                    })}
                 </div>
               </div>
             );
@@ -150,10 +163,11 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* Special Sections */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
         {[
-          { label: 'Exhibitions & Features', href: '/admin/exhibitions', color: '#fbbf24', desc: 'Add, edit, reorder exhibition entries.' },
-          { label: 'Inquiries / CRM', href: '/admin/crm', color: '#60a5fa', desc: 'Review contact and commission leads.' },
+          { label: 'Buy Art', href: '/admin/buy-art', color: '#a78bfa', desc: 'Manage acquisition destinations.' },
+          { label: 'Exhibitions', href: '/admin/exhibitions', color: '#fbbf24', desc: 'Add, edit, reorder entries.' },
+          { label: 'CRM', href: '/admin/crm', color: '#60a5fa', desc: 'Review contact and commissions.' },
         ].map((item) => (
           <Link key={item.label} href={item.href} style={{
             display: 'block',

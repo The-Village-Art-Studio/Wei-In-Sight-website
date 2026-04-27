@@ -292,3 +292,67 @@ INSERT INTO exhibitions (year, title, location, is_award, sort_order) VALUES
 ('2025', 'Trace by PDA at Avant Garde Gallery', 'Toronto, Canada', false, 2),
 ('2025', 'Natalie Solo Show by La Gloria Mexican Coffee', 'Toronto, Canada', false, 3),
 ('2025', 'Featured Artist in 101 Artbook Landscape Edition by Arts to Hearts Magazine', 'Worldwide', true, 4);
+-- ========================================
+-- 7. ADMIN USER SEEDING (Local Dev only)
+-- ========================================
+-- Create the admin user (password123)
+INSERT INTO auth.users (
+    instance_id,
+    id,
+    aud,
+    role,
+    email,
+    encrypted_password,
+    email_confirmed_at,
+    raw_app_meta_data,
+    raw_user_meta_data,
+    created_at,
+    updated_at
+)
+SELECT
+    '00000000-0000-0000-0000-000000000000',
+    uuid_generate_v4(),
+    'authenticated',
+    'authenticated',
+    'jackyho@weiinsight.com',
+    crypt('password123', gen_salt('bf')),
+    now(),
+    '{"provider":"email","providers":["email"]}',
+    '{}',
+    now(),
+    now()
+WHERE NOT EXISTS (
+    SELECT 1 FROM auth.users WHERE email = 'jackyho@weiinsight.com'
+);
+
+-- Link identity
+INSERT INTO auth.identities (
+    id,
+    user_id,
+    identity_data,
+    provider,
+    last_sign_in_at,
+    created_at,
+    updated_at,
+    provider_id
+)
+SELECT
+    uuid_generate_v4(),
+    id,
+    format('{"sub":"%s","email":"%s"}', id, email)::jsonb,
+    'email',
+    now(),
+    now(),
+    now(),
+    id
+FROM auth.users
+WHERE email = 'jackyho@weiinsight.com'
+AND NOT EXISTS (
+    SELECT 1 FROM auth.identities WHERE user_id = auth.users.id
+);
+
+-- Ensure public.admin_users record
+INSERT INTO public.admin_users (email, full_name, role)
+VALUES ('jackyho@weiinsight.com', 'Jacky Ho', 'owner')
+ON CONFLICT (email) DO NOTHING;
+

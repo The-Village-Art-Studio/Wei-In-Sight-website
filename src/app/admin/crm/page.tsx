@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { supabase } from '@/lib/supabase';
-import { Loader2, Mail, MessageSquare, Briefcase, Archive, Eye, Clock } from 'lucide-react';
+import { Loader2, Mail, Briefcase, Archive, Clock, TrendingUp, TrendingDown, MessageSquare, AlertCircle, CheckCircle2, StickyNote } from 'lucide-react';
 
 interface Inquiry {
   id: string;
@@ -12,6 +12,10 @@ interface Inquiry {
   message: string;
   type: 'contact' | 'commission';
   status: 'new' | 'read' | 'replied' | 'archived';
+  notes: string | null;
+  outcome: string | null;
+  won_lost: boolean | null;
+  follow_up_needed: boolean;
   created_at: string;
 }
 
@@ -29,11 +33,15 @@ const STATUS_BG: Record<string, string> = {
   archived: 'rgba(255,255,255,0.03)',
 };
 
+type CRMView = 'commissions' | 'contact';
+
 export default function CRMPage() {
   const [inquiries, setInquiries] = useState<Inquiry[]>([]);
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<Inquiry | null>(null);
-  const [filter, setFilter] = useState<'all' | 'new' | 'contact' | 'commission'>('all');
+  const [view, setView] = useState<CRMView>('commissions');
+  const [notesDraft, setNotesDraft] = useState('');
+  const [savingNotes, setSavingNotes] = useState(false);
 
   useEffect(() => { fetchInquiries(); }, []);
 
@@ -50,24 +58,74 @@ export default function CRMPage() {
     if (selected?.id === id) setSelected(prev => prev ? { ...prev, status } : null);
   };
 
-  const filtered = inquiries.filter(i => {
-    if (filter === 'new') return i.status === 'new';
-    if (filter === 'contact') return i.type === 'contact';
-    if (filter === 'commission') return i.type === 'commission';
-    return true;
-  });
+  const updateWonLost = async (id: string, won_lost: boolean | null) => {
+    await supabase.from('inquiries').update({ won_lost }).eq('id', id);
+    setInquiries(prev => prev.map(i => i.id === id ? { ...i, won_lost } : i));
+    if (selected?.id === id) setSelected(prev => prev ? { ...prev, won_lost } : null);
+  };
+
+  const toggleFollowUp = async (id: string, value: boolean) => {
+    await supabase.from('inquiries').update({ follow_up_needed: value }).eq('id', id);
+    setInquiries(prev => prev.map(i => i.id === id ? { ...i, follow_up_needed: value } : i));
+    if (selected?.id === id) setSelected(prev => prev ? { ...prev, follow_up_needed: value } : null);
+  };
+
+  const saveNotes = async (id: string) => {
+    setSavingNotes(true);
+    await supabase.from('inquiries').update({ notes: notesDraft }).eq('id', id);
+    setInquiries(prev => prev.map(i => i.id === id ? { ...i, notes: notesDraft } : i));
+    if (selected?.id === id) setSelected(prev => prev ? { ...prev, notes: notesDraft } : null);
+    setSavingNotes(false);
+  };
+
+  // When selecting an inquiry, prefill the notes draft
+  const handleSelect = (inquiry: Inquiry) => {
+    setSelected(inquiry);
+    setNotesDraft(inquiry.notes ?? '');
+    if (inquiry.status === 'new') updateStatus(inquiry.id, 'read');
+  };
+
+  const filtered = useMemo(() => {
+    return inquiries.filter(i => {
+      if (view === 'commissions') return i.type === 'commission';
+      return i.type === 'contact';
+    });
+  }, [inquiries, view]);
+
+  // Metrics for commissions
+  const commissionMetrics = useMemo(() => {
+    const comms = inquiries.filter(i => i.type === 'commission');
+    return {
+      total: comms.length,
+      won: comms.filter(i => i.won_lost === true).length,
+      lost: comms.filter(i => i.won_lost === false).length,
+      pending: comms.filter(i => i.won_lost === null).length,
+    };
+  }, [inquiries]);
+
+  // Metrics for contact
+  const contactMetrics = useMemo(() => {
+    const contacts = inquiries.filter(i => i.type === 'contact');
+    return {
+      total: contacts.length,
+      needFollowUp: contacts.filter(i => i.follow_up_needed).length,
+      replied: contacts.filter(i => i.status === 'replied').length,
+      newCount: contacts.filter(i => i.status === 'new').length,
+    };
+  }, [inquiries]);
 
   const newCount = inquiries.filter(i => i.status === 'new').length;
 
   return (
-    <div style={{ maxWidth: '1000px' }}>
-      <div style={{ marginBottom: '32px' }}>
+    <div style={{ maxWidth: '1060px' }}>
+      {/* Header */}
+      <div style={{ marginBottom: '24px' }}>
         <div style={{ fontSize: '10px', letterSpacing: '0.22em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', marginBottom: '6px', fontFamily: 'var(--font-inter)' }}>
           Pulse / CRM
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
           <h1 style={{ fontSize: '28px', fontWeight: 300, color: '#fff', letterSpacing: '0.04em', fontFamily: 'var(--font-outfit)', margin: 0 }}>
-            Inquiries
+            {view === 'commissions' ? 'Commissions' : 'Contact Inquiries'}
           </h1>
           {newCount > 0 && (
             <span style={{ padding: '3px 10px', borderRadius: '20px', background: 'rgba(96,165,250,0.15)', border: '1px solid rgba(96,165,250,0.3)', color: '#60a5fa', fontSize: '11px', fontFamily: 'var(--font-inter)' }}>
@@ -77,21 +135,82 @@ export default function CRMPage() {
         </div>
       </div>
 
-      {/* Filter tabs */}
+      {/* View toggle tabs */}
       <div style={{ display: 'flex', gap: '6px', marginBottom: '20px' }}>
-        {(['all', 'new', 'contact', 'commission'] as const).map(f => (
-          <button key={f} onClick={() => setFilter(f)} style={{
-            padding: '6px 14px', borderRadius: '7px', fontSize: '11px', fontFamily: 'var(--font-inter)', letterSpacing: '0.06em', textTransform: 'capitalize',
-            background: filter === f ? 'rgba(96,165,250,0.15)' : 'rgba(255,255,255,0.04)',
-            border: filter === f ? '1px solid rgba(96,165,250,0.3)' : '1px solid rgba(255,255,255,0.08)',
-            color: filter === f ? '#60a5fa' : 'rgba(255,255,255,0.5)',
-            cursor: 'pointer',
+        {([
+          { key: 'commissions' as const, label: 'Commissions', icon: <Briefcase size={12} />, color: '#a78bfa' },
+          { key: 'contact' as const, label: 'Contact', icon: <Mail size={12} />, color: '#60a5fa' },
+        ]).map(tab => (
+          <button key={tab.key} onClick={() => { setView(tab.key); setSelected(null); }} style={{
+            display: 'flex', alignItems: 'center', gap: '7px',
+            padding: '8px 16px', borderRadius: '8px', fontSize: '12px', fontFamily: 'var(--font-inter)', letterSpacing: '0.06em',
+            background: view === tab.key ? `${tab.color}15` : 'rgba(255,255,255,0.04)',
+            border: view === tab.key ? `1px solid ${tab.color}35` : '1px solid rgba(255,255,255,0.08)',
+            color: view === tab.key ? tab.color : 'rgba(255,255,255,0.5)',
+            cursor: 'pointer', transition: 'all 0.15s',
           }}>
-            {f}
+            {tab.icon}
+            {tab.label}
           </button>
         ))}
       </div>
 
+      {/* ─── Metrics strip ─── */}
+      {view === 'commissions' ? (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px', marginBottom: '20px' }}>
+          {[
+            { label: 'Total', value: commissionMetrics.total, color: '#a78bfa' },
+            { label: 'Won', value: commissionMetrics.won, color: '#34d399', icon: <TrendingUp size={14} /> },
+            { label: 'Lost', value: commissionMetrics.lost, color: '#ef4444', icon: <TrendingDown size={14} /> },
+            { label: 'Pending', value: commissionMetrics.pending, color: '#fbbf24' },
+          ].map(m => (
+            <div key={m.label} style={{
+              background: 'rgba(255,255,255,0.03)',
+              border: '1px solid rgba(255,255,255,0.07)',
+              borderRadius: '12px',
+              padding: '14px 16px',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px', color: m.color, opacity: 0.8 }}>
+                {m.icon || <Briefcase size={13} />}
+                <span style={{ fontSize: '10px', letterSpacing: '0.14em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)' }}>
+                  {m.label}
+                </span>
+              </div>
+              <div style={{ fontSize: '28px', fontWeight: 200, color: '#fff', fontFamily: 'var(--font-outfit)' }}>
+                {m.value}
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px', marginBottom: '20px' }}>
+          {[
+            { label: 'Total', value: contactMetrics.total, color: '#60a5fa' },
+            { label: 'New', value: contactMetrics.newCount, color: '#60a5fa', icon: <Mail size={13} /> },
+            { label: 'Replied', value: contactMetrics.replied, color: '#34d399', icon: <CheckCircle2 size={13} /> },
+            { label: 'Follow Up', value: contactMetrics.needFollowUp, color: '#fbbf24', icon: <AlertCircle size={13} /> },
+          ].map(m => (
+            <div key={m.label} style={{
+              background: 'rgba(255,255,255,0.03)',
+              border: '1px solid rgba(255,255,255,0.07)',
+              borderRadius: '12px',
+              padding: '14px 16px',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px', color: m.color, opacity: 0.8 }}>
+                {m.icon || <MessageSquare size={13} />}
+                <span style={{ fontSize: '10px', letterSpacing: '0.14em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)' }}>
+                  {m.label}
+                </span>
+              </div>
+              <div style={{ fontSize: '28px', fontWeight: 200, color: '#fff', fontFamily: 'var(--font-outfit)' }}>
+                {m.value}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* ─── List + Detail split ─── */}
       <div style={{ display: 'grid', gridTemplateColumns: selected ? '1fr 1fr' : '1fr', gap: '14px' }}>
         {/* List */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -101,10 +220,10 @@ export default function CRMPage() {
             </div>
           ) : filtered.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '48px', color: 'rgba(255,255,255,0.25)', fontSize: '13px', fontFamily: 'var(--font-inter)', border: '1px dashed rgba(255,255,255,0.08)', borderRadius: '12px' }}>
-              No inquiries found.
+              No {view === 'commissions' ? 'commissions' : 'contact inquiries'} found.
             </div>
           ) : filtered.map(inquiry => (
-            <button key={inquiry.id} onClick={() => { setSelected(inquiry); updateStatus(inquiry.id, inquiry.status === 'new' ? 'read' : inquiry.status); }} style={{
+            <button key={inquiry.id} onClick={() => handleSelect(inquiry)} style={{
               display: 'block', width: '100%', textAlign: 'left', cursor: 'pointer',
               background: selected?.id === inquiry.id ? 'rgba(96,165,250,0.08)' : STATUS_BG[inquiry.status],
               border: selected?.id === inquiry.id ? '1px solid rgba(96,165,250,0.25)' : '1px solid rgba(255,255,255,0.07)',
@@ -113,12 +232,45 @@ export default function CRMPage() {
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
                 {inquiry.type === 'commission' ? <Briefcase size={13} color="#a78bfa" /> : <Mail size={13} color="#60a5fa" />}
                 <span style={{ fontSize: '13px', fontWeight: 500, color: '#fff', fontFamily: 'var(--font-outfit)', flex: 1 }}>{inquiry.name}</span>
+
+                {/* Commission: Won/Lost badge */}
+                {view === 'commissions' && inquiry.won_lost !== null && (
+                  <span style={{
+                    fontSize: '10px', padding: '2px 8px', borderRadius: '10px',
+                    background: inquiry.won_lost ? 'rgba(52,211,153,0.12)' : 'rgba(239,68,68,0.12)',
+                    border: `1px solid ${inquiry.won_lost ? 'rgba(52,211,153,0.3)' : 'rgba(239,68,68,0.3)'}`,
+                    color: inquiry.won_lost ? '#34d399' : '#ef4444',
+                    fontFamily: 'var(--font-inter)', letterSpacing: '0.1em', textTransform: 'uppercase',
+                  }}>
+                    {inquiry.won_lost ? 'Won' : 'Lost'}
+                  </span>
+                )}
+
+                {/* Contact: Follow-up badge */}
+                {view === 'contact' && inquiry.follow_up_needed && (
+                  <span style={{
+                    fontSize: '10px', padding: '2px 8px', borderRadius: '10px',
+                    background: 'rgba(251,191,36,0.12)',
+                    border: '1px solid rgba(251,191,36,0.3)',
+                    color: '#fbbf24',
+                    fontFamily: 'var(--font-inter)', letterSpacing: '0.1em', textTransform: 'uppercase',
+                  }}>
+                    Follow Up
+                  </span>
+                )}
+
                 <span style={{ fontSize: '10px', padding: '2px 8px', borderRadius: '10px', background: STATUS_BG[inquiry.status], border: `1px solid ${STATUS_COLORS[inquiry.status]}30`, color: STATUS_COLORS[inquiry.status], fontFamily: 'var(--font-inter)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
                   {inquiry.status}
                 </span>
               </div>
               <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)', fontFamily: 'var(--font-inter)', marginBottom: '4px' }}>{inquiry.email}</div>
               {inquiry.subject && <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.35)', fontFamily: 'var(--font-inter)' }}>{inquiry.subject}</div>}
+              {inquiry.notes && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginTop: '4px' }}>
+                  <StickyNote size={10} color="rgba(255,255,255,0.25)" />
+                  <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.25)', fontFamily: 'var(--font-inter)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '200px' }}>{inquiry.notes}</span>
+                </div>
+              )}
               <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.2)', fontFamily: 'var(--font-inter)', marginTop: '6px', display: 'flex', alignItems: 'center', gap: '4px' }}>
                 <Clock size={10} />
                 {new Date(inquiry.created_at).toLocaleDateString('en-CA', { year: 'numeric', month: 'short', day: 'numeric' })}
@@ -127,7 +279,7 @@ export default function CRMPage() {
           ))}
         </div>
 
-        {/* Detail pane */}
+        {/* ─── Detail pane ─── */}
         {selected && (
           <div style={{ background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '12px', padding: '20px', position: 'sticky', top: '0', alignSelf: 'start' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
@@ -148,10 +300,55 @@ export default function CRMPage() {
               {selected.message}
             </div>
 
+            {/* ─── Commission-specific: Won/Lost ─── */}
+            {view === 'commissions' && (
+              <div style={{ marginBottom: '16px' }}>
+                <div style={{ fontSize: '10px', letterSpacing: '0.16em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.25)', marginBottom: '8px', fontFamily: 'var(--font-inter)' }}>
+                  Outcome
+                </div>
+                <div style={{ display: 'flex', gap: '6px' }}>
+                  {[
+                    { label: 'Won', value: true, color: '#34d399' },
+                    { label: 'Lost', value: false, color: '#ef4444' },
+                    { label: 'Pending', value: null as boolean | null, color: '#fbbf24' },
+                  ].map(opt => (
+                    <button key={String(opt.value)} onClick={() => updateWonLost(selected.id, opt.value)} style={{
+                      padding: '6px 14px', borderRadius: '7px', fontSize: '11px', fontFamily: 'var(--font-inter)', letterSpacing: '0.06em',
+                      background: selected.won_lost === opt.value ? `${opt.color}18` : 'rgba(255,255,255,0.04)',
+                      border: selected.won_lost === opt.value ? `1px solid ${opt.color}45` : '1px solid rgba(255,255,255,0.08)',
+                      color: selected.won_lost === opt.value ? opt.color : 'rgba(255,255,255,0.4)',
+                      cursor: 'pointer', transition: 'all 0.15s',
+                    }}>
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* ─── Contact-specific: Follow-up toggle ─── */}
+            {view === 'contact' && (
+              <div style={{ marginBottom: '16px' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', userSelect: 'none' }}>
+                  <input
+                    type="checkbox"
+                    checked={selected.follow_up_needed}
+                    onChange={e => toggleFollowUp(selected.id, e.target.checked)}
+                    style={{ accentColor: '#fbbf24', width: '14px', height: '14px' }}
+                  />
+                  <AlertCircle size={13} color={selected.follow_up_needed ? '#fbbf24' : 'rgba(255,255,255,0.3)'} />
+                  <span style={{ fontSize: '12px', color: selected.follow_up_needed ? '#fbbf24' : 'rgba(255,255,255,0.4)', fontFamily: 'var(--font-inter)' }}>
+                    Needs Follow-up
+                  </span>
+                </label>
+              </div>
+            )}
+
+            {/* ─── Status ─── */}
             <div style={{ fontSize: '10px', letterSpacing: '0.16em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.25)', marginBottom: '8px', fontFamily: 'var(--font-inter)' }}>
-              Update Status
+              Status
             </div>
-            <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginBottom: '16px' }}>
               {(['new', 'read', 'replied', 'archived'] as const).map(s => (
                 <button key={s} onClick={() => updateStatus(selected.id, s)} style={{
                   padding: '5px 12px', borderRadius: '6px', fontSize: '11px', fontFamily: 'var(--font-inter)', letterSpacing: '0.08em', textTransform: 'capitalize',
@@ -165,8 +362,43 @@ export default function CRMPage() {
               ))}
             </div>
 
+            {/* ─── Notes ─── */}
+            <div style={{ fontSize: '10px', letterSpacing: '0.16em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.25)', marginBottom: '8px', fontFamily: 'var(--font-inter)' }}>
+              Internal Notes
+            </div>
+            <textarea
+              value={notesDraft}
+              onChange={e => setNotesDraft(e.target.value)}
+              placeholder="Add private notes about this inquiry…"
+              rows={3}
+              style={{
+                width: '100%', boxSizing: 'border-box',
+                background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)',
+                borderRadius: '8px', padding: '10px 13px', color: '#fff', fontSize: '12px',
+                fontFamily: 'var(--font-inter)', outline: 'none', resize: 'vertical',
+                marginBottom: '8px',
+              }}
+              onFocus={e => { e.target.style.borderColor = 'rgba(255,105,180,0.4)'; }}
+              onBlur={e => { e.target.style.borderColor = 'rgba(255,255,255,0.1)'; }}
+            />
+            <button
+              onClick={() => saveNotes(selected.id)}
+              disabled={savingNotes}
+              style={{
+                display: 'flex', alignItems: 'center', gap: '6px',
+                padding: '6px 14px', borderRadius: '7px',
+                background: 'rgba(255,105,180,0.1)', border: '1px solid rgba(255,105,180,0.3)',
+                color: '#ff69b4', cursor: 'pointer', fontSize: '11px', fontFamily: 'var(--font-inter)',
+                marginBottom: '16px',
+              }}
+            >
+              <StickyNote size={11} />
+              {savingNotes ? 'Saving…' : 'Save Notes'}
+            </button>
+
+            {/* Reply via email */}
             <a href={`mailto:${selected.email}`} style={{
-              display: 'flex', alignItems: 'center', gap: '8px', marginTop: '16px', padding: '10px 16px', borderRadius: '8px',
+              display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 16px', borderRadius: '8px',
               background: 'rgba(96,165,250,0.1)', border: '1px solid rgba(96,165,250,0.25)', color: '#60a5fa',
               textDecoration: 'none', fontSize: '12px', fontFamily: 'var(--font-inter)',
             }}>
