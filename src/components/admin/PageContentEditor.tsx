@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
+import { supabase, deleteFileFromStorage } from '@/lib/supabase';
 import { Section, SubMenu } from '@/lib/constants';
 import { Loader2, Save, CheckCircle, Crop } from 'lucide-react';
 import AlbumManager from './AlbumManager';
@@ -210,7 +210,10 @@ export default function PageContentEditor({ section, submenu }: Props) {
                   <SupabaseUploader 
                     accent={accent} 
                     buttonText="Upload New Image" 
-                    onUpload={(url) => setMeta({ ...meta, hero_image_url: url })} 
+                    onUpload={(url) => {
+                      if (meta.hero_image_url) deleteFileFromStorage(meta.hero_image_url);
+                      setMeta({ ...meta, hero_image_url: url });
+                    }} 
                   />
                   
                   <button onClick={() => setShowCropper(true)} style={{
@@ -237,7 +240,10 @@ export default function PageContentEditor({ section, submenu }: Props) {
                 <SupabaseUploader 
                   accent={accent} 
                   buttonText="Upload Image" 
-                  onUpload={(url) => setMeta({ ...meta, hero_image_url: url })} 
+                  onUpload={(url) => {
+                    if (meta.hero_image_url) deleteFileFromStorage(meta.hero_image_url);
+                    setMeta({ ...meta, hero_image_url: url });
+                  }} 
                 />
               </div>
             )}

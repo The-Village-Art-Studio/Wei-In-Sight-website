@@ -53,6 +53,7 @@ export function useContent(sectionId: string, slug: string) {
                 title: i.title,
                 year: i.year,
                 medium: i.medium,
+                size: i.size,
                 description: i.description,
                 link: i.link
               }))
@@ -86,6 +87,7 @@ export function useContent(sectionId: string, slug: string) {
               title: i.title,
               year: i.year,
               medium: i.medium,
+              size: i.size,
               description: i.description,
               link: i.link
             }))
@@ -210,6 +212,7 @@ export function useAlbum(albumId: string) {
             title: i.title,
             year: i.year,
             medium: i.medium,
+            size: i.size,
             description: i.description,
             link: i.link
           }))

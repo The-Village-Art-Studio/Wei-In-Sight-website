@@ -1,11 +1,12 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { supabase } from '@/lib/supabase';
+import { supabase, deleteFileFromStorage } from '@/lib/supabase';
 import { Section, SubMenu } from '@/lib/constants';
 import {
-  Plus, Trash2, GripVertical, Save, Loader2, Film, Image as ImageIcon, ExternalLink
+  Plus, Trash2, GripVertical, Save, Loader2, Film, Image as ImageIcon, ExternalLink, CheckCircle
 } from 'lucide-react';
+import SupabaseUploader from './SupabaseUploader';
 
 interface CollectionItem {
   id: string;
@@ -99,11 +100,14 @@ export default function CollectionEditor({ section, submenu }: Props) {
     setSaving(null);
   };
 
-  const handleDelete = async (id: string) => {
-    if (!id.startsWith('new_')) {
-      await supabase.from('collection_items').delete().eq('id', id);
+  const handleDelete = async (item: CollectionItem) => {
+    if (window.confirm('Are you sure you want to remove this item? This will also delete the file from the server.')) {
+      if (!item.id.startsWith('new_')) {
+        await supabase.from('collection_items').delete().eq('id', item.id);
+      }
+      if (item.media_url) await deleteFileFromStorage(item.media_url);
+      setItems(prev => prev.filter(i => i.id !== item.id));
     }
-    setItems(prev => prev.filter(item => item.id !== id));
   };
 
   if (loading) {
@@ -152,7 +156,7 @@ export default function CollectionEditor({ section, submenu }: Props) {
             saving={saving === item.id}
             onUpdate={handleUpdate}
             onSave={handleSave}
-            onDelete={handleDelete}
+            onDelete={() => handleDelete(item)}
           />
         ))}
       </div>
@@ -244,6 +248,18 @@ function ItemCard({
             onChange={v => onUpdate(item.id, 'media_url', v)}
             placeholder={isVideo ? 'https://www.youtube.com/embed/...' : 'https://...'}
           />
+          {!isVideo && (
+            <div style={{ marginTop: '8px' }}>
+              <SupabaseUploader 
+                accent={accent} 
+                buttonText="Upload Image" 
+                onUpload={(url) => {
+                  if (item.media_url) deleteFileFromStorage(item.media_url);
+                  onUpdate(item.id, 'media_url', url);
+                }} 
+              />
+            </div>
+          )}
         </div>
         <FieldInput label="Title" value={item.title} onChange={v => onUpdate(item.id, 'title', v)} placeholder="e.g. Untitled No. 4" />
         <FieldInput label="Year" value={item.year} onChange={v => onUpdate(item.id, 'year', v)} placeholder="e.g. 2024" />
@@ -272,10 +288,10 @@ function ItemCard({
           }}
         >
           {saving ? <Loader2 size={12} style={{ animation: 'spin 1s linear infinite' }} /> : <Save size={12} />}
-          Save
+          {saving ? '…' : 'Save'}
         </button>
         <button
-          onClick={() => onDelete(item.id)}
+          onClick={onDelete}
           style={{
             display: 'flex',
             alignItems: 'center',

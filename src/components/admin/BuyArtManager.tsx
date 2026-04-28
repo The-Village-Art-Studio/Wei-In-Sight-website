@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
+import { supabase, deleteFileFromStorage } from '@/lib/supabase';
 import { Plus, Trash2, Save, Loader2, CheckCircle, GripVertical, ExternalLink } from 'lucide-react';
 import { FieldInput } from './PageContentEditor';
 import SupabaseUploader from './SupabaseUploader';
@@ -59,10 +59,11 @@ export default function BuyArtManager({ accent }: { accent: string }) {
     setTimeout(() => setSaved(null), 2000);
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Remove this destination?')) return;
-    if (!id.startsWith('new_')) await supabase.from('buy_art_items').delete().eq('id', id);
-    setItems(prev => prev.filter(i => i.id !== id));
+  const handleDelete = async (item: BuyArtItem) => {
+    if (!confirm('Remove this destination and its logo from the server?')) return;
+    if (!item.id.startsWith('new_')) await supabase.from('buy_art_items').delete().eq('id', item.id);
+    if (item.logo_url) await deleteFileFromStorage(item.logo_url);
+    setItems(prev => prev.filter(i => i.id !== item.id));
   };
 
   const update = (id: string, field: keyof BuyArtItem, value: string) => {
@@ -114,7 +115,10 @@ export default function BuyArtManager({ accent }: { accent: string }) {
                 <SupabaseUploader 
                   accent={accent} 
                   buttonText="Upload Logo" 
-                  onUpload={(url) => update(item.id, 'logo_url', url)} 
+                  onUpload={(url) => {
+                    if (item.logo_url) deleteFileFromStorage(item.logo_url);
+                    update(item.id, 'logo_url', url);
+                  }} 
                 />
               </div>
               <FieldInput label="Title" value={item.title} onChange={v => update(item.id, 'title', v)} placeholder="Platform Name" />
@@ -138,7 +142,7 @@ export default function BuyArtManager({ accent }: { accent: string }) {
                 {saving === item.id ? <Loader2 size={11} className="animate-spin" /> : saved === item.id ? <CheckCircle size={11} /> : <Save size={11} />}
                 {saving === item.id ? '…' : saved === item.id ? 'Saved' : 'Save'}
               </button>
-              <button onClick={() => handleDelete(item.id)} style={{
+              <button onClick={() => handleDelete(item)} style={{
                 display: 'flex', alignItems: 'center', gap: '5px', padding: '6px 11px', borderRadius: '7px',
                 background: 'rgba(239,68,68,0.07)', border: '1px solid rgba(239,68,68,0.18)', color: 'rgba(239,68,68,0.7)',
                 cursor: 'pointer', fontSize: '11px', fontFamily: 'var(--font-inter)',

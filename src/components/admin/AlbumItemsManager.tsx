@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
+import { supabase, deleteFileFromStorage } from '@/lib/supabase';
 import { Plus, Trash2, Save, Loader2, CheckCircle, GripVertical, Image as ImageIcon } from 'lucide-react';
 import { FieldInput } from './PageContentEditor';
 import SupabaseUploader from './SupabaseUploader';
@@ -55,9 +55,12 @@ export default function AlbumItemsManager({ albumId, accent }: { albumId: string
     setTimeout(() => setSaved(null), 2000);
   };
 
-  const handleDelete = async (id: string) => {
-    if (!id.startsWith('new_')) await supabase.from('album_items').delete().eq('id', id);
-    setItems(prev => prev.filter(i => i.id !== id));
+  const handleDelete = async (item: AlbumItem) => {
+    if (window.confirm('Are you sure you want to remove this image? This will also delete the file from the server.')) {
+      if (!item.id.startsWith('new_')) await supabase.from('album_items').delete().eq('id', item.id);
+      if (item.media_url) await deleteFileFromStorage(item.media_url);
+      setItems(prev => prev.filter(i => i.id !== item.id));
+    }
   };
 
   const handleDuplicate = (item: AlbumItem) => {
@@ -106,7 +109,10 @@ export default function AlbumItemsManager({ albumId, accent }: { albumId: string
                   <SupabaseUploader 
                     accent={accent} 
                     buttonText="Upload File" 
-                    onUpload={(url) => update(item.id, 'media_url', url)} 
+                    onUpload={(url) => {
+                      if (item.media_url) deleteFileFromStorage(item.media_url);
+                      update(item.id, 'media_url', url);
+                    }} 
                   />
                 </div>
               </div>
@@ -138,7 +144,7 @@ export default function AlbumItemsManager({ albumId, accent }: { albumId: string
               }}>
                 <Plus size={11} /> Duplicate
               </button>
-              <button onClick={() => handleDelete(item.id)} style={{
+              <button onClick={() => handleDelete(item)} style={{
                 display: 'flex', alignItems: 'center', gap: '5px', padding: '6px 10px', borderRadius: '7px',
                 background: 'rgba(239,68,68,0.07)', border: '1px solid rgba(239,68,68,0.18)', color: 'rgba(239,68,68,0.7)',
                 cursor: 'pointer', fontSize: '11px', fontFamily: 'var(--font-inter)',

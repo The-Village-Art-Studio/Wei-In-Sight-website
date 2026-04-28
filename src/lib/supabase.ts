@@ -21,3 +21,19 @@ export interface ContentEntry {
   status: 'draft' | 'published' | 'archived';
   created_at: string;
 }
+
+export async function deleteFileFromStorage(url: string | null | undefined) {
+  if (!url || !url.includes('/storage/v1/object/public/media/')) return;
+  
+  // Extract path: after /media/ comes the internal path
+  const parts = url.split('/storage/v1/object/public/media/');
+  const path = parts[1];
+  if (!path) return;
+
+  const { error } = await supabase.storage.from('media').remove([path]);
+  if (error) {
+    console.error('Error deleting file from storage:', error);
+  } else {
+    console.log('Successfully deleted file from storage:', path);
+  }
+}

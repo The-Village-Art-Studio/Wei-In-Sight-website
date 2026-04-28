@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
+import { supabase, deleteFileFromStorage } from '@/lib/supabase';
 import { Plus, Trash2, ChevronDown, ChevronRight, Loader2, GripVertical } from 'lucide-react';
 import { FieldInput, SaveButton } from './PageContentEditor';
 import AlbumItemsManager from './AlbumItemsManager';
@@ -49,10 +49,23 @@ export default function AlbumManager({ pageId, accent }: { pageId: string; accen
     setTimeout(() => setSaved(null), 2000);
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Delete this folder and all its images?')) return;
-    await supabase.from('albums').delete().eq('id', id);
-    setAlbums(prev => prev.filter(a => a.id !== id));
+  const handleDelete = async (album: Album) => {
+    if (window.confirm(`Are you sure you want to delete "${album.title}" and all its images from the server?`)) {
+      // 1. Get all items in this album to delete their files
+      const { data: items } = await supabase.from('album_items').select('media_url').eq('album_id', album.id);
+      
+      // 2. Delete album record (cascade will handle album_items DB records)
+      await supabase.from('albums').delete().eq('id', album.id);
+      
+      // 3. Delete files from storage
+      if (items) {
+        for (const item of items) {
+          if (item.media_url) await deleteFileFromStorage(item.media_url);
+        }
+      }
+      
+      setAlbums(prev => prev.filter(a => a.id !== album.id));
+    }
   };
 
   const handleDuplicate = async (album: Album) => {
@@ -137,7 +150,7 @@ export default function AlbumManager({ pageId, accent }: { pageId: string; accen
                   }}>
                     Duplicate
                   </button>
-                  <button onClick={(e) => { e.stopPropagation(); handleDelete(album.id); }} style={{
+                  <button onClick={(e) => { e.stopPropagation(); handleDelete(album); }} style={{
                     padding: '5px 8px', borderRadius: '6px', background: 'rgba(239,68,68,0.08)',
                     border: '1px solid rgba(239,68,68,0.2)', color: 'rgba(239,68,68,0.7)',
                     cursor: 'pointer', fontSize: '11px', fontFamily: 'var(--font-inter)',
