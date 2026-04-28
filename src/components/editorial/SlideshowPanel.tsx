@@ -173,14 +173,16 @@ export default function SlideshowPanel({ items, initialIndex, isOpen, onClose }:
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 10 }}
                   transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                  className="rounded-3xl border border-pink-500/40 py-12 flex flex-col items-start justify-center text-left w-fit h-full"
+                  className="rounded-3xl border border-pink-500/40 py-12 flex flex-col items-start justify-center text-left h-full"
                   style={{
                     background: 'rgba(15, 6, 30, 0.85)',
                     backdropFilter: 'blur(32px) saturate(250%)',
                     WebkitBackdropFilter: 'blur(32px) saturate(250%)',
                     boxShadow: '0 32px 80px rgba(0, 0, 0, 0.95), 0 0 0 1px rgba(255, 255, 255, 0.1) inset, 0 0 60px rgba(255, 105, 180, 0.2) inset',
-                    paddingLeft: '100px',
-                    paddingRight: '100px'
+                    paddingLeft: '60px',
+                    paddingRight: '60px',
+                    width: `${MAX_INFO_WIDTH}px`,
+                    maxWidth: '90vw'
                   }}
                 >
                   <div className="flex flex-col items-start gap-6 lg:gap-10 w-full">
@@ -191,7 +193,7 @@ export default function SlideshowPanel({ items, initialIndex, isOpen, onClose }:
                           fontFamily: 'var(--font-poetic)',
                           textShadow: '0 0 20px rgba(255,255,255,0.2)',
                           color: 'var(--white)',
-                          whiteSpace: 'nowrap'
+                          whiteSpace: 'normal'
                         }}
                       >
                         {currentItem?.title}
