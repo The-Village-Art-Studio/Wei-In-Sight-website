@@ -117,6 +117,9 @@ export default function FlatGalleryManager({ pageId, isVideo, accent }: {
               <FieldInput label="Year" value={item.year ?? ''} onChange={v => update(item.id, 'year', v)} />
               {!isVideo && <FieldInput label="Medium" value={item.medium ?? ''} onChange={v => update(item.id, 'medium', v)} />}
               {!isVideo && <FieldInput label="Link (optional)" value={item.link ?? ''} onChange={v => update(item.id, 'link', v)} placeholder="https://..." />}
+              <div style={{ gridColumn: '1 / -1' }}>
+                <FieldInput label="Description" value={item.description ?? ''} onChange={v => update(item.id, 'description', v)} multiline placeholder="Enter a description..." />
+              </div>
             </div>
 
             {/* Actions */}

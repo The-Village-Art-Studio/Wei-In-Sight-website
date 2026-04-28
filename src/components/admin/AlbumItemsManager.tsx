@@ -105,6 +105,9 @@ export default function AlbumItemsManager({ albumId, accent }: { albumId: string
               <div style={{ gridColumn: '1 / -1' }}>
                 <FieldInput label="Medium" value={item.medium ?? ''} onChange={v => update(item.id, 'medium', v)} />
               </div>
+              <div style={{ gridColumn: '1 / -1' }}>
+                <FieldInput label="Description" value={item.description ?? ''} onChange={v => update(item.id, 'description', v)} multiline placeholder="Enter a description..." />
+              </div>
             </div>
 
             {/* Actions */}
