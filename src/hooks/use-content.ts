@@ -188,11 +188,20 @@ export function useAlbum(albumId: string) {
     async function fetchAlbum() {
       if (!albumId) return;
       setLoading(true);
-      const { data: albumData } = await supabase
-        .from('albums')
-        .select('*')
-        .eq('id', albumId)
-        .single();
+      
+      // Try fetching by ID first (UUID) or Slug
+      let query = supabase.from('albums').select('*');
+      
+      // Check if it's a UUID or a slug
+      const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(albumId);
+      
+      if (isUUID) {
+        query = query.eq('id', albumId);
+      } else {
+        query = query.eq('slug', albumId);
+      }
+
+      const { data: albumData } = await query.single();
 
       if (albumData) {
         const { data: items } = await supabase

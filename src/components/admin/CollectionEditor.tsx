@@ -14,6 +14,7 @@ interface CollectionItem {
   media_url: string;
   year: string;
   medium: string;
+  size: string;
   sort_order: number;
 }
 
@@ -66,6 +67,7 @@ export default function CollectionEditor({ section, submenu }: Props) {
       media_url: '',
       year: '',
       medium: '',
+      size: '',
       sort_order: items.length,
     };
     setItems(prev => [...prev, newItem]);
@@ -85,6 +87,7 @@ export default function CollectionEditor({ section, submenu }: Props) {
       media_url: item.media_url,
       year: item.year,
       medium: item.medium,
+      size: item.size,
       sort_order: item.sort_order,
     };
 
@@ -264,6 +267,7 @@ function ItemCard({
         <FieldInput label="Title" value={item.title} onChange={v => onUpdate(item.id, 'title', v)} placeholder="e.g. Untitled No. 4" />
         <FieldInput label="Year" value={item.year} onChange={v => onUpdate(item.id, 'year', v)} placeholder="e.g. 2024" />
         {!isVideo && <FieldInput label="Medium" value={item.medium} onChange={v => onUpdate(item.id, 'medium', v)} placeholder="e.g. Oil on Canvas" />}
+        {!isVideo && <FieldInput label="Size (optional)" value={item.size ?? ''} onChange={v => onUpdate(item.id, 'size', v)} placeholder="e.g. 24x36 inches" />}
       </div>
 
       {/* Actions */}

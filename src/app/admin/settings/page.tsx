@@ -205,6 +205,7 @@ export default function SettingsPage() {
                 media_url: item.url,
                 year: item.year || null,
                 medium: item.medium || null,
+                size: (item as any).size || null,
                 sort_order: idx
               }));
               await supabase.from('album_items').insert(itemsToInsert);
@@ -223,6 +224,7 @@ export default function SettingsPage() {
             media_url: item.url,
             year: item.year || null,
             medium: item.medium || null,
+            size: (item as any).size || null,
             sort_order: idx
           }));
           await supabase.from('page_gallery_items').insert(itemsToInsert);

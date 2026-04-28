@@ -63,7 +63,7 @@ export default function SlideshowPanel({ items, initialIndex, isOpen, onClose }:
 
   // Layout Constants (Maximums)
   const MAX_IMAGE_SIZE = 650;
-  const MAX_INFO_WIDTH = 500;
+  const MAX_INFO_WIDTH = 560;
   const GAP = 48;
 
   return (
@@ -182,6 +182,7 @@ export default function SlideshowPanel({ items, initialIndex, isOpen, onClose }:
                     paddingLeft: '60px',
                     paddingRight: '60px',
                     width: `${MAX_INFO_WIDTH}px`,
+                    minWidth: `${MAX_INFO_WIDTH}px`,
                     maxWidth: '90vw'
                   }}
                 >
@@ -205,7 +206,7 @@ export default function SlideshowPanel({ items, initialIndex, isOpen, onClose }:
                         {currentItem?.size && (
                           <>
                             <span className="w-1 h-1 rounded-full bg-white/20" />
-                            <span className="text-white/40">{currentItem.size}</span>
+                            <span className="text-white/60">{currentItem.size}</span>
                           </>
                         )}
                       </div>

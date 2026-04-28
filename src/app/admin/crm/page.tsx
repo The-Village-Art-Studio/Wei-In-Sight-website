@@ -17,6 +17,7 @@ interface Inquiry {
   won_lost: boolean | null;
   follow_up_needed: boolean;
   created_at: string;
+  media_url?: string;
 }
 
 const STATUS_COLORS: Record<string, string> = {
@@ -92,8 +93,6 @@ export default function CRMPage() {
     if (!confirm('Are you sure you want to permanently delete this inquiry?')) return;
     
     const inquiry = inquiries.find(i => i.id === id);
-    // Future proofing for lead attachments
-    // @ts-ignore
     if (inquiry?.media_url) await deleteFileFromStorage(inquiry.media_url);
 
     await supabase.from('inquiries').delete().eq('id', id);
