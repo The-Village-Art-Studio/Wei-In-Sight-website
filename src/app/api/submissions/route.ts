@@ -34,7 +34,8 @@ export async function POST(req: Request) {
           email: validatedData.email,
           phone: validatedData.phone,
           budget: validatedData.budget,
-          project_type: validatedData.project_type || validatedData.subject,
+          project_type: validatedData.project_type,
+          subject: validatedData.subject,
           message: validatedData.message,
           status: 'new'
         }
