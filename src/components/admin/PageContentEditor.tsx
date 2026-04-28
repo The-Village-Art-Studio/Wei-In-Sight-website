@@ -21,7 +21,7 @@ interface PageMeta {
 // Pages with nested album folders
 const ALBUM_PAGES = ['paintings', 'photography', 'sculpture', 'collections', 'mixed-media', 'material-experiments', 'watchmaking', 'fashion'];
 // Pages with flat gallery items
-const GALLERY_PAGES = ['music-archive', 'audio-visual-work', 'poems', 'lyrics', 'novels', 'quotes', 'journey'];
+const GALLERY_PAGES = ['music-archive', 'audio-visual-work', 'poems', 'lyrics', 'novels', 'quotes', 'journey', 'streaming-platforms', 'philosophy'];
 // Video pages (YouTube URLs)
 const VIDEO_PAGES = ['audio-visual-work'];
 // Special pages with unique editors

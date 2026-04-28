@@ -123,9 +123,14 @@ export default function FlatGalleryManager({ pageId, isVideo, accent }: {
                       buttonText="Upload File" 
                       onUpload={(url) => {
                         if (item.media_url) deleteFileFromStorage(item.media_url);
+                        const updatedItem = { ...item, media_url: url };
                         update(item.id, 'media_url', url);
+                        handleSave(updatedItem);
                       }} 
                     />
+                    <span style={{ marginLeft: '8px', fontSize: '10px', color: 'rgba(255,255,255,0.25)', fontStyle: 'italic' }}>
+                      Auto-saves after upload
+                    </span>
                   </div>
                 )}
               </div>

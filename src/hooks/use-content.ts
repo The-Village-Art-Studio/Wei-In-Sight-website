@@ -139,11 +139,16 @@ export function useContent(sectionId: string, slug: string) {
         const staticContent = MOCK_CONTENT[`${sectionId}/${slug}`];
         
         // Filter out blocks from staticContent that we are going to replace with DB data
+        // ONLY if we actually have data from the DB to replace it with
+        const hasGallery = galleryData && galleryData.length > 0;
+        const hasExhibitions = exhibitionsData && exhibitionsData.length > 0;
+        const hasBuyArt = buyData && buyData.length > 0;
+
         const preserveBlocks = staticContent?.blocks?.filter(b => {
-          if (b.type === 'gallery' || b.type === 'video-gallery') return false;
-          if (b.type === 'exhibition-list') return false;
-          if (b.type === 'profile-photo') return false;
-          if (b.type === 'logo-grid' && slug === 'buy-art') return false;
+          if (b.type === 'gallery' || b.type === 'video-gallery') return !hasGallery;
+          if (b.type === 'exhibition-list') return !hasExhibitions;
+          if (b.type === 'logo-grid' && slug === 'buy-art') return !hasBuyArt;
+          if (b.type === 'profile-photo') return false; // Profile photo is always handled separately or replaced
           return true;
         }) || [];
 
@@ -161,8 +166,8 @@ export function useContent(sectionId: string, slug: string) {
             ...blocks.filter(b => b.type !== 'profile-photo')
           ],
           // If the DB has albums, use them. Otherwise fallback to static albums to prevent blank pages
-          // Or if they initialized it but it's empty, we should probably show empty, but for safety we fallback
-          albums: albums.length > 0 ? albums : staticContent?.albums
+          // If we have AT LEAST ONE album in the DB, we consider the DB the source of truth for albums
+          albums: (albums.length > 0) ? albums : (staticContent?.albums || [])
         });
       } catch (err) {
         console.error('Error fetching content:', err);

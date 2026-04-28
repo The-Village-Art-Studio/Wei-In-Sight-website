@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { supabase, deleteFileFromStorage } from '@/lib/supabase';
 import { Loader2, Mail, Briefcase, Archive, Clock, TrendingUp, TrendingDown, MessageSquare, AlertCircle, CheckCircle2, StickyNote, Search, Trash2, Edit2, Save, X } from 'lucide-react';
+import CRMMetadataEditor from '@/components/admin/CRMMetadataEditor';
 
 interface Inquiry {
   id: string;
@@ -226,6 +227,9 @@ export default function CRMPage() {
           </button>
         ))}
       </div>
+
+      {/* Page Hero & Metadata Editor */}
+      <CRMMetadataEditor slug={view} />
 
       {/* ─── Metrics strip ─── */}
       {view === 'commissions' ? (
