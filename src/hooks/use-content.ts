@@ -137,13 +137,13 @@ export function useContent(sectionId: string, slug: string) {
         const staticContent = MOCK_CONTENT[`${sectionId}/${slug}`];
         
         // Filter out blocks from staticContent that we are going to replace with DB data
-        const preserveBlocks = staticContent?.blocks?.filter(b => 
-          b.type !== 'gallery' && 
-          b.type !== 'video-gallery' && 
-          b.type !== 'exhibition-list' && 
-          b.type !== 'logo-grid' &&
-          b.type !== 'profile-photo'
-        ) || [];
+        const preserveBlocks = staticContent?.blocks?.filter(b => {
+          if (b.type === 'gallery' || b.type === 'video-gallery') return false;
+          if (b.type === 'exhibition-list') return false;
+          if (b.type === 'profile-photo') return false;
+          if (b.type === 'logo-grid' && slug === 'buy-art') return false;
+          return true;
+        }) || [];
 
         setContent({
           id: pageData.id,
