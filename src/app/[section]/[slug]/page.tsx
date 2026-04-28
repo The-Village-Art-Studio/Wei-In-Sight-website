@@ -252,13 +252,15 @@ export default function ContentPage() {
         }
         .hero-image-container {
           width: 100%;
-          max-height: 400px;
+          aspect-ratio: 21 / 9;
           overflow: hidden;
           position: relative;
+          border-radius: 4px; /* Slight rounding for polish */
+          box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
         .hero-image {
           width: 100%;
-          height: auto;
+          height: 100%;
           object-fit: cover;
           display: block;
         }

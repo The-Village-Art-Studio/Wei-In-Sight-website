@@ -194,8 +194,9 @@ export default function PageContentEditor({ section, submenu }: Props) {
                 ) : (
                   /* Rectangular hero cover preview */
                   <div style={{
-                    flex: 1,
-                    height: '160px',
+                    width: '100%',
+                    maxWidth: '400px',
+                    aspectRatio: '21 / 9',
                     borderRadius: '10px',
                     overflow: 'hidden',
                     border: '1px solid rgba(255,255,255,0.08)',
@@ -273,7 +274,7 @@ export default function PageContentEditor({ section, submenu }: Props) {
       {showCropper && meta?.hero_image_url && (
         <ImageCropper
           imageSrc={meta.hero_image_url.split('?')[0]}
-          aspect={isAbout ? 1 : 16 / 9}
+          aspect={isAbout ? 1 : 21 / 9}
           cropShape={isAbout ? 'round' : 'rect'}
           onCropComplete={(dataUrl) => {
             setMeta({ ...meta, hero_image_url: dataUrl });
