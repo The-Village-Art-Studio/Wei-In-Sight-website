@@ -74,12 +74,12 @@ export default function ContentPage() {
       <SectionHero section={section} compact />
 
       <article className="content-container">
-        {content?.heroImage && slug !== 'about' && (
+        {content?.heroImage && slug !== 'about' ? (
           <motion.div 
             initial={{ opacity: 0, scale: 1.02 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-            className="page-hero"
+            className="page-hero-section"
           >
             <div className="hero-image-container">
               <img 
@@ -88,13 +88,18 @@ export default function ContentPage() {
                 className="hero-image"
               />
             </div>
+            
+            <header className="page-header">
+              <h2 className="hero-title">{content?.title || activeSubmenu.label}</h2>
+              {content?.subtitle && <p className="hero-subtitle">{content.subtitle}</p>}
+            </header>
           </motion.div>
+        ) : (
+          <header className="page-header no-hero">
+            <h2 className="hero-title">{content?.title || activeSubmenu.label}</h2>
+            {content?.subtitle && <p className="hero-subtitle">{content.subtitle}</p>}
+          </header>
         )}
-
-        <header className="page-header">
-          <h2 className="text-xl">{content?.title || activeSubmenu.label}</h2>
-          {content?.subtitle && <p className="text-small opacity-50">{content.subtitle}</p>}
-        </header>
 
         <div className="content-blocks">
           {useAlbumLayout ? (
@@ -244,19 +249,19 @@ export default function ContentPage() {
           }
         }
 
-        .page-hero {
+        .page-hero-section {
           margin-bottom: var(--spacing-l);
           width: 100%;
-          overflow: hidden;
-          background: rgba(255, 255, 255, 0.02);
+          position: relative;
         }
         .hero-image-container {
           width: 100%;
           aspect-ratio: 21 / 9;
           overflow: hidden;
           position: relative;
-          border-radius: 4px; /* Slight rounding for polish */
+          border-radius: 4px;
           box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+          margin-bottom: var(--spacing-m);
         }
         .hero-image {
           width: 100%;
@@ -309,10 +314,25 @@ export default function ContentPage() {
         .page-header {
           margin-bottom: var(--spacing-l);
         }
-        .page-header h2 {
+        .page-header.no-hero {
+          margin-top: var(--spacing-m);
+        }
+        .hero-title {
+          font-size: clamp(1.5rem, 4vw, 2.75rem);
+          font-family: var(--font-poetic);
           text-transform: none;
-          letter-spacing: 0.05em;
-          margin-bottom: 4px;
+          letter-spacing: 0.02em;
+          margin-bottom: 8px;
+          line-height: 1.1;
+          color: #fff;
+        }
+        .hero-subtitle {
+          font-size: 1rem;
+          opacity: 0.5;
+          max-width: 600px;
+          line-height: 1.6;
+          font-family: var(--font-main);
+          letter-spacing: 0.01em;
         }
         
         .content-blocks {

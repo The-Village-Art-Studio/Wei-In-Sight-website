@@ -28,7 +28,7 @@ const VIDEO_PAGES = ['audio-visual-work'];
 const ABOUT_PAGE = 'about';
 const BUY_ART_PAGE = 'buy-art';
 // Pages that skip the metadata editor entirely
-const SKIP_META_PAGES = ['commissions', 'contact', 'streaming-platforms', 'philosophy', 'exhibitions-features'];
+const SKIP_META_PAGES: string[] = [];
 
 interface Props {
   section: Section;
