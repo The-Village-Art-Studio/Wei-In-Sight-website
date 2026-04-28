@@ -26,7 +26,6 @@ const itemVariants: Variants = {
   }
 };
 
-import { useContent } from '@/hooks/use-content';
 
 export default function ContentPage() {
   const { section: sectionId, slug } = useParams();

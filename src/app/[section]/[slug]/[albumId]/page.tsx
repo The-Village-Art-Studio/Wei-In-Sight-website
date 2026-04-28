@@ -10,7 +10,6 @@ import SectionHero from '@/components/editorial/SectionHero';
 import { useState } from 'react';
 import SlideshowPanel from '@/components/editorial/SlideshowPanel';
 
-import { useContent, useAlbum } from '@/hooks/use-content';
 
 export default function AlbumGalleryPage() {
   const { section: sectionId, slug, albumId } = useParams();
