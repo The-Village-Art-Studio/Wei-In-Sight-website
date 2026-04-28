@@ -27,16 +27,16 @@ export default function AlbumGalleryPage() {
   const [slideshowOpen, setSlideshowOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
 
-  if (!section || !content || (!dbLoading && !albumLoading && !album)) {
-    notFound();
-  }
-
   if (dbLoading || albumLoading) {
     return (
       <div className="flex items-center justify-center h-[60vh]">
         <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-pink-500"></div>
       </div>
     );
+  }
+
+  if (!section || !content || !album) {
+    notFound();
   }
 
   const openSlideshow = (index: number) => {

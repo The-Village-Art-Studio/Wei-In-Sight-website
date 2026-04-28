@@ -3,7 +3,7 @@ import { Resend } from 'resend';
 import { supabase } from '@/lib/supabase';
 import { z } from 'zod';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+
 
 // Validation schema for the unified submission
 const submissionSchema = z.object({
@@ -22,6 +22,7 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
     const validatedData = submissionSchema.parse(body);
+    const resend = new Resend(process.env.RESEND_API_KEY || 'missing_key');
 
     // 1. Store in Supabase
     const { data: dbData, error: dbError } = await supabase
