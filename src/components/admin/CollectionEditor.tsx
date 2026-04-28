@@ -291,7 +291,7 @@ function ItemCard({
           {saving ? '…' : 'Save'}
         </button>
         <button
-          onClick={onDelete}
+          onClick={() => onDelete(item.id)}
           style={{
             display: 'flex',
             alignItems: 'center',
