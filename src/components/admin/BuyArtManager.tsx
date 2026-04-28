@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Plus, Trash2, Save, Loader2, CheckCircle, GripVertical, ExternalLink } from 'lucide-react';
 import { FieldInput } from './PageContentEditor';
+import SupabaseUploader from './SupabaseUploader';
 
 interface BuyArtItem {
   id: string;
@@ -108,7 +109,14 @@ export default function BuyArtManager({ accent }: { accent: string }) {
 
             {/* Fields */}
             <div style={{ flex: 1, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
-              <FieldInput label="Logo URL" value={item.logo_url} onChange={v => update(item.id, 'logo_url', v)} placeholder="/assets/logo.png" />
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                <FieldInput label="Logo URL" value={item.logo_url} onChange={v => update(item.id, 'logo_url', v)} placeholder="/assets/logo.png" />
+                <SupabaseUploader 
+                  accent={accent} 
+                  buttonText="Upload Logo" 
+                  onUpload={(url) => update(item.id, 'logo_url', url)} 
+                />
+              </div>
               <FieldInput label="Title" value={item.title} onChange={v => update(item.id, 'title', v)} placeholder="Platform Name" />
               <div style={{ gridColumn: '1 / -1' }}>
                 <FieldInput label="Description" value={item.description ?? ''} onChange={v => update(item.id, 'description', v)} multiline placeholder="Short description..." />

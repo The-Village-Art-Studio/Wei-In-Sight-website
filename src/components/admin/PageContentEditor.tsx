@@ -7,6 +7,7 @@ import { Loader2, Save, CheckCircle, Crop } from 'lucide-react';
 import AlbumManager from './AlbumManager';
 import FlatGalleryManager from './FlatGalleryManager';
 import BuyArtManager from './BuyArtManager';
+import SupabaseUploader from './SupabaseUploader';
 import ImageCropper from './ImageCropper';
 import { Area } from 'react-easy-crop';
 
@@ -173,7 +174,7 @@ export default function PageContentEditor({ section, submenu }: Props) {
               onChange={v => setMeta({ ...meta, hero_image_url: v })}
             />
 
-            {/* Image Preview + Crop Button */}
+            {/* Image Preview + Buttons */}
             {meta.hero_image_url && (
               <div style={{ display: 'flex', gap: '14px', alignItems: 'flex-start' }}>
                 {isAbout ? (
@@ -204,26 +205,43 @@ export default function PageContentEditor({ section, submenu }: Props) {
                   </div>
                 )}
 
-                <button onClick={() => setShowCropper(true)} style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  padding: '8px 14px',
-                  borderRadius: '8px',
-                  background: 'rgba(255,255,255,0.04)',
-                  border: '1px solid rgba(255,255,255,0.1)',
-                  color: 'rgba(255,255,255,0.55)',
-                  cursor: 'pointer',
-                  fontSize: '11px',
-                  fontFamily: 'var(--font-inter)',
-                  whiteSpace: 'nowrap',
-                }}>
-                  <Crop size={13} /> Scale & Crop
-                </button>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <SupabaseUploader 
+                    accent={accent} 
+                    buttonText="Upload New Image" 
+                    onUpload={(url) => setMeta({ ...meta, hero_image_url: url })} 
+                  />
+                  
+                  <button onClick={() => setShowCropper(true)} style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    padding: '8px 14px',
+                    borderRadius: '8px',
+                    background: 'rgba(255,255,255,0.04)',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    color: 'rgba(255,255,255,0.55)',
+                    cursor: 'pointer',
+                    fontSize: '11px',
+                    fontFamily: 'var(--font-inter)',
+                    whiteSpace: 'nowrap',
+                  }}>
+                    <Crop size={13} /> Scale & Crop
+                  </button>
+                </div>
+              </div>
+            )}
+            {!meta.hero_image_url && (
+              <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
+                <SupabaseUploader 
+                  accent={accent} 
+                  buttonText="Upload Image" 
+                  onUpload={(url) => setMeta({ ...meta, hero_image_url: url })} 
+                />
               </div>
             )}
 
-            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px' }}>
               <SaveButton saving={saving} saved={saved} accent={accent} onClick={handleSaveMeta} />
             </div>
           </div>

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Plus, Trash2, Save, Loader2, CheckCircle, GripVertical, Image as ImageIcon, Film } from 'lucide-react';
 import { FieldInput } from './PageContentEditor';
+import SupabaseUploader from './SupabaseUploader';
 
 interface GalleryItem {
   id: string;
@@ -102,6 +103,15 @@ export default function FlatGalleryManager({ pageId, isVideo, accent }: {
                   onChange={v => update(item.id, 'media_url', v)}
                   placeholder={isVideo ? 'https://www.youtube.com/embed/...' : 'https://...'}
                 />
+                {!isVideo && (
+                  <div style={{ marginTop: '6px' }}>
+                    <SupabaseUploader 
+                      accent={accent} 
+                      buttonText="Upload File" 
+                      onUpload={(url) => update(item.id, 'media_url', url)} 
+                    />
+                  </div>
+                )}
               </div>
               <FieldInput label="Title" value={item.title ?? ''} onChange={v => update(item.id, 'title', v)} />
               <FieldInput label="Year" value={item.year ?? ''} onChange={v => update(item.id, 'year', v)} />

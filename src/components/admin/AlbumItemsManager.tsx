@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Plus, Trash2, Save, Loader2, CheckCircle, GripVertical, Image as ImageIcon } from 'lucide-react';
 import { FieldInput } from './PageContentEditor';
+import SupabaseUploader from './SupabaseUploader';
 
 interface AlbumItem {
   id: string;
@@ -91,6 +92,13 @@ export default function AlbumItemsManager({ albumId, accent }: { albumId: string
             <div style={{ flex: 1, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
               <div style={{ gridColumn: '1 / -1' }}>
                 <FieldInput label="Image URL" value={item.media_url} onChange={v => update(item.id, 'media_url', v)} placeholder="https://..." />
+                <div style={{ marginTop: '6px' }}>
+                  <SupabaseUploader 
+                    accent={accent} 
+                    buttonText="Upload File" 
+                    onUpload={(url) => update(item.id, 'media_url', url)} 
+                  />
+                </div>
               </div>
               <FieldInput label="Title" value={item.title ?? ''} onChange={v => update(item.id, 'title', v)} />
               <FieldInput label="Year" value={item.year ?? ''} onChange={v => update(item.id, 'year', v)} />
