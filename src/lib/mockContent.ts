@@ -67,9 +67,9 @@ export const MOCK_CONTENT: Record<string, DeepContent> = {
     subtitle: 'A series of atmospheric oil abstractions exploring memory and spatial resonance.',
     heroImage: '/assets/art/sight_paintings_hero_1776626955531.png',
     blocks: [
-      { 
-        type: 'text', 
-        content: `### TEXTURE OF MEMORY\n\nThese works represent a five-year exploration of sensory memory. Each stroke is a translation of a specific moment in time—a vibration captured through heavy impasto and gold leaf.` 
+      {
+        type: 'text',
+        content: `### TEXTURE OF MEMORY\n\nThese works represent a five-year exploration of sensory memory. Each stroke is a translation of a specific moment in time—a vibration captured through heavy impasto and gold leaf.`
       }
     ],
     albums: [
@@ -130,9 +130,9 @@ export const MOCK_CONTENT: Record<string, DeepContent> = {
     subtitle: 'High-contrast studies of brutalist geometry and the play of light.',
     heroImage: '/assets/art/sight_photography_preview_1776626984989.png',
     blocks: [
-      { 
-        type: 'text', 
-        content: `### THE VOID BEYOND\n\nPhotography, for me, is an exercise in subtractive composition.` 
+      {
+        type: 'text',
+        content: `### THE VOID BEYOND\n\nPhotography, for me, is an exercise in subtractive composition.`
       }
     ],
     albums: [
@@ -166,9 +166,9 @@ export const MOCK_CONTENT: Record<string, DeepContent> = {
     subtitle: 'Brutalist mixed media forms exploring the tension between glass and steel.',
     heroImage: '/assets/art/sight_sculpture_preview_1776627004575.png',
     blocks: [
-      { 
-        type: 'text', 
-        content: `### TACTILE BRUTALISM\n\nMy sculptures are physical manifestations of internal friction.` 
+      {
+        type: 'text',
+        content: `### TACTILE BRUTALISM\n\nMy sculptures are physical manifestations of internal friction.`
       }
     ],
     albums: [
@@ -201,9 +201,9 @@ export const MOCK_CONTENT: Record<string, DeepContent> = {
     subtitle: 'Curated series of digital artifacts and mixed media studies.',
     heroImage: '/assets/art/sight_collections_preview_1776627027864.png',
     blocks: [
-      { 
-        type: 'text', 
-        content: `### THE CREATIVE ATLAS\n\nCollections represent the connective tissue between my disparate disciplines.` 
+      {
+        type: 'text',
+        content: `### THE CREATIVE ATLAS\n\nCollections represent the connective tissue between my disparate disciplines.`
       }
     ],
     albums: [
@@ -237,26 +237,26 @@ export const MOCK_CONTENT: Record<string, DeepContent> = {
     subtitle: 'Where to experience my cinematic soundscapes and audio explorations.',
     heroImage: '/assets/art/sight_photography_preview_1776626984989.png',
     blocks: [
-      { 
-        type: 'logo-grid', 
+      {
+        type: 'logo-grid',
         logoItems: [
-          { 
-            logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/8/84/Spotify_icon.svg', 
-            title: 'Spotify', 
+          {
+            logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/8/84/Spotify_icon.svg',
+            title: 'Spotify',
             description: "Stream my latest conceptual soundscapes, original albums, and immersive audio explorations.",
             link: 'https://open.spotify.com/artist/4DebGnDY4FnrE3cy6PrWWK?si=GohtblluTIeLIvGUnB-etQ',
             preserveColor: true
           },
-          { 
-            logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/f/f8/Apple_Music_icon_iOS_26.svg', 
-            title: 'Apple Music', 
+          {
+            logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/f/f8/Apple_Music_icon_iOS_26.svg',
+            title: 'Apple Music',
             description: "Find my entire discography and narratively-driven scores in high-fidelity spatial audio.",
             link: 'https://music.apple.com/ca/artist/the-prof/1733168743',
             preserveColor: true
           },
-          { 
-            logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/b/b0/YouTube_Music_icon_2024.svg', 
-            title: 'YouTube Music', 
+          {
+            logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/b/b0/YouTube_Music_icon_2024.svg',
+            title: 'YouTube Music',
             description: "A centralized hub to watch my audio-visual projects and listen to my official track releases.",
             link: 'https://music.youtube.com/channel/UCfG9SAkCC8sNDAKV5qbOSZA?si=-gBjmrbJhLyaCCia',
             preserveColor: true
@@ -743,29 +743,29 @@ export const MOCK_CONTENT: Record<string, DeepContent> = {
       {
         type: 'exhibition-list',
         exhibitionItems: [
-          { 
-            title: 'The Great Outdoors by Northern Contemporary Gallery', 
-            location: 'Toronto, Canada', 
-            year: '2026' 
+          {
+            title: 'The Great Outdoors by Northern Contemporary Gallery',
+            location: 'Toronto, Canada',
+            year: '2026'
           },
-          { 
-            title: 'Miami Art Weeks 2025', 
-            location: 'Miami, USA', 
-            year: '2025' 
+          {
+            title: 'Miami Art Weeks 2025',
+            location: 'Miami, USA',
+            year: '2025'
           },
-          { 
-            title: 'Trace by PDA at Avant Garde Gallery', 
-            location: 'Toronto, Canada', 
-            year: '2025' 
+          {
+            title: 'Trace by PDA at Avant Garde Gallery',
+            location: 'Toronto, Canada',
+            year: '2025'
           },
-          { 
-            title: 'Natalie Solo Show by La Gloria Mexican Coffee', 
-            location: 'Toronto, Canada', 
-            year: '2025' 
+          {
+            title: 'Natalie Solo Show by La Gloria Mexican Coffee',
+            location: 'Toronto, Canada',
+            year: '2025'
           },
-          { 
-            title: 'Featured Artist in 101 Artbook Landscape Edition by Arts to Hearts Magazine', 
-            location: 'Worldwide', 
+          {
+            title: 'Featured Artist in 101 Artbook Landscape Edition by Arts to Hearts Magazine',
+            location: 'Worldwide',
             year: '2025',
             isAward: true
           }
@@ -780,9 +780,9 @@ export const MOCK_CONTENT: Record<string, DeepContent> = {
     title: 'Philosophy',
     subtitle: 'The inner compass of a multidisciplinary search.',
     blocks: [
-      { 
-        type: 'text', 
-        content: `### THE MANIFESTO OF TRACE\n\nArt is not a search for decoration or a pursuit of perfection. It is a form of truth-telling—a way to leave a human trace in a world that often moves too fast to feel. \n\nCreative expression is an act of translation, giving form to the invisible threads of memory, emotion, and presence. It is the bridge between the silent inner world and the visible outer one.` 
+      {
+        type: 'text',
+        content: `### THE MANIFESTO OF TRACE\n\nArt is not a search for decoration or a pursuit of perfection. It is a form of truth-telling—a way to leave a human trace in a world that often moves too fast to feel. \n\nCreative expression is an act of translation, giving form to the invisible threads of memory, emotion, and presence. It is the bridge between the silent inner world and the visible outer one.`
       },
       {
         type: 'pillar-grid',
@@ -817,8 +817,8 @@ export const MOCK_CONTENT: Record<string, DeepContent> = {
         type: 'dna-section',
         caption: 'CREATIVE DNA',
         dnaItems: [
-          'Science Fiction', 'Cinema', 'Romance', 'Migration', 'Memory', 
-          'Craftsmanship', 'Everyday Tenderness', 'Emotional Aftermath', 
+          'Science Fiction', 'Cinema', 'Romance', 'Migration', 'Memory',
+          'Craftsmanship', 'Everyday Tenderness', 'Emotional Aftermath',
           'Material Experimentation', 'Time', 'Human Connection'
         ]
       },
@@ -911,25 +911,25 @@ export const MOCK_CONTENT: Record<string, DeepContent> = {
       {
         type: 'logo-grid',
         logoItems: [
-          { 
-            logoUrl: '/assets/artrewards-logo.png', 
-            title: 'ArtRewards', 
-            description: "Discover curated physical editions and exclusive prints of my visual works available for collectors." 
+          {
+            logoUrl: '/assets/artrewards-logo.png',
+            title: 'ArtRewards',
+            description: "Discover curated physical editions and exclusive prints of my visual works available for collectors."
           },
-          { 
-            logoUrl: '/assets/artsy-logo.png', 
-            title: 'Artsy', 
-            description: "Access my larger fine art pieces and high-end works through global gallery partners and auctions." 
+          {
+            logoUrl: '/assets/artsy-logo.png',
+            title: 'Artsy',
+            description: "Access my larger fine art pieces and high-end works through global gallery partners and auctions."
           },
-          { 
-            logoUrl: '/assets/helloart-logo.png', 
-            title: 'HelloArt', 
-            description: "Encounter my work in person at various high-traffic professional venues and galleries across North America." 
+          {
+            logoUrl: '/assets/helloart-logo.png',
+            title: 'HelloArt',
+            description: "Encounter my work in person at various high-traffic professional venues and galleries across North America."
           },
-          { 
-            logoUrl: '/assets/righttime-logo.png', 
-            title: 'Right Time', 
-            description: "Explore my horological collaborations where art meets precision in exclusive Swiss-made collections." 
+          {
+            logoUrl: '/assets/righttime-logo.png',
+            title: 'Right Time',
+            description: "Explore my horological collaborations where art meets precision in exclusive Swiss-made collections."
           }
         ]
       }
@@ -939,7 +939,7 @@ export const MOCK_CONTENT: Record<string, DeepContent> = {
     id: 'p3',
     slug: 'commissions',
     sectionId: 'pulse',
-    title: 'Sound Commissions',
+    title: 'Commissions',
     subtitle: 'Secure a custom-crafted audio experience for your vision.',
     heroImage: '/assets/art/sight_sculpture_preview_1776627004575.png',
     blocks: [
