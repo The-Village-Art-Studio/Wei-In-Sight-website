@@ -1,9 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
+import { supabase, deleteFileFromStorage } from '@/lib/supabase';
 import { Loader2, Save, CheckCircle, Globe, Mail, Music, Link as LinkIcon, Video, KeyRound, Type, ImageIcon, Database } from 'lucide-react';
 import { MOCK_CONTENT } from '@/lib/mockContent';
+import SupabaseUploader from '../SupabaseUploader';
 
 interface SiteSettings {
   id: string;
@@ -341,8 +342,28 @@ export default function SettingsPage() {
             <SettingsField label="Site Subtitle" value={settings.site_subtitle ?? ''} onChange={v => update('site_subtitle', v)} placeholder="The creative atlas…" />
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
-            <SettingsField label="Favicon URL" value={settings.favicon_url ?? ''} onChange={v => update('favicon_url', v)} placeholder="/favicon.ico" icon={<ImageIcon size={13} />} />
-            <SettingsField label="Brand Wordmark URL" value={settings.brand_wordmark_url ?? ''} onChange={v => update('brand_wordmark_url', v)} placeholder="/assets/wordmark.svg" icon={<ImageIcon size={13} />} />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <SettingsField label="Favicon URL" value={settings.favicon_url ?? ''} onChange={v => update('favicon_url', v)} placeholder="/favicon.ico" icon={<ImageIcon size={13} />} />
+              <SupabaseUploader 
+                accent="#ff69b4" 
+                buttonText="Upload Favicon" 
+                onUpload={(url) => {
+                  if (settings.favicon_url) deleteFileFromStorage(settings.favicon_url);
+                  update('favicon_url', url);
+                }} 
+              />
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <SettingsField label="Brand Wordmark URL" value={settings.brand_wordmark_url ?? ''} onChange={v => update('brand_wordmark_url', v)} placeholder="/assets/wordmark.svg" icon={<ImageIcon size={13} />} />
+              <SupabaseUploader 
+                accent="#ff69b4" 
+                buttonText="Upload Wordmark" 
+                onUpload={(url) => {
+                  if (settings.brand_wordmark_url) deleteFileFromStorage(settings.brand_wordmark_url);
+                  update('brand_wordmark_url', url);
+                }} 
+              />
+            </div>
           </div>
         </SettingsSection>
 

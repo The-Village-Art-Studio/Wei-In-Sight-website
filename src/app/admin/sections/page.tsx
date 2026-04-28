@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { Save, Image as ImageIcon, Loader2 } from 'lucide-react';
-import { supabase } from '@/lib/supabase';
+import { supabase, deleteFileFromStorage } from '@/lib/supabase';
+import SupabaseUploader from '../SupabaseUploader';
 
 interface Section {
   id: string;
@@ -166,16 +167,26 @@ export default function SectionsEditorPage() {
                   onChange={(e) => setActiveSection({...activeSection, hero_image_url: e.target.value})}
                   className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-pink-500/50 focus:ring-1 focus:ring-pink-500/50 transition-all mb-4"
                 />
-                <div className="aspect-[4/5] w-full bg-white/5 border-2 border-dashed border-white/10 rounded-xl flex flex-col items-center justify-center hover:border-pink-500/50 hover:bg-pink-500/5 transition-all cursor-pointer group overflow-hidden relative">
-                  {activeSection.hero_image_url ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={activeSection.hero_image_url} alt="Cover" className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity" />
-                  ) : (
-                    <>
-                      <ImageIcon className="w-8 h-8 text-white/20 group-hover:text-pink-400 transition-colors mb-3" />
-                      <span className="text-sm text-white/50 group-hover:text-white transition-colors">Enter an image URL above</span>
-                    </>
-                  )}
+                <div className="space-y-4">
+                  <SupabaseUploader 
+                    accent="#ff69b4" 
+                    buttonText="Upload New Hero" 
+                    onUpload={(url) => {
+                      if (activeSection.hero_image_url) deleteFileFromStorage(activeSection.hero_image_url);
+                      setActiveSection({...activeSection, hero_image_url: url});
+                    }} 
+                  />
+                  <div className="aspect-[4/5] w-full bg-white/5 border-2 border-dashed border-white/10 rounded-xl flex flex-col items-center justify-center transition-all group overflow-hidden relative">
+                    {activeSection.hero_image_url ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={activeSection.hero_image_url} alt="Cover" className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity" />
+                    ) : (
+                      <>
+                        <ImageIcon className="w-8 h-8 text-white/20 mb-3" />
+                        <span className="text-sm text-white/50">No image uploaded</span>
+                      </>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>

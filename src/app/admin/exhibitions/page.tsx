@@ -1,9 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
-import { Plus, Trash2, Save, Loader2, CheckCircle, GripVertical, Trophy, Crop } from 'lucide-react';
+import { supabase, deleteFileFromStorage } from '@/lib/supabase';
+import { Plus, Trash2, Save, Loader2, CheckCircle, GripVertical, Trophy, Crop, ImageIcon } from 'lucide-react';
 import { FieldInput, SaveButton, SectionCard } from '@/components/admin/PageContentEditor';
+import SupabaseUploader from '@/components/admin/SupabaseUploader';
 import ImageCropper from '@/components/admin/ImageCropper';
 import { Area } from 'react-easy-crop';
 
@@ -160,6 +161,15 @@ export default function ExhibitionsPage() {
             <FieldInput label="Title" value={meta.title} onChange={v => setMeta({ ...meta, title: v })} />
             <FieldInput label="Subtitle" value={meta.subtitle ?? ''} onChange={v => setMeta({ ...meta, subtitle: v })} />
             <FieldInput label="Hero Cover Image URL" value={meta.hero_image_url ?? ''} onChange={v => setMeta({ ...meta, hero_image_url: v })} />
+            
+            <SupabaseUploader 
+              accent="#ff6b6b" 
+              buttonText="Upload Header Image" 
+              onUpload={(url) => {
+                if (meta.hero_image_url) deleteFileFromStorage(meta.hero_image_url);
+                setMeta({ ...meta, hero_image_url: url });
+              }} 
+            />
             
             {meta.hero_image_url && (
               <div style={{ display: 'flex', gap: '14px', alignItems: 'flex-start' }}>

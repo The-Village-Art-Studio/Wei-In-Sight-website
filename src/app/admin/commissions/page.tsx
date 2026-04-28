@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
-import { Loader2, Briefcase, Clock, CheckCircle, XCircle, AlertCircle, StickyNote } from 'lucide-react';
+import { Loader2, Briefcase, Clock, CheckCircle, XCircle, AlertCircle, StickyNote, Trash2 } from 'lucide-react';
+import { supabase, deleteFileFromStorage } from '@/lib/supabase';
 import { FieldInput, SaveButton } from '@/components/admin/PageContentEditor';
 
 interface Inquiry {
@@ -60,6 +60,19 @@ export default function CommissionsCRMPage() {
     setSaving(false);
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm('Are you sure you want to permanently delete this commission inquiry?')) return;
+    
+    const item = items.find(i => i.id === id);
+    // Future proofing for lead attachments
+    // @ts-ignore
+    if (item?.media_url) await deleteFileFromStorage(item.media_url);
+    
+    await supabase.from('inquiries').delete().eq('id', id);
+    setItems(prev => prev.filter(i => i.id !== id));
+    if (selected?.id === id) setSelected(null);
   };
 
   // Metrics
@@ -181,6 +194,16 @@ export default function CommissionsCRMPage() {
                 textDecoration: 'none', fontSize: '12px', fontFamily: 'var(--font-inter)',
               }}>Reply via Email</a>
               <SaveButton saving={saving} saved={saved} accent="#a78bfa" onClick={handleSave} />
+              <button 
+                onClick={() => handleDelete(selected.id)}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 14px', borderRadius: '8px',
+                  background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.25)', color: '#ef4444',
+                  cursor: 'pointer', fontSize: '12px', fontFamily: 'var(--font-inter)',
+                }}
+              >
+                <Trash2 size={13} />
+              </button>
             </div>
           </div>
         )}

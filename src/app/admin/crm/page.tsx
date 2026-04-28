@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { supabase } from '@/lib/supabase';
+import { supabase, deleteFileFromStorage } from '@/lib/supabase';
 import { Loader2, Mail, Briefcase, Archive, Clock, TrendingUp, TrendingDown, MessageSquare, AlertCircle, CheckCircle2, StickyNote, Search, Trash2, Edit2, Save, X } from 'lucide-react';
 
 interface Inquiry {
@@ -90,6 +90,12 @@ export default function CRMPage() {
 
   const handleDelete = async (id: string) => {
     if (!confirm('Are you sure you want to permanently delete this inquiry?')) return;
+    
+    const inquiry = inquiries.find(i => i.id === id);
+    // Future proofing for lead attachments
+    // @ts-ignore
+    if (inquiry?.media_url) await deleteFileFromStorage(inquiry.media_url);
+
     await supabase.from('inquiries').delete().eq('id', id);
     setInquiries(prev => prev.filter(i => i.id !== id));
     if (selected?.id === id) setSelected(null);
