@@ -3,23 +3,41 @@
 import { useParams, notFound } from 'next/navigation';
 import { NAV_SECTIONS } from '@/lib/constants';
 import { getContent } from '@/lib/mockContent';
+import { useContent, useAlbum } from '@/hooks/use-content';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import SectionHero from '@/components/editorial/SectionHero';
 import { useState } from 'react';
 import SlideshowPanel from '@/components/editorial/SlideshowPanel';
 
+import { useContent, useAlbum } from '@/hooks/use-content';
+
 export default function AlbumGalleryPage() {
   const { section: sectionId, slug, albumId } = useParams();
   const section = NAV_SECTIONS.find(s => s.id === sectionId);
-  const content = getContent(sectionId as string, slug as string);
-  const album = content?.albums?.find(a => a.id === albumId);
+  
+  // Fetch dynamic content
+  const { content: dbContent, loading: dbLoading } = useContent(sectionId as string, slug as string);
+  const { album: dbAlbum, loading: albumLoading } = useAlbum(albumId as string);
+
+  // Fallback to mock
+  const mockContent = getContent(sectionId as string, slug as string);
+  const content = dbContent || mockContent;
+  const album = dbAlbum || content?.albums?.find(a => a.id === albumId);
 
   const [slideshowOpen, setSlideshowOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
 
-  if (!section || !content || !album) {
+  if (!section || !content || (!dbLoading && !albumLoading && !album)) {
     notFound();
+  }
+
+  if (dbLoading || albumLoading) {
+    return (
+      <div className="flex items-center justify-center h-[60vh]">
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-pink-500"></div>
+      </div>
+    );
   }
 
   const openSlideshow = (index: number) => {

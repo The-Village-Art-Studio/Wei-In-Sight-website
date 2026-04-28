@@ -3,6 +3,7 @@
 import { useParams, notFound } from 'next/navigation';
 import { NAV_SECTIONS } from '@/lib/constants';
 import { getContent } from '@/lib/mockContent';
+import { useContent } from '@/hooks/use-content';
 import { motion, Variants } from 'framer-motion';
 import Link from 'next/link';
 import SectionHero from '@/components/editorial/SectionHero';
@@ -25,16 +26,32 @@ const itemVariants: Variants = {
   }
 };
 
+import { useContent } from '@/hooks/use-content';
+
 export default function ContentPage() {
   const { section: sectionId, slug } = useParams();
   const section = NAV_SECTIONS.find(s => s.id === sectionId);
-  const content = getContent(sectionId as string, slug as string);
+  
+  // Fetch dynamic content from Supabase
+  const { content: dbContent, loading: dbLoading } = useContent(sectionId as string, slug as string);
+  
+  // Fallback to mock content if DB is loading or empty (optional, but good for stability during transition)
+  const mockContent = getContent(sectionId as string, slug as string);
+  const content = dbContent || mockContent;
 
   // Fallback for sub-pages not yet in mockContent
   const activeSubmenu = section?.submenus.find(m => m.href.endsWith(`/${slug}`));
 
   if (!section || !activeSubmenu) {
     notFound();
+  }
+
+  if (dbLoading) {
+    return (
+      <div className="flex items-center justify-center h-[60vh]">
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-pink-500"></div>
+      </div>
+    );
   }
 
   // Check if we should use the album folder layout
@@ -58,7 +75,7 @@ export default function ContentPage() {
       <SectionHero section={section} compact />
 
       <article className="content-container">
-        {content?.heroImage && (
+        {content?.heroImage && slug !== 'about' && (
           <motion.div 
             initial={{ opacity: 0, scale: 1.02 }}
             animate={{ opacity: 1, scale: 1 }}

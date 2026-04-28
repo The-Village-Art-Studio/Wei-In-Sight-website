@@ -25,7 +25,7 @@ export async function POST(req: Request) {
 
     // 1. Store in Supabase
     const { data: dbData, error: dbError } = await supabase
-      .from('inquiry_submissions')
+      .from('inquiries')
       .insert([
         {
           type: validatedData.type,
