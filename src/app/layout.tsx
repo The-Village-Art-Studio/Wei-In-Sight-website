@@ -14,6 +14,9 @@ const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit" });
 export const metadata: Metadata = {
   title: "WEI IN SIGHT — Jacky Ho",
   description: "The creative atlas of Jacky Ho. A multidisciplinary artist building worlds through image, sound, craft, poetry, and memory.",
+  icons: {
+    icon: "/assets/logo-white.png",
+  },
 };
 
 export default function RootLayout({

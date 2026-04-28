@@ -55,6 +55,37 @@ export default function AlbumManager({ pageId, accent }: { pageId: string; accen
     setAlbums(prev => prev.filter(a => a.id !== id));
   };
 
+  const handleDuplicate = async (album: Album) => {
+    const slug = `${album.slug}-copy-${Date.now()}`;
+    const { data } = await supabase.from('albums')
+      .insert({ 
+        page_id: pageId, 
+        title: `${album.title} (Copy)`, 
+        description: album.description, 
+        slug, 
+        sort_order: albums.length 
+      })
+      .select().single();
+    if (data) {
+      setAlbums(prev => [...prev, data]);
+      setExpanded(data.id);
+      
+      const { data: items } = await supabase.from('album_items').select('*').eq('album_id', album.id);
+      if (items && items.length > 0) {
+        const newItems = items.map(item => ({
+          album_id: data.id,
+          media_url: item.media_url,
+          title: item.title,
+          year: item.year,
+          medium: item.medium,
+          description: item.description,
+          sort_order: item.sort_order
+        }));
+        await supabase.from('album_items').insert(newItems);
+      }
+    }
+  };
+
   const updateField = (id: string, field: keyof Album, value: string) => {
     setAlbums(prev => prev.map(a => a.id === id ? { ...a, [field]: value } : a));
   };
@@ -98,13 +129,22 @@ export default function AlbumManager({ pageId, accent }: { pageId: string; accen
                     )}
                   </div>
                 </button>
-                <button onClick={() => handleDelete(album.id)} style={{
-                  padding: '5px 8px', borderRadius: '6px', background: 'rgba(239,68,68,0.08)',
-                  border: '1px solid rgba(239,68,68,0.2)', color: 'rgba(239,68,68,0.7)',
-                  cursor: 'pointer', fontSize: '11px', fontFamily: 'var(--font-inter)',
-                }}>
-                  Delete
-                </button>
+                <div style={{ display: 'flex', gap: '6px' }}>
+                  <button onClick={(e) => { e.stopPropagation(); handleDuplicate(album); }} style={{
+                    padding: '5px 8px', borderRadius: '6px', background: 'rgba(255,255,255,0.08)',
+                    border: '1px solid rgba(255,255,255,0.2)', color: 'rgba(255,255,255,0.7)',
+                    cursor: 'pointer', fontSize: '11px', fontFamily: 'var(--font-inter)',
+                  }}>
+                    Duplicate
+                  </button>
+                  <button onClick={(e) => { e.stopPropagation(); handleDelete(album.id); }} style={{
+                    padding: '5px 8px', borderRadius: '6px', background: 'rgba(239,68,68,0.08)',
+                    border: '1px solid rgba(239,68,68,0.2)', color: 'rgba(239,68,68,0.7)',
+                    cursor: 'pointer', fontSize: '11px', fontFamily: 'var(--font-inter)',
+                  }}>
+                    Delete
+                  </button>
+                </div>
               </div>
 
               {/* Expanded editing area */}

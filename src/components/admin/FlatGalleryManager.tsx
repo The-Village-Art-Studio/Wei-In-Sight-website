@@ -62,6 +62,15 @@ export default function FlatGalleryManager({ pageId, isVideo, accent }: {
     setItems(prev => prev.filter(i => i.id !== id));
   };
 
+  const handleDuplicate = (item: GalleryItem) => {
+    const temp: GalleryItem = {
+      ...item,
+      id: `new_${Date.now()}`,
+      sort_order: items.length,
+    };
+    setItems(prev => [...prev, temp]);
+  };
+
   const update = (id: string, field: keyof GalleryItem, value: string) => {
     setItems(prev => prev.map(i => i.id === id ? { ...i, [field]: value } : i));
   };
@@ -133,6 +142,13 @@ export default function FlatGalleryManager({ pageId, isVideo, accent }: {
               }}>
                 {saving === item.id ? <Loader2 size={11} className="animate-spin" /> : saved === item.id ? <CheckCircle size={11} /> : <Save size={11} />}
                 {saving === item.id ? '…' : saved === item.id ? 'Saved' : 'Save'}
+              </button>
+              <button onClick={() => handleDuplicate(item)} style={{
+                display: 'flex', alignItems: 'center', gap: '5px', padding: '6px 11px', borderRadius: '7px',
+                background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.15)', color: 'rgba(255,255,255,0.6)',
+                cursor: 'pointer', fontSize: '11px', fontFamily: 'var(--font-inter)',
+              }}>
+                <Plus size={11} /> Duplicate
               </button>
               <button onClick={() => handleDelete(item.id)} style={{
                 display: 'flex', alignItems: 'center', gap: '5px', padding: '6px 11px', borderRadius: '7px',
