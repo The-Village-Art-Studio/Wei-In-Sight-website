@@ -940,12 +940,12 @@ export const MOCK_CONTENT: Record<string, DeepContent> = {
     slug: 'commissions',
     sectionId: 'pulse',
     title: 'Commissions',
-    subtitle: 'Secure a custom-crafted audio experience for your vision.',
+    subtitle: 'Collaborative creations across painting, mural, installation, and fashion.',
     heroImage: '/assets/art/sight_sculpture_preview_1776627004575.png',
     blocks: [
       {
         type: 'text',
-        content: `### COLLABORATIVE CREATION\n\nI am currently accepting commissions related to cinematic sound design, original scoring, and experimental audio-visual landscapes. \n\nWhether you are a filmmaker, game developer, or performance artist, we can build a sonic universe that resonates with your core narrative. Use the form below to share your project details.`
+        content: `### COLLABORATIVE CREATION\n\nI am currently accepting commissions related to paintings, murals, large-scale installations, and bespoke fashion pieces. \n\nWhether you are looking for a statement piece for your home, a public mural that transforms a space, a tactile installation for an exhibition, or a custom wearable artifact, we can bring your vision to life through my multidisciplinary practice. Use the form below to share your project details.`
       },
       {
         type: 'form',
