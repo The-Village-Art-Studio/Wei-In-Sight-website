@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { supabase } from '@/lib/supabase';
-import { Loader2, Mail, Briefcase, Archive, Clock, TrendingUp, TrendingDown, MessageSquare, AlertCircle, CheckCircle2, StickyNote } from 'lucide-react';
+import { Loader2, Mail, Briefcase, Archive, Clock, TrendingUp, TrendingDown, MessageSquare, AlertCircle, CheckCircle2, StickyNote, Search, Trash2, Edit2, Save, X } from 'lucide-react';
 
 interface Inquiry {
   id: string;
@@ -43,6 +43,16 @@ export default function CRMPage() {
   const [notesDraft, setNotesDraft] = useState('');
   const [savingNotes, setSavingNotes] = useState(false);
 
+  // Search & Sort State
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sortField, setSortField] = useState<'created_at' | 'name' | 'status'>('created_at');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+
+  // Edit State
+  const [editMode, setEditMode] = useState(false);
+  const [editDraft, setEditDraft] = useState<Partial<Inquiry>>({});
+  const [savingEdit, setSavingEdit] = useState(false);
+
   useEffect(() => { fetchInquiries(); }, []);
 
   const fetchInquiries = async () => {
@@ -78,19 +88,76 @@ export default function CRMPage() {
     setSavingNotes(false);
   };
 
+  const handleDelete = async (id: string) => {
+    if (!confirm('Are you sure you want to permanently delete this inquiry?')) return;
+    await supabase.from('inquiries').delete().eq('id', id);
+    setInquiries(prev => prev.filter(i => i.id !== id));
+    if (selected?.id === id) setSelected(null);
+  };
+
+  const saveEdit = async (id: string) => {
+    setSavingEdit(true);
+    await supabase.from('inquiries').update({
+      name: editDraft.name,
+      email: editDraft.email,
+      subject: editDraft.subject,
+      message: editDraft.message
+    }).eq('id', id);
+    setInquiries(prev => prev.map(i => i.id === id ? { ...i, ...editDraft } : i));
+    if (selected?.id === id) setSelected(prev => prev ? { ...prev, ...editDraft } : null);
+    setEditMode(false);
+    setSavingEdit(false);
+  };
+
   // When selecting an inquiry, prefill the notes draft
   const handleSelect = (inquiry: Inquiry) => {
     setSelected(inquiry);
     setNotesDraft(inquiry.notes ?? '');
+    setEditMode(false);
     if (inquiry.status === 'new') updateStatus(inquiry.id, 'read');
   };
 
   const filtered = useMemo(() => {
-    return inquiries.filter(i => {
+    let result = inquiries.filter(i => {
       if (view === 'commissions') return i.type === 'commission';
       return i.type === 'contact';
     });
-  }, [inquiries, view]);
+
+    if (searchQuery.trim() !== '') {
+      const q = searchQuery.toLowerCase();
+      result = result.filter(i => 
+        i.name.toLowerCase().includes(q) || 
+        i.email.toLowerCase().includes(q) || 
+        (i.subject && i.subject.toLowerCase().includes(q)) ||
+        (i.message && i.message.toLowerCase().includes(q))
+      );
+    }
+
+    result.sort((a, b) => {
+      let aVal: any = a[sortField];
+      let bVal: any = b[sortField];
+      
+      if (sortField === 'status') {
+        const orderMap: Record<string, number> = { new: 0, read: 1, replied: 2, archived: 3 };
+        aVal = orderMap[a.status] ?? 4;
+        bVal = orderMap[b.status] ?? 4;
+      }
+      
+      if (aVal === bVal) return 0;
+      if (aVal === null) return 1;
+      if (bVal === null) return -1;
+      
+      let comp = 0;
+      if (typeof aVal === 'string' && typeof bVal === 'string') {
+        comp = aVal.localeCompare(bVal);
+      } else {
+        comp = aVal < bVal ? -1 : 1;
+      }
+      return sortOrder === 'asc' ? comp : -comp;
+    });
+
+    return result;
+  }, [inquiries, view, searchQuery, sortField, sortOrder]);
 
   // Metrics for commissions
   const commissionMetrics = useMemo(() => {
@@ -209,6 +276,43 @@ export default function CRMPage() {
           ))}
         </div>
       )}
+      {/* ─── Search & Sort Bar ─── */}
+      <div style={{ display: 'flex', gap: '10px', marginBottom: '14px' }}>
+        <div style={{ flex: 1, position: 'relative' }}>
+          <Search size={14} color="rgba(255,255,255,0.4)" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
+          <input
+            type="text"
+            placeholder="Search inquiries..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            style={{
+              width: '100%', boxSizing: 'border-box',
+              background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)',
+              borderRadius: '8px', padding: '8px 12px 8px 34px', color: '#fff', fontSize: '12px',
+              fontFamily: 'var(--font-inter)', outline: 'none'
+            }}
+          />
+        </div>
+        <select
+          value={`${sortField}-${sortOrder}`}
+          onChange={(e) => {
+            const [f, o] = e.target.value.split('-');
+            setSortField(f as any);
+            setSortOrder(o as any);
+          }}
+          style={{
+            background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)',
+            borderRadius: '8px', padding: '8px 12px', color: '#fff', fontSize: '12px',
+            fontFamily: 'var(--font-inter)', outline: 'none', cursor: 'pointer', WebkitAppearance: 'none'
+          }}
+        >
+          <option value="created_at-desc" style={{ color: '#000' }}>Newest First</option>
+          <option value="created_at-asc" style={{ color: '#000' }}>Oldest First</option>
+          <option value="name-asc" style={{ color: '#000' }}>Name (A-Z)</option>
+          <option value="name-desc" style={{ color: '#000' }}>Name (Z-A)</option>
+          <option value="status-asc" style={{ color: '#000' }}>Status</option>
+        </select>
+      </div>
 
       {/* ─── List + Detail split ─── */}
       <div style={{ display: 'grid', gridTemplateColumns: selected ? '1fr 1fr' : '1fr', gap: '14px' }}>
@@ -283,22 +387,53 @@ export default function CRMPage() {
         {selected && (
           <div style={{ background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '12px', padding: '20px', position: 'sticky', top: '0', alignSelf: 'start' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
-              <div>
-                <div style={{ fontSize: '16px', fontWeight: 500, color: '#fff', fontFamily: 'var(--font-outfit)' }}>{selected.name}</div>
-                <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.45)', fontFamily: 'var(--font-inter)', marginTop: '2px' }}>{selected.email}</div>
+              {!editMode ? (
+                <div>
+                  <div style={{ fontSize: '16px', fontWeight: 500, color: '#fff', fontFamily: 'var(--font-outfit)' }}>{selected.name}</div>
+                  <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.45)', fontFamily: 'var(--font-inter)', marginTop: '2px' }}>{selected.email}</div>
+                </div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', flex: 1, marginRight: '16px' }}>
+                  <input value={editDraft.name ?? selected.name} onChange={e => setEditDraft(prev => ({...prev, name: e.target.value}))} style={{ width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', padding: '6px 10px', borderRadius: '6px', fontSize: '14px', outline: 'none' }} placeholder="Name" />
+                  <input value={editDraft.email ?? selected.email} onChange={e => setEditDraft(prev => ({...prev, email: e.target.value}))} style={{ width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', padding: '6px 10px', borderRadius: '6px', fontSize: '12px', outline: 'none' }} placeholder="Email" />
+                </div>
+              )}
+              <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                {!editMode ? (
+                  <button onClick={() => { setEditMode(true); setEditDraft({ name: selected.name, email: selected.email, subject: selected.subject, message: selected.message }); }} style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '4px 8px', borderRadius: '6px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.6)', cursor: 'pointer', fontSize: '10px' }}>
+                    <Edit2 size={10} /> Edit
+                  </button>
+                ) : (
+                  <>
+                    <button onClick={() => saveEdit(selected.id)} disabled={savingEdit} style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '4px 8px', borderRadius: '6px', background: 'rgba(52,211,153,0.15)', border: '1px solid rgba(52,211,153,0.3)', color: '#34d399', cursor: 'pointer', fontSize: '10px' }}>
+                      {savingEdit ? <Loader2 size={10} className="animate-spin" /> : <Save size={10} />} Save
+                    </button>
+                    <button onClick={() => setEditMode(false)} style={{ padding: '4px 8px', borderRadius: '6px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.6)', cursor: 'pointer', fontSize: '10px' }}>
+                      Cancel
+                    </button>
+                  </>
+                )}
+                <button onClick={() => setSelected(null)} style={{ color: 'rgba(255,255,255,0.3)', background: 'none', border: 'none', cursor: 'pointer', fontSize: '18px' }}>×</button>
               </div>
-              <button onClick={() => setSelected(null)} style={{ color: 'rgba(255,255,255,0.3)', background: 'none', border: 'none', cursor: 'pointer', fontSize: '18px' }}>×</button>
             </div>
 
-            {selected.subject && (
-              <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)', fontFamily: 'var(--font-inter)', marginBottom: '12px', padding: '8px 12px', background: 'rgba(255,255,255,0.04)', borderRadius: '7px' }}>
-                {selected.subject}
+            {!editMode ? (
+              <>
+                {selected.subject && (
+                  <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)', fontFamily: 'var(--font-inter)', marginBottom: '12px', padding: '8px 12px', background: 'rgba(255,255,255,0.04)', borderRadius: '7px' }}>
+                    {selected.subject}
+                  </div>
+                )}
+                <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.7)', fontFamily: 'var(--font-inter)', lineHeight: '1.7', marginBottom: '20px', padding: '14px', background: 'rgba(255,255,255,0.03)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.06)' }}>
+                  {selected.message}
+                </div>
+              </>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '20px' }}>
+                <input value={editDraft.subject ?? (selected.subject || '')} onChange={e => setEditDraft(prev => ({...prev, subject: e.target.value}))} style={{ width: '100%', boxSizing: 'border-box', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', padding: '8px 12px', borderRadius: '6px', fontSize: '12px', outline: 'none' }} placeholder="Subject (Optional)" />
+                <textarea value={editDraft.message ?? selected.message} onChange={e => setEditDraft(prev => ({...prev, message: e.target.value}))} rows={5} style={{ width: '100%', boxSizing: 'border-box', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', padding: '10px 12px', borderRadius: '6px', fontSize: '13px', outline: 'none', resize: 'vertical' }} placeholder="Message content" />
               </div>
             )}
-
-            <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.7)', fontFamily: 'var(--font-inter)', lineHeight: '1.7', marginBottom: '20px', padding: '14px', background: 'rgba(255,255,255,0.03)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.06)' }}>
-              {selected.message}
-            </div>
 
             {/* ─── Commission-specific: Won/Lost ─── */}
             {view === 'commissions' && (
@@ -396,14 +531,23 @@ export default function CRMPage() {
               {savingNotes ? 'Saving…' : 'Save Notes'}
             </button>
 
-            {/* Reply via email */}
-            <a href={`mailto:${selected.email}`} style={{
-              display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 16px', borderRadius: '8px',
-              background: 'rgba(96,165,250,0.1)', border: '1px solid rgba(96,165,250,0.25)', color: '#60a5fa',
-              textDecoration: 'none', fontSize: '12px', fontFamily: 'var(--font-inter)',
-            }}>
-              <Mail size={13} /> Reply via Email
-            </a>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              {/* Reply via email */}
+              <a href={`mailto:${selected.email}`} style={{
+                flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '10px 16px', borderRadius: '8px',
+                background: 'rgba(96,165,250,0.1)', border: '1px solid rgba(96,165,250,0.25)', color: '#60a5fa',
+                textDecoration: 'none', fontSize: '12px', fontFamily: 'var(--font-inter)',
+              }}>
+                <Mail size={13} /> Reply via Email
+              </a>
+              <button onClick={() => handleDelete(selected.id)} style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '10px 16px', borderRadius: '8px',
+                background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.25)', color: '#ef4444',
+                cursor: 'pointer', fontSize: '12px', fontFamily: 'var(--font-inter)',
+              }}>
+                <Trash2 size={13} /> Delete
+              </button>
+            </div>
           </div>
         )}
       </div>
