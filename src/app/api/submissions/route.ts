@@ -53,7 +53,7 @@ export async function POST(req: Request) {
 
     const { data: emailData, error: emailError } = await resend.emails.send({
       from: 'Wei In Sight <onboarding@resend.dev>', // Update this with a verified domain later
-      to: ['jackyho.art@gmail.com'], // Replace with artist's email or identity.email
+      to: [process.env.CONTACT_EMAIL || 'jackyho.art@gmail.com'], // Replace with artist's email or identity.email
       subject: emailSubject,
       html: `
         <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
