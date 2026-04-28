@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
-import { DeepContent, GalleryItem, Album, ContentBlock } from '@/lib/mockContent';
+import { DeepContent, GalleryItem, Album, ContentBlock, MOCK_CONTENT } from '@/lib/mockContent';
 
 export function useContent(sectionId: string, slug: string) {
   const [content, setContent] = useState<DeepContent | null>(null);
@@ -131,15 +131,32 @@ export function useContent(sectionId: string, slug: string) {
           }
         }
 
+        // --- MERGE LOGIC ---
+        // We start with the static mock content because the CMS doesn't yet support
+        // rich text blocks, pillar grids, audio players, etc.
+        const staticContent = MOCK_CONTENT[`${sectionId}/${slug}`];
+        
+        // Filter out blocks from staticContent that we are going to replace with DB data
+        const preserveBlocks = staticContent?.blocks?.filter(b => 
+          b.type !== 'gallery' && 
+          b.type !== 'video-gallery' && 
+          b.type !== 'exhibition-list' && 
+          b.type !== 'logo-grid' &&
+          b.type !== 'profile-photo'
+        ) || [];
+
         setContent({
           id: pageData.id,
           slug: pageData.slug,
           sectionId: pageData.section_key,
-          title: pageData.title,
-          subtitle: pageData.subtitle,
-          heroImage: pageData.hero_image_url,
-          blocks,
-          albums
+          title: pageData.title || staticContent?.title || '',
+          subtitle: pageData.subtitle || staticContent?.subtitle || '',
+          heroImage: pageData.hero_image_url || staticContent?.heroImage || '',
+          // Combine the preserved static blocks (text, quotes, etc) with the dynamic DB blocks
+          blocks: [...preserveBlocks, ...blocks],
+          // If the DB has albums, use them. Otherwise fallback to static albums to prevent blank pages
+          // Or if they initialized it but it's empty, we should probably show empty, but for safety we fallback
+          albums: albums.length > 0 ? albums : staticContent?.albums
         });
       } catch (err) {
         console.error('Error fetching content:', err);
