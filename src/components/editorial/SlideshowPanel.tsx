@@ -173,7 +173,7 @@ export default function SlideshowPanel({ items, initialIndex, isOpen, onClose }:
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 10 }}
                   transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                  className="rounded-3xl border border-pink-500/40 py-12 flex flex-col items-center justify-center text-center w-fit h-full"
+                  className="rounded-3xl border border-pink-500/40 py-12 flex flex-col items-start justify-center text-left w-fit h-full"
                   style={{
                     background: 'rgba(15, 6, 30, 0.85)',
                     backdropFilter: 'blur(32px) saturate(250%)',
@@ -183,8 +183,8 @@ export default function SlideshowPanel({ items, initialIndex, isOpen, onClose }:
                     paddingRight: '100px'
                   }}
                 >
-                  <div className="flex flex-col items-center gap-6 lg:gap-10 w-full">
-                    <div className="space-y-3 lg:space-y-6 flex flex-col items-center">
+                  <div className="flex flex-col items-start gap-6 lg:gap-10 w-full">
+                    <div className="space-y-3 lg:space-y-6 flex flex-col items-start">
                       <h2 
                         className="text-xl md:text-3xl lg:text-4xl tracking-tight leading-tight uppercase" 
                         style={{ 
@@ -196,21 +196,39 @@ export default function SlideshowPanel({ items, initialIndex, isOpen, onClose }:
                       >
                         {currentItem?.title}
                       </h2>
-                      <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-[9px] lg:text-xs tracking-[0.3em] font-medium uppercase" style={{ fontFamily: 'var(--font-main)' }}>
+                      <div className="flex flex-wrap items-center justify-start gap-x-4 gap-y-2 text-[9px] lg:text-xs tracking-[0.3em] font-medium uppercase" style={{ fontFamily: 'var(--font-main)' }}>
                         <span className="text-pink-500 font-bold" style={{ textShadow: '0 0 10px var(--neon-pink)' }}>{currentItem?.year}</span>
                         <span className="w-1 h-1 rounded-full bg-white/20" />
                         <span className="text-white/40">{currentItem?.medium}</span>
                       </div>
                     </div>
                     
-                    <div className="h-px w-12 lg:w-20 bg-gradient-to-r from-transparent via-pink-500/40 to-transparent" />
+                    <div className="h-px w-12 lg:w-20 bg-gradient-to-r from-transparent via-pink-500/40 to-pink-500/10" />
                     
-                    <p 
-                      className="text-white/60 leading-relaxed text-xs md:text-sm lg:text-base font-light italic max-w-sm"
-                      style={{ fontFamily: 'var(--font-main)' }}
-                    >
-                      &ldquo;{currentItem?.description}&rdquo;
-                    </p>
+                    <div className="max-h-[160px] overflow-y-auto pr-4 w-full scrollbar-thin" style={{ textAlign: 'left' }}>
+                      <style jsx>{`
+                        .scrollbar-thin::-webkit-scrollbar {
+                          width: 3px;
+                        }
+                        .scrollbar-thin::-webkit-scrollbar-track {
+                          background: rgba(255, 255, 255, 0.05);
+                          border-radius: 10px;
+                        }
+                        .scrollbar-thin::-webkit-scrollbar-thumb {
+                          background: rgba(255, 105, 180, 0.4);
+                          border-radius: 10px;
+                        }
+                        .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+                          background: rgba(255, 105, 180, 0.6);
+                        }
+                      `}</style>
+                      <p 
+                        className="text-white/60 leading-relaxed text-xs md:text-sm lg:text-base font-light italic whitespace-pre-line"
+                        style={{ fontFamily: 'var(--font-main)' }}
+                      >
+                        &ldquo;{currentItem?.description}&rdquo;
+                      </p>
+                    </div>
 
                     {currentItem?.link && (
                       <motion.a
