@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Save, Image as ImageIcon, Loader2 } from 'lucide-react';
 import { supabase, deleteFileFromStorage } from '@/lib/supabase';
-import SupabaseUploader from '../SupabaseUploader';
+import SupabaseUploader from '@/components/admin/SupabaseUploader';
 
 interface Section {
   id: string;

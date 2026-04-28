@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { supabase, deleteFileFromStorage } from '@/lib/supabase';
 import { Loader2, Save, CheckCircle, Globe, Mail, Music, Link as LinkIcon, Video, KeyRound, Type, ImageIcon, Database } from 'lucide-react';
 import { MOCK_CONTENT } from '@/lib/mockContent';
-import SupabaseUploader from '../SupabaseUploader';
+import SupabaseUploader from '@/components/admin/SupabaseUploader';
 
 interface SiteSettings {
   id: string;
