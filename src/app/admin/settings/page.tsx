@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
-import { Loader2, Save, CheckCircle, Globe, Mail, Music, Link as LinkIcon, Video, KeyRound, Type, Image as ImageIcon } from 'lucide-react';
+import { Loader2, Save, CheckCircle, Globe, Mail, Music, Link as LinkIcon, Video, KeyRound, Type, ImageIcon, Database } from 'lucide-react';
+import { MOCK_CONTENT } from '@/lib/mockContent';
 
 interface SiteSettings {
   id: string;
@@ -152,6 +153,122 @@ export default function SettingsPage() {
     setSettings({ ...settings, [field]: value });
   };
 
+  const [seeding, setSeeding] = useState(false);
+  const [seedComplete, setSeedComplete] = useState(false);
+
+  const handleSeedMockContent = async () => {
+    if (!window.confirm("Are you sure you want to seed the database? This will overwrite existing mock content folders.")) return;
+    setSeeding(true);
+    try {
+      for (const [sectionSlug, content] of Object.entries(MOCK_CONTENT)) {
+        // 1. Upsert Page
+        const { data: page, error: pageError } = await supabase
+          .from('pages')
+          .upsert({
+            section_key: content.sectionId,
+            slug: content.slug,
+            title: content.title,
+            subtitle: content.subtitle || null,
+            hero_image_url: content.heroImage || null,
+          }, { onConflict: 'section_key,slug' })
+          .select()
+          .single();
+
+        if (pageError || !page) continue;
+
+        // 2. Insert Albums & Items
+        if (content.albums && content.albums.length > 0) {
+          await supabase.from('albums').delete().eq('page_id', page.id);
+
+          for (let i = 0; i < content.albums.length; i++) {
+            const mockAlbum = content.albums[i];
+            const { data: album, error: albumError } = await supabase
+              .from('albums')
+              .insert({
+                page_id: page.id,
+                title: mockAlbum.title,
+                description: mockAlbum.description || null,
+                slug: mockAlbum.id,
+                sort_order: i
+              })
+              .select()
+              .single();
+
+            if (albumError || !album) continue;
+
+            if (mockAlbum.items && mockAlbum.items.length > 0) {
+              const itemsToInsert = mockAlbum.items.map((item, idx) => ({
+                album_id: album.id,
+                title: item.title,
+                description: item.description || null,
+                media_url: item.url,
+                year: item.year || null,
+                medium: item.medium || null,
+                sort_order: idx
+              }));
+              await supabase.from('album_items').insert(itemsToInsert);
+            }
+          }
+        }
+
+        // 3. Insert Gallery Blocks
+        const galleryBlock = content.blocks.find(b => b.type === 'gallery' || b.type === 'video-gallery');
+        if (galleryBlock && galleryBlock.items && galleryBlock.items.length > 0) {
+          await supabase.from('page_gallery_items').delete().eq('page_id', page.id);
+          const itemsToInsert = galleryBlock.items.map((item: any, idx: number) => ({
+            page_id: page.id,
+            title: item.title || null,
+            description: item.description || null,
+            media_url: item.url,
+            year: item.year || null,
+            medium: item.medium || null,
+            sort_order: idx
+          }));
+          await supabase.from('page_gallery_items').insert(itemsToInsert);
+        }
+
+        // 4. Exhibitions
+        if (content.slug === 'exhibitions-features') {
+          const exhBlock = content.blocks.find(b => b.type === 'exhibition-list');
+          if (exhBlock && exhBlock.exhibitionItems && exhBlock.exhibitionItems.length > 0) {
+            await supabase.from('exhibitions').delete().neq('id', '00000000-0000-0000-0000-000000000000'); 
+            const itemsToInsert = exhBlock.exhibitionItems.map((item: any, idx: number) => ({
+              title: item.title,
+              location: item.location || null,
+              year: item.year || null,
+              is_award: item.isAward || false,
+              sort_order: idx
+            }));
+            await supabase.from('exhibitions').insert(itemsToInsert);
+          }
+        }
+
+        // 5. Buy Art Logos
+        if (content.slug === 'buy-art') {
+          const logoBlock = content.blocks.find(b => b.type === 'logo-grid');
+          if (logoBlock && logoBlock.logoItems && logoBlock.logoItems.length > 0) {
+            await supabase.from('buy_art_items').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+            const itemsToInsert = logoBlock.logoItems.map((item: any, idx: number) => ({
+              title: item.title,
+              description: item.description || null,
+              logo_url: item.logoUrl,
+              link: item.link || null,
+              sort_order: idx
+            }));
+            await supabase.from('buy_art_items').insert(itemsToInsert);
+          }
+        }
+      }
+      setSeedComplete(true);
+      setTimeout(() => setSeedComplete(false), 3000);
+    } catch (err) {
+      console.error(err);
+      alert('Error seeding database.');
+    } finally {
+      setSeeding(false);
+    }
+  };
+
   if (loading) {
     return (
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '60vh' }}>
@@ -256,6 +373,38 @@ export default function SettingsPage() {
         <SettingsSection title="SEO Defaults" accent="#fbbf24" icon={<KeyRound size={14} />}>
           <SettingsField label="Default Meta Description" value={settings.seo_description ?? ''} onChange={v => update('seo_description', v)} placeholder="A multidisciplinary creative portfolio…" multiline />
           <SettingsField label="SEO Keywords" value={settings.seo_keywords ?? ''} onChange={v => update('seo_keywords', v)} placeholder="art, portfolio, cinematic, painting…" />
+        </SettingsSection>
+
+
+        {/* ─── Database Tools ─── */}
+        <SettingsSection title="Database Tools" accent="#ef4444" icon={<Database size={14} />}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)', margin: 0, fontFamily: 'var(--font-inter)' }}>
+              Populate the CMS with the original placeholder mock content. This is useful for initializing the site structure without manually recreating everything.
+            </p>
+            <button
+              onClick={handleSeedMockContent}
+              disabled={seeding || seedComplete}
+              style={{
+                alignSelf: 'flex-start',
+                marginTop: '8px',
+                padding: '9px 16px',
+                borderRadius: '8px',
+                background: seedComplete ? 'rgba(52,211,153,0.15)' : 'rgba(239, 68, 68, 0.15)',
+                border: seedComplete ? '1px solid rgba(52,211,153,0.4)' : '1px solid rgba(239, 68, 68, 0.4)',
+                color: seedComplete ? '#34d399' : '#ef4444',
+                fontSize: '12px',
+                fontFamily: 'var(--font-inter)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                cursor: seeding ? 'wait' : 'pointer'
+              }}
+            >
+              {seeding ? <Loader2 size={14} className="animate-spin" /> : seedComplete ? <CheckCircle size={14} /> : <Database size={14} />}
+              {seeding ? 'Seeding Database...' : seedComplete ? 'Seed Complete!' : 'Seed Mock Content'}
+            </button>
+          </div>
         </SettingsSection>
 
       </div>
