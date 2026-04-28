@@ -13,6 +13,7 @@ interface AlbumItem {
   title: string;
   year: string;
   medium: string;
+  size: string;
   description: string;
   sort_order: number;
 }
@@ -35,14 +36,14 @@ export default function AlbumItemsManager({ albumId, accent }: { albumId: string
   const handleAdd = () => {
     const temp: AlbumItem = {
       id: `new_${Date.now()}`, album_id: albumId,
-      media_url: '', title: '', year: '', medium: '', description: '', sort_order: items.length,
+      media_url: '', title: '', year: '', medium: '', size: '', description: '', sort_order: items.length,
     };
     setItems(prev => [...prev, temp]);
   };
 
   const handleSave = async (item: AlbumItem) => {
     setSaving(item.id);
-    const payload = { album_id: albumId, media_url: item.media_url, title: item.title, year: item.year, medium: item.medium, description: item.description, sort_order: item.sort_order };
+    const payload = { album_id: albumId, media_url: item.media_url, title: item.title, year: item.year, medium: item.medium, size: item.size, description: item.description, sort_order: item.sort_order };
     if (item.id.startsWith('new_')) {
       const { data } = await supabase.from('album_items').insert(payload).select().single();
       if (data) setItems(prev => prev.map(i => i.id === item.id ? data : i));
@@ -111,9 +112,8 @@ export default function AlbumItemsManager({ albumId, accent }: { albumId: string
               </div>
               <FieldInput label="Title" value={item.title ?? ''} onChange={v => update(item.id, 'title', v)} />
               <FieldInput label="Year" value={item.year ?? ''} onChange={v => update(item.id, 'year', v)} />
-              <div style={{ gridColumn: '1 / -1' }}>
-                <FieldInput label="Medium" value={item.medium ?? ''} onChange={v => update(item.id, 'medium', v)} />
-              </div>
+              <FieldInput label="Medium" value={item.medium ?? ''} onChange={v => update(item.id, 'medium', v)} />
+              <FieldInput label="Size (optional)" value={item.size ?? ''} onChange={v => update(item.id, 'size', v)} placeholder="e.g. 24x36 inches" />
               <div style={{ gridColumn: '1 / -1' }}>
                 <FieldInput label="Description" value={item.description ?? ''} onChange={v => update(item.id, 'description', v)} multiline placeholder="Enter a description..." />
               </div>

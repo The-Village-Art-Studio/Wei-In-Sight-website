@@ -202,6 +202,12 @@ export default function SlideshowPanel({ items, initialIndex, isOpen, onClose }:
                         <span className="text-pink-500 font-bold" style={{ textShadow: '0 0 10px var(--neon-pink)' }}>{currentItem?.year}</span>
                         <span className="w-1 h-1 rounded-full bg-white/20" />
                         <span className="text-white/40">{currentItem?.medium}</span>
+                        {currentItem?.size && (
+                          <>
+                            <span className="w-1 h-1 rounded-full bg-white/20" />
+                            <span className="text-white/40">{currentItem.size}</span>
+                          </>
+                        )}
                       </div>
                     </div>
                     

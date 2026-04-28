@@ -20,6 +20,7 @@ export interface GalleryItem {
   title: string;
   year: string;
   medium: string;
+  size?: string;
   description: string;
   link?: string;
 }

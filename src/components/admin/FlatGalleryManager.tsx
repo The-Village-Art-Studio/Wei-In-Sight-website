@@ -13,6 +13,7 @@ interface GalleryItem {
   title: string;
   year: string;
   medium: string;
+  size: string;
   description: string;
   link: string;
   sort_order: number;
@@ -38,14 +39,14 @@ export default function FlatGalleryManager({ pageId, isVideo, accent }: {
   const handleAdd = () => {
     const temp: GalleryItem = {
       id: `new_${Date.now()}`, page_id: pageId,
-      media_url: '', title: '', year: '', medium: isVideo ? 'Video' : '', description: '', link: '', sort_order: items.length,
+      media_url: '', title: '', year: '', medium: isVideo ? 'Video' : '', size: '', description: '', link: '', sort_order: items.length,
     };
     setItems(prev => [...prev, temp]);
   };
 
   const handleSave = async (item: GalleryItem) => {
     setSaving(item.id);
-    const payload = { page_id: pageId, media_url: item.media_url, title: item.title, year: item.year, medium: item.medium, description: item.description, link: item.link, sort_order: item.sort_order };
+    const payload = { page_id: pageId, media_url: item.media_url, title: item.title, year: item.year, medium: item.medium, size: item.size, description: item.description, link: item.link, sort_order: item.sort_order };
     if (item.id.startsWith('new_')) {
       const { data } = await supabase.from('page_gallery_items').insert(payload).select().single();
       if (data) setItems(prev => prev.map(i => i.id === item.id ? data : i));
@@ -125,6 +126,7 @@ export default function FlatGalleryManager({ pageId, isVideo, accent }: {
               <FieldInput label="Title" value={item.title ?? ''} onChange={v => update(item.id, 'title', v)} />
               <FieldInput label="Year" value={item.year ?? ''} onChange={v => update(item.id, 'year', v)} />
               {!isVideo && <FieldInput label="Medium" value={item.medium ?? ''} onChange={v => update(item.id, 'medium', v)} />}
+              {!isVideo && <FieldInput label="Size (optional)" value={item.size ?? ''} onChange={v => update(item.id, 'size', v)} placeholder="e.g. 24x36 inches" />}
               {!isVideo && <FieldInput label="Link (optional)" value={item.link ?? ''} onChange={v => update(item.id, 'link', v)} placeholder="https://..." />}
               <div style={{ gridColumn: '1 / -1' }}>
                 <FieldInput label="Description" value={item.description ?? ''} onChange={v => update(item.id, 'description', v)} multiline placeholder="Enter a description..." />
