@@ -152,8 +152,12 @@ export function useContent(sectionId: string, slug: string) {
           title: pageData.title || staticContent?.title || '',
           subtitle: pageData.subtitle || staticContent?.subtitle || '',
           heroImage: pageData.hero_image_url || staticContent?.heroImage || '',
-          // Combine the preserved static blocks (text, quotes, etc) with the dynamic DB blocks
-          blocks: [...preserveBlocks, ...blocks],
+          // Combine blocks: place profile-photo first, then preserved static text, then other dynamic blocks
+          blocks: [
+            ...blocks.filter(b => b.type === 'profile-photo'),
+            ...preserveBlocks,
+            ...blocks.filter(b => b.type !== 'profile-photo')
+          ],
           // If the DB has albums, use them. Otherwise fallback to static albums to prevent blank pages
           // Or if they initialized it but it's empty, we should probably show empty, but for safety we fallback
           albums: albums.length > 0 ? albums : staticContent?.albums
