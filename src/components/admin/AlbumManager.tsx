@@ -137,6 +137,7 @@ export default function AlbumManager({ pageId, accent }: { pageId: string; accen
   const updateField = (id: string, field: keyof Album, value: string) => {
     setAlbums(prev => prev.map(a => a.id === id ? { ...a, [field]: value } : a));
   };
+  if (loading) return (
     <div style={{ display: 'flex', justifyContent: 'center', padding: '32px' }}>
       <Loader2 size={22} color={accent} className="animate-spin" />
     </div>

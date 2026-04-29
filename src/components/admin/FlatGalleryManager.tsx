@@ -144,6 +144,12 @@ export default function FlatGalleryManager({ pageId, isVideo, accent }: {
     setItems(prev => prev.map(i => i.id === id ? { ...i, [field]: value } : i));
   };
 
+  if (loading) return (
+    <div style={{ display: 'flex', justifyContent: 'center', padding: '24px' }}>
+      <Loader2 size={20} color={accent} className="animate-spin" />
+    </div>
+  );
+
   return (
     <div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '14px' }}>
