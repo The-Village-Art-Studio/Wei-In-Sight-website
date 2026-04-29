@@ -140,9 +140,9 @@ export function useContent(sectionId: string, slug: string) {
         
         // Filter out blocks from staticContent that we are going to replace with DB data
         // ONLY if we actually have data from the DB to replace it with
-        const hasGallery = galleryData && galleryData.length > 0;
-        const hasExhibitions = exhibitionsData && exhibitionsData.length > 0;
-        const hasBuyArt = buyData && buyData.length > 0;
+        const hasGallery = blocks.some(b => b.type === 'gallery' || b.type === 'video-gallery');
+        const hasExhibitions = blocks.some(b => b.type === 'exhibition-list');
+        const hasBuyArt = blocks.some(b => b.type === 'logo-grid');
 
         const preserveBlocks = staticContent?.blocks?.filter(b => {
           if (b.type === 'gallery' || b.type === 'video-gallery') return !hasGallery;
