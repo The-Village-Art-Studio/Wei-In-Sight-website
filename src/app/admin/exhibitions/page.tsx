@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { supabase, deleteFileFromStorage } from '@/lib/supabase';
-import { Plus, Trash2, Save, Loader2, CheckCircle, GripVertical, Trophy, Crop, ImageIcon } from 'lucide-react';
+import { Plus, Trash2, Save, Loader2, CheckCircle, ChevronUp, ChevronDown, Trophy, Crop, ImageIcon } from 'lucide-react';
 import { FieldInput, SaveButton, SectionCard } from '@/components/admin/PageContentEditor';
 import SupabaseUploader from '@/components/admin/SupabaseUploader';
 import ImageCropper from '@/components/admin/ImageCropper';
@@ -151,14 +151,53 @@ export default function ExhibitionsPage() {
     setItems(prev => prev.map(i => i.id === id ? { ...i, [field]: value } : i));
   };
 
+  const [orderChanged, setOrderChanged] = useState(false);
+
+  const moveItem = (index: number, direction: 'up' | 'down') => {
+    const newIndex = direction === 'up' ? index - 1 : index + 1;
+    if (newIndex < 0 || newIndex >= items.length) return;
+
+    const newItems = [...items];
+    [newItems[index], newItems[newIndex]] = [newItems[newIndex], newItems[index]];
+
+    // Update sort_order for all items to match their new positions
+    const reordered = newItems.map((item, idx) => ({ ...item, sort_order: idx }));
+    setItems(reordered);
+    setOrderChanged(true);
+  };
+
+  const handleSaveOrder = async () => {
+    setSavingMeta(true);
+    for (const item of items) {
+      if (!item.id.startsWith('new_')) {
+        await supabase.from('exhibitions').update({ sort_order: item.sort_order }).eq('id', item.id);
+      }
+    }
+    setOrderChanged(false);
+    setSavingMeta(false);
+    setSavedMeta(true);
+    setTimeout(() => setSavedMeta(false), 2000);
+  };
+
   return (
     <div style={{ maxWidth: '780px' }}>
       <div style={{ marginBottom: '8px', fontSize: '10px', letterSpacing: '0.22em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', fontFamily: 'var(--font-inter)' }}>
         Heart / Exhibitions & Features
       </div>
-      <h1 style={{ fontSize: '28px', fontWeight: 300, color: '#fff', letterSpacing: '0.04em', fontFamily: 'var(--font-outfit)', marginBottom: '32px' }}>
-        Exhibitions & Features
-      </h1>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
+        <h1 style={{ fontSize: '28px', fontWeight: 300, color: '#fff', letterSpacing: '0.04em', fontFamily: 'var(--font-outfit)', margin: 0 }}>
+          Exhibitions & Features
+        </h1>
+        {orderChanged && (
+          <button onClick={handleSaveOrder} disabled={savingMeta} style={{
+            padding: '8px 16px', borderRadius: '8px', background: 'rgba(251,191,36,0.15)', border: '1px solid rgba(251,191,36,0.4)',
+            color: '#fbbf24', fontSize: '11px', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px'
+          }}>
+            {savingMeta ? <Loader2 size={12} className="animate-spin" /> : <Save size={12} />}
+            Save New Order
+          </button>
+        )}
+      </div>
 
       {!meta && (
         <div style={{
@@ -235,7 +274,30 @@ export default function ExhibitionsPage() {
               padding: '16px 18px',
               display: 'flex', gap: '12px', alignItems: 'flex-start',
             }}>
-              <GripVertical size={15} color="rgba(255,255,255,0.2)" style={{ cursor: 'grab', marginTop: '14px', flexShrink: 0 }} />
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginTop: '4px' }}>
+                <button 
+                  onClick={() => moveItem(items.indexOf(item), 'up')}
+                  disabled={items.indexOf(item) === 0}
+                  style={{ 
+                    padding: '4px', borderRadius: '4px', background: 'rgba(255,255,255,0.05)', border: 'none', 
+                    color: items.indexOf(item) === 0 ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.4)',
+                    cursor: items.indexOf(item) === 0 ? 'default' : 'pointer'
+                  }}
+                >
+                  <ChevronUp size={14} />
+                </button>
+                <button 
+                  onClick={() => moveItem(items.indexOf(item), 'down')}
+                  disabled={items.indexOf(item) === items.length - 1}
+                  style={{ 
+                    padding: '4px', borderRadius: '4px', background: 'rgba(255,255,255,0.05)', border: 'none', 
+                    color: items.indexOf(item) === items.length - 1 ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.4)',
+                    cursor: items.indexOf(item) === items.length - 1 ? 'default' : 'pointer'
+                  }}
+                >
+                  <ChevronDown size={14} />
+                </button>
+              </div>
 
               <div style={{ flex: 1, display: 'grid', gridTemplateColumns: '80px 1fr 1fr', gap: '10px', alignItems: 'end' }}>
                 <FieldInput label="Year" value={item.year} onChange={v => update(item.id, 'year', v)} placeholder="2025" />

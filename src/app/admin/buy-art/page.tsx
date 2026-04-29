@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { supabase, deleteFileFromStorage } from '@/lib/supabase';
-import { Plus, Trash2, Save, Loader2, CheckCircle, GripVertical, ExternalLink, ShoppingBag, Crop } from 'lucide-react';
+import { Plus, Trash2, Save, Loader2, CheckCircle, ChevronUp, ChevronDown, ExternalLink, ShoppingBag, Crop } from 'lucide-react';
 import { FieldInput, SaveButton, SectionCard } from '@/components/admin/PageContentEditor';
 import ImageCropper from '@/components/admin/ImageCropper';
 import SupabaseUploader from '@/components/admin/SupabaseUploader';
@@ -130,6 +130,34 @@ export default function BuyArtPage() {
     setItems(prev => prev.map(i => i.id === id ? { ...i, [field]: value } : i));
   };
 
+  const [orderChanged, setOrderChanged] = useState(false);
+
+  const moveItem = (index: number, direction: 'up' | 'down') => {
+    const newIndex = direction === 'up' ? index - 1 : index + 1;
+    if (newIndex < 0 || newIndex >= items.length) return;
+
+    const newItems = [...items];
+    [newItems[index], newItems[newIndex]] = [newItems[newIndex], newItems[index]];
+
+    // Update sort_order for all items
+    const reordered = newItems.map((item, idx) => ({ ...item, sort_order: idx }));
+    setItems(reordered);
+    setOrderChanged(true);
+  };
+
+  const handleSaveOrder = async () => {
+    setSavingMeta(true);
+    for (const item of items) {
+      if (!item.id.startsWith('new_')) {
+        await supabase.from('buy_art_items').update({ sort_order: item.sort_order }).eq('id', item.id);
+      }
+    }
+    setOrderChanged(false);
+    setSavingMeta(false);
+    setSavedMeta(true);
+    setTimeout(() => setSavedMeta(false), 2000);
+  };
+
   return (
     <div style={{ maxWidth: '860px' }}>
       {/* Header */}
@@ -198,8 +226,17 @@ export default function BuyArtPage() {
         </SectionCard>
       )}
 
-      <div style={{ marginBottom: '16px', fontSize: '10px', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#a78bfa', opacity: 0.8, fontFamily: 'var(--font-inter)' }}>
-        Acquisition Destinations
+      <div style={{ marginBottom: '16px', fontSize: '10px', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#a78bfa', opacity: 0.8, fontFamily: 'var(--font-inter)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <span>Acquisition Destinations</span>
+        {orderChanged && (
+          <button onClick={handleSaveOrder} disabled={savingMeta} style={{
+            padding: '4px 12px', borderRadius: '6px', background: 'rgba(167,139,250,0.2)', border: '1px solid rgba(167,139,250,0.4)',
+            color: '#a78bfa', fontSize: '10px', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px'
+          }}>
+            {savingMeta ? <Loader2 size={10} className="animate-spin" /> : <Save size={10} />}
+            Save New Order
+          </button>
+        )}
       </div>
       <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.4)', fontFamily: 'var(--font-inter)', marginBottom: '32px' }}>
         Manage the logo grid on the Buy Art page. Each destination links to an external marketplace or gallery.
@@ -211,7 +248,7 @@ export default function BuyArtPage() {
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '16px' }}>
-          {items.map((item) => (
+          {items.map((item, idx) => (
             <div key={item.id} style={{
               background: 'rgba(255,255,255,0.025)',
               border: '1px solid rgba(255,255,255,0.08)',
@@ -219,7 +256,30 @@ export default function BuyArtPage() {
               padding: '20px',
             }}>
               <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
-                <GripVertical size={15} color="rgba(255,255,255,0.2)" style={{ cursor: 'grab', marginTop: '14px', flexShrink: 0 }} />
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginTop: '4px' }}>
+                  <button 
+                    onClick={() => moveItem(idx, 'up')}
+                    disabled={idx === 0}
+                    style={{ 
+                      padding: '4px', borderRadius: '4px', background: 'rgba(255,255,255,0.05)', border: 'none', 
+                      color: idx === 0 ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.4)',
+                      cursor: idx === 0 ? 'default' : 'pointer'
+                    }}
+                  >
+                    <ChevronUp size={14} />
+                  </button>
+                  <button 
+                    onClick={() => moveItem(idx, 'down')}
+                    disabled={idx === items.length - 1}
+                    style={{ 
+                      padding: '4px', borderRadius: '4px', background: 'rgba(255,255,255,0.05)', border: 'none', 
+                      color: idx === items.length - 1 ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.4)',
+                      cursor: idx === items.length - 1 ? 'default' : 'pointer'
+                    }}
+                  >
+                    <ChevronDown size={14} />
+                  </button>
+                </div>
 
                 {/* Logo preview */}
                 <div style={{

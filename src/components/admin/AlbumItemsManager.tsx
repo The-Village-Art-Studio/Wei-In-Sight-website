@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { supabase, deleteFileFromStorage } from '@/lib/supabase';
-import { Plus, Trash2, Save, Loader2, CheckCircle, GripVertical, Image as ImageIcon } from 'lucide-react';
+import { Plus, Trash2, Save, Loader2, CheckCircle, ChevronUp, ChevronDown, Image as ImageIcon } from 'lucide-react';
 import { FieldInput } from './PageContentEditor';
 import SupabaseUploader from './SupabaseUploader';
 
@@ -103,23 +103,86 @@ export default function AlbumItemsManager({ albumId, accent }: { albumId: string
     setItems(prev => prev.map(i => i.id === id ? { ...i, [field]: value } : i));
   };
 
+  const [orderChanged, setOrderChanged] = useState(false);
+
+  const moveItem = (index: number, direction: 'up' | 'down') => {
+    const newIndex = direction === 'up' ? index - 1 : index + 1;
+    if (newIndex < 0 || newIndex >= items.length) return;
+
+    const newItems = [...items];
+    [newItems[index], newItems[newIndex]] = [newItems[newIndex], newItems[index]];
+
+    // Update sort_order for all items
+    const reordered = newItems.map((item, idx) => ({ ...item, sort_order: idx }));
+    setItems(reordered);
+    setOrderChanged(true);
+  };
+
+  const handleSaveOrder = async () => {
+    setSaving('ALL');
+    for (const item of items) {
+      if (!item.id.startsWith('new_')) {
+        await supabase.from('album_items').update({ sort_order: item.sort_order }).eq('id', item.id);
+      }
+    }
+    setOrderChanged(false);
+    setSaving(null);
+    setSaved('ALL');
+    setTimeout(() => setSaved(null), 2500);
+  };
+
   if (loading) return <div style={{ padding: '16px', display: 'flex', justifyContent: 'center' }}><Loader2 size={18} color={accent} className="animate-spin" /></div>;
 
   return (
     <div>
+      {orderChanged && (
+        <div style={{ marginBottom: '12px', display: 'flex', justifyContent: 'flex-end' }}>
+          <button onClick={handleSaveOrder} disabled={saving === 'ALL'} style={{
+            display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 12px', borderRadius: '7px',
+            background: `${accent}15`, border: `1px solid ${accent}40`, color: accent,
+            cursor: 'pointer', fontSize: '11px', fontWeight: 600, fontFamily: 'var(--font-inter)',
+          }}>
+            {saving === 'ALL' ? <Loader2 size={11} className="animate-spin" /> : <Save size={11} />}
+            Save New Order
+          </button>
+        </div>
+      )}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '12px' }}>
         {items.length === 0 && (
           <div style={{ textAlign: 'center', padding: '20px', color: 'rgba(255,255,255,0.2)', fontSize: '12px', fontFamily: 'var(--font-inter)', border: '1px dashed rgba(255,255,255,0.08)', borderRadius: '8px' }}>
             No images yet.
           </div>
         )}
-        {items.map(item => (
+        {items.map((item, idx) => (
           <div key={item.id} style={{
             display: 'flex', gap: '12px', alignItems: 'flex-start',
             background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.07)',
             borderRadius: '10px', padding: '12px',
           }}>
-            <GripVertical size={14} color="rgba(255,255,255,0.18)" style={{ cursor: 'grab', marginTop: '14px', flexShrink: 0 }} />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginTop: '4px' }}>
+              <button 
+                onClick={() => moveItem(idx, 'up')}
+                disabled={idx === 0}
+                style={{ 
+                  padding: '4px', borderRadius: '4px', background: 'rgba(255,255,255,0.05)', border: 'none', 
+                  color: idx === 0 ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.4)',
+                  cursor: idx === 0 ? 'default' : 'pointer'
+                }}
+              >
+                <ChevronUp size={14} />
+              </button>
+              <button 
+                onClick={() => moveItem(idx, 'down')}
+                disabled={idx === items.length - 1}
+                style={{ 
+                  padding: '4px', borderRadius: '4px', background: 'rgba(255,255,255,0.05)', border: 'none', 
+                  color: idx === items.length - 1 ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.4)',
+                  cursor: idx === items.length - 1 ? 'default' : 'pointer'
+                }}
+              >
+                <ChevronDown size={14} />
+              </button>
+            </div>
 
             {/* Thumbnail */}
             <div style={{ width: '52px', height: '52px', borderRadius: '7px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', flexShrink: 0, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
