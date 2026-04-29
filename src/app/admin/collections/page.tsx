@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Plus, Search, Filter, MoreHorizontal, Folder, Film, Image as ImageIcon, Loader2 } from 'lucide-react';
-import { supabase } from '@/lib/supabase';
+import { Plus, Search, Filter, Folder, Film, Image as ImageIcon, Loader2, ChevronUp, ChevronDown, Trash2, Edit2, Save, CheckCircle } from 'lucide-react';
+import { supabase, deleteFileFromStorage } from '@/lib/supabase';
 
 interface Collection {
   id: string;
@@ -11,6 +11,7 @@ interface Collection {
   collection_type: string;
   section_key: string;
   cover_image_url: string | null;
+  sort_order: number;
 }
 
 export default function CollectionsEditorPage() {
@@ -34,6 +35,50 @@ export default function CollectionsEditorPage() {
       setCollections(data);
     }
     setLoading(false);
+  };
+
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [orderChanged, setOrderChanged] = useState(false);
+
+  const moveItem = (index: number, direction: 'up' | 'down') => {
+    const newIndex = direction === 'up' ? index - 1 : index + 1;
+    if (newIndex < 0 || newIndex >= collections.length) return;
+
+    const newCols = [...collections];
+    [newCols[index], newCols[newIndex]] = [newCols[newIndex], newCols[index]];
+
+    const reordered = newCols.map((col, idx) => ({ ...col, sort_order: idx }));
+    setCollections(reordered);
+    setOrderChanged(true);
+  };
+
+  const handleSaveOrder = async () => {
+    setSaving(true);
+    try {
+      for (const col of collections) {
+        await supabase.from('collections').update({ sort_order: col.sort_order }).eq('id', col.id);
+      }
+      setOrderChanged(false);
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    } catch (err) {
+      console.error(err);
+      alert('Failed to save order');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleDelete = async (col: Collection) => {
+    if (!confirm(`Delete "${col.title}"? This will also remove its cover image from the server.`)) return;
+    
+    await supabase.from('collections').delete().eq('id', col.id);
+    if (col.cover_image_url) {
+      await deleteFileFromStorage(col.cover_image_url);
+    }
+    
+    setCollections(prev => prev.filter(c => c.id !== col.id));
   };
 
   const getTypeIcon = (type: string) => {
@@ -74,6 +119,16 @@ export default function CollectionsEditorPage() {
               Filter
             </button>
           </div>
+          {orderChanged && (
+            <button 
+              onClick={handleSaveOrder}
+              disabled={saving}
+              className="flex items-center gap-2 px-4 py-2 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-lg hover:bg-emerald-500/30 transition-colors"
+            >
+              {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : saved ? <CheckCircle className="w-4 h-4" /> : <Save className="w-4 h-4" />}
+              Save Order
+            </button>
+          )}
         </div>
 
         {/* Data Table */}
@@ -90,6 +145,7 @@ export default function CollectionsEditorPage() {
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="border-b border-white/10 text-xs uppercase tracking-widest text-white/40 bg-[#0a0a0a]">
+                  <th className="px-6 py-4 font-medium w-16">Order</th>
                   <th className="px-6 py-4 font-medium">Collection</th>
                   <th className="px-6 py-4 font-medium">Type</th>
                   <th className="px-6 py-4 font-medium">Section</th>
@@ -97,8 +153,26 @@ export default function CollectionsEditorPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
-                {collections.map((collection) => (
+                {collections.map((collection, idx) => (
                   <tr key={collection.id} className="hover:bg-white/[0.02] transition-colors group">
+                    <td className="px-6 py-4">
+                      <div className="flex flex-col gap-1">
+                        <button 
+                          onClick={() => moveItem(idx, 'up')}
+                          disabled={idx === 0}
+                          className={`p-1 rounded hover:bg-white/10 transition-colors ${idx === 0 ? 'text-white/5 cursor-default' : 'text-white/20 hover:text-pink-400'}`}
+                        >
+                          <ChevronUp className="w-3 h-3" />
+                        </button>
+                        <button 
+                          onClick={() => moveItem(idx, 'down')}
+                          disabled={idx === collections.length - 1}
+                          className={`p-1 rounded hover:bg-white/10 transition-colors ${idx === collections.length - 1 ? 'text-white/5 cursor-default' : 'text-white/20 hover:text-pink-400'}`}
+                        >
+                          <ChevronDown className="w-3 h-3" />
+                        </button>
+                      </div>
+                    </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-4">
                         <div className="w-12 h-12 bg-white/5 rounded-lg border border-white/10 flex items-center justify-center overflow-hidden relative">
@@ -124,9 +198,17 @@ export default function CollectionsEditorPage() {
                     </td>
                     <td className="px-6 py-4 text-sm text-white/60 capitalize">{collection.section_key}</td>
                     <td className="px-6 py-4 text-right">
-                      <button className="p-2 text-white/40 hover:text-white hover:bg-white/10 rounded-lg transition-colors">
-                        <MoreHorizontal className="w-5 h-5" />
-                      </button>
+                      <div className="flex items-center justify-end gap-2">
+                        <button className="p-2 text-white/40 hover:text-white hover:bg-white/10 rounded-lg transition-colors">
+                          <Edit2 className="w-4 h-4" />
+                        </button>
+                        <button 
+                          onClick={() => handleDelete(collection)}
+                          className="p-2 text-white/40 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { supabase, deleteFileFromStorage } from '@/lib/supabase';
-import { Plus, Trash2, Save, Loader2, CheckCircle, GripVertical, ExternalLink } from 'lucide-react';
+import { Plus, Trash2, Save, Loader2, CheckCircle, ChevronUp, ChevronDown, ExternalLink } from 'lucide-react';
 import { FieldInput } from './PageContentEditor';
 import SupabaseUploader from './SupabaseUploader';
 
@@ -66,6 +66,43 @@ export default function BuyArtManager({ accent }: { accent: string }) {
     setItems(prev => prev.filter(i => i.id !== item.id));
   };
 
+  const moveUp = (idx: number) => {
+    if (idx === 0) return;
+    const newItems = [...items];
+    [newItems[idx - 1], newItems[idx]] = [newItems[idx], newItems[idx - 1]];
+    setItems(newItems.map((item, i) => ({ ...item, sort_order: i })));
+  };
+
+  const moveDown = (idx: number) => {
+    if (idx === items.length - 1) return;
+    const newItems = [...items];
+    [newItems[idx + 1], newItems[idx]] = [newItems[idx], newItems[idx + 1]];
+    setItems(newItems.map((item, i) => ({ ...item, sort_order: i })));
+  };
+
+  const handleSaveOrder = async () => {
+    setSaving('order');
+    try {
+      const updates = items
+        .filter(item => !item.id.startsWith('new_'))
+        .map((item, i) => ({
+          id: item.id,
+          sort_order: i
+        }));
+
+      for (const update of updates) {
+        await supabase.from('buy_art_items').update({ sort_order: update.sort_order }).eq('id', update.id);
+      }
+      setSaved('order');
+      setTimeout(() => setSaved(null), 2000);
+    } catch (err) {
+      console.error(err);
+      alert('Failed to save order');
+    } finally {
+      setSaving(null);
+    }
+  };
+
   const update = (id: string, field: keyof BuyArtItem, value: string) => {
     setItems(prev => prev.map(i => i.id === id ? { ...i, [field]: value } : i));
   };
@@ -90,7 +127,14 @@ export default function BuyArtManager({ accent }: { accent: string }) {
             background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.07)',
             borderRadius: '10px', padding: '14px',
           }}>
-            <GripVertical size={14} color="rgba(255,255,255,0.18)" style={{ cursor: 'grab', marginTop: '16px', flexShrink: 0 }} />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', flexShrink: 0, marginTop: '4px' }}>
+              <button onClick={() => moveUp(items.indexOf(item))} disabled={items.indexOf(item) === 0} style={{ padding: '4px', background: 'none', border: 'none', color: 'rgba(255,255,255,0.2)', cursor: 'pointer' }}>
+                <ChevronUp size={14} />
+              </button>
+              <button onClick={() => moveDown(items.indexOf(item))} disabled={items.indexOf(item) === items.length - 1} style={{ padding: '4px', background: 'none', border: 'none', color: 'rgba(255,255,255,0.2)', cursor: 'pointer' }}>
+                <ChevronDown size={14} />
+              </button>
+            </div>
 
             {/* Logo Preview */}
             <div style={{
@@ -154,13 +198,27 @@ export default function BuyArtManager({ accent }: { accent: string }) {
         ))}
       </div>
 
-      <button onClick={handleAdd} style={{
-        display: 'flex', alignItems: 'center', gap: '7px', padding: '9px 16px', borderRadius: '8px',
-        background: `${accent}12`, border: `1px solid ${accent}30`, color: accent,
-        cursor: 'pointer', fontSize: '12px', fontFamily: 'var(--font-inter)', letterSpacing: '0.06em',
-      }}>
-        <Plus size={13} /> Add Destination
-      </button>
+      <div style={{ display: 'flex', gap: '10px' }}>
+        <button onClick={handleAdd} style={{
+          display: 'flex', alignItems: 'center', gap: '7px', padding: '9px 16px', borderRadius: '8px',
+          background: `${accent}12`, border: `1px solid ${accent}30`, color: accent,
+          cursor: 'pointer', fontSize: '12px', fontFamily: 'var(--font-inter)', letterSpacing: '0.06em',
+        }}>
+          <Plus size={13} /> Add Destination
+        </button>
+        {items.length > 1 && (
+          <button onClick={handleSaveOrder} disabled={saving === 'order'} style={{
+            display: 'flex', alignItems: 'center', gap: '7px', padding: '9px 16px', borderRadius: '8px',
+            background: saved === 'order' ? 'rgba(52,211,153,0.12)' : 'rgba(255,255,255,0.03)',
+            border: saved === 'order' ? '1px solid rgba(52,211,153,0.3)' : '1px solid rgba(255,255,255,0.1)',
+            color: saved === 'order' ? '#34d399' : 'rgba(255,255,255,0.6)',
+            cursor: 'pointer', fontSize: '12px', fontFamily: 'var(--font-inter)', letterSpacing: '0.06em',
+          }}>
+            {saving === 'order' ? <Loader2 size={13} className="animate-spin" /> : saved === 'order' ? <CheckCircle size={13} /> : <Save size={13} />}
+            Save New Order
+          </button>
+        )}
+      </div>
     </div>
   );
 }

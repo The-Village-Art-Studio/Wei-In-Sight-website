@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import { supabase, deleteFileFromStorage } from '@/lib/supabase';
-import { Plus, Trash2, Save, Loader2, CheckCircle, GripVertical, Image as ImageIcon, Film } from 'lucide-react';
+import { Plus, Trash2, Save, Loader2, CheckCircle, GripVertical, Image as ImageIcon, Film, ChevronUp, ChevronDown, ExternalLink } from 'lucide-react';
 import { FieldInput } from './PageContentEditor';
 import SupabaseUploader from './SupabaseUploader';
+import { formatExternalLink } from '@/lib/utils';
 
 interface GalleryItem {
   id: string;
@@ -102,11 +103,46 @@ export default function FlatGalleryManager({ pageId, isVideo, accent }: {
     setItems(prev => [...prev, temp]);
   };
 
+  const moveUp = (idx: number) => {
+    if (idx === 0) return;
+    const newItems = [...items];
+    [newItems[idx - 1], newItems[idx]] = [newItems[idx], newItems[idx - 1]];
+    setItems(newItems.map((item, i) => ({ ...item, sort_order: i })));
+  };
+
+  const moveDown = (idx: number) => {
+    if (idx === items.length - 1) return;
+    const newItems = [...items];
+    [newItems[idx + 1], newItems[idx]] = [newItems[idx], newItems[idx + 1]];
+    setItems(newItems.map((item, i) => ({ ...item, sort_order: i })));
+  };
+
+  const handleSaveOrder = async () => {
+    setSaving('order');
+    try {
+      const updates = items
+        .filter(item => !item.id.startsWith('new_'))
+        .map((item, i) => ({
+          id: item.id,
+          sort_order: i
+        }));
+
+      for (const update of updates) {
+        await supabase.from('page_gallery_items').update({ sort_order: update.sort_order }).eq('id', update.id);
+      }
+      setSaved('order');
+      setTimeout(() => setSaved(null), 2000);
+    } catch (err) {
+      console.error(err);
+      alert('Failed to save order');
+    } finally {
+      setSaving(null);
+    }
+  };
+
   const update = (id: string, field: keyof GalleryItem, value: string) => {
     setItems(prev => prev.map(i => i.id === id ? { ...i, [field]: value } : i));
   };
-
-  if (loading) return <div style={{ display: 'flex', justifyContent: 'center', padding: '24px' }}><Loader2 size={20} color={accent} className="animate-spin" /></div>;
 
   return (
     <div>
@@ -122,7 +158,14 @@ export default function FlatGalleryManager({ pageId, isVideo, accent }: {
             background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.07)',
             borderRadius: '10px', padding: '14px',
           }}>
-            <GripVertical size={14} color="rgba(255,255,255,0.18)" style={{ cursor: 'grab', marginTop: '16px', flexShrink: 0 }} />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', flexShrink: 0, marginTop: '4px' }}>
+              <button onClick={() => moveUp(items.indexOf(item))} disabled={items.indexOf(item) === 0} style={{ padding: '4px', background: 'none', border: 'none', color: 'rgba(255,255,255,0.2)', cursor: 'pointer' }}>
+                <ChevronUp size={14} />
+              </button>
+              <button onClick={() => moveDown(items.indexOf(item))} disabled={items.indexOf(item) === items.length - 1} style={{ padding: '4px', background: 'none', border: 'none', color: 'rgba(255,255,255,0.2)', cursor: 'pointer' }}>
+                <ChevronDown size={14} />
+              </button>
+            </div>
 
             {/* Thumbnail / Video icon */}
             <div style={{ width: '56px', height: '56px', borderRadius: '8px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', flexShrink: 0, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -190,6 +233,15 @@ export default function FlatGalleryManager({ pageId, isVideo, accent }: {
               }}>
                 <Plus size={11} /> Duplicate
               </button>
+              {item.link && (
+                <a href={formatExternalLink(item.link)} target="_blank" rel="noopener noreferrer" style={{
+                  display: 'flex', alignItems: 'center', gap: '5px', padding: '6px 11px', borderRadius: '7px',
+                  background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.15)', color: 'rgba(255,255,255,0.6)',
+                  cursor: 'pointer', fontSize: '11px', fontFamily: 'var(--font-inter)', textDecoration: 'none',
+                }}>
+                  <ExternalLink size={11} /> View Link
+                </a>
+              )}
               <button onClick={() => handleDelete(item)} style={{
                 display: 'flex', alignItems: 'center', gap: '5px', padding: '6px 11px', borderRadius: '7px',
                 background: 'rgba(239,68,68,0.07)', border: '1px solid rgba(239,68,68,0.18)', color: 'rgba(239,68,68,0.7)',
@@ -202,13 +254,27 @@ export default function FlatGalleryManager({ pageId, isVideo, accent }: {
         ))}
       </div>
 
-      <button onClick={handleAdd} style={{
-        display: 'flex', alignItems: 'center', gap: '7px', padding: '9px 16px', borderRadius: '8px',
-        background: `${accent}12`, border: `1px solid ${accent}30`, color: accent,
-        cursor: 'pointer', fontSize: '12px', fontFamily: 'var(--font-inter)', letterSpacing: '0.06em',
-      }}>
-        <Plus size={13} /> Add {isVideo ? 'Video' : 'Image'}
-      </button>
+      <div style={{ display: 'flex', gap: '10px' }}>
+        <button onClick={handleAdd} style={{
+          display: 'flex', alignItems: 'center', gap: '7px', padding: '9px 16px', borderRadius: '8px',
+          background: `${accent}12`, border: `1px solid ${accent}30`, color: accent,
+          cursor: 'pointer', fontSize: '12px', fontFamily: 'var(--font-inter)', letterSpacing: '0.06em',
+        }}>
+          <Plus size={13} /> Add {isVideo ? 'Video' : 'Image'}
+        </button>
+        {items.length > 1 && (
+          <button onClick={handleSaveOrder} disabled={saving === 'order'} style={{
+            display: 'flex', alignItems: 'center', gap: '7px', padding: '9px 16px', borderRadius: '8px',
+            background: saved === 'order' ? 'rgba(52,211,153,0.12)' : 'rgba(255,255,255,0.03)',
+            border: saved === 'order' ? '1px solid rgba(52,211,153,0.3)' : '1px solid rgba(255,255,255,0.1)',
+            color: saved === 'order' ? '#34d399' : 'rgba(255,255,255,0.6)',
+            cursor: 'pointer', fontSize: '12px', fontFamily: 'var(--font-inter)', letterSpacing: '0.06em',
+          }}>
+            {saving === 'order' ? <Loader2 size={13} className="animate-spin" /> : saved === 'order' ? <CheckCircle size={13} /> : <Save size={13} />}
+            Save New Order
+          </button>
+        )}
+      </div>
     </div>
   );
 }

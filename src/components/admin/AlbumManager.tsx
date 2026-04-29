@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { supabase, deleteFileFromStorage } from '@/lib/supabase';
-import { Plus, Trash2, ChevronDown, ChevronRight, Loader2, GripVertical } from 'lucide-react';
+import { Plus, Trash2, ChevronDown, ChevronRight, Loader2, ChevronUp, ChevronDown as ChevronDownIcon, Save, CheckCircle } from 'lucide-react';
 import { FieldInput, SaveButton } from './PageContentEditor';
 import AlbumItemsManager from './AlbumItemsManager';
 
@@ -99,11 +99,44 @@ export default function AlbumManager({ pageId, accent }: { pageId: string; accen
     }
   };
 
+  const moveUp = (idx: number) => {
+    if (idx === 0) return;
+    const newItems = [...albums];
+    [newItems[idx - 1], newItems[idx]] = [newItems[idx], newItems[idx - 1]];
+    setAlbums(newItems.map((item, i) => ({ ...item, sort_order: i })));
+  };
+
+  const moveDown = (idx: number) => {
+    if (idx === albums.length - 1) return;
+    const newItems = [...albums];
+    [newItems[idx + 1], newItems[idx]] = [newItems[idx], newItems[idx + 1]];
+    setAlbums(newItems.map((item, i) => ({ ...item, sort_order: i })));
+  };
+
+  const handleSaveOrder = async () => {
+    setSaving('order');
+    try {
+      const updates = albums.map((album, i) => ({
+        id: album.id,
+        sort_order: i
+      }));
+
+      for (const update of updates) {
+        await supabase.from('albums').update({ sort_order: update.sort_order }).eq('id', update.id);
+      }
+      setSaved('order');
+      setTimeout(() => setSaved(null), 2000);
+    } catch (err) {
+      console.error(err);
+      alert('Failed to save order');
+    } finally {
+      setSaving(null);
+    }
+  };
+
   const updateField = (id: string, field: keyof Album, value: string) => {
     setAlbums(prev => prev.map(a => a.id === id ? { ...a, [field]: value } : a));
   };
-
-  if (loading) return (
     <div style={{ display: 'flex', justifyContent: 'center', padding: '32px' }}>
       <Loader2 size={22} color={accent} className="animate-spin" />
     </div>
@@ -129,7 +162,14 @@ export default function AlbumManager({ pageId, accent }: { pageId: string; accen
             }}>
               {/* Folder header */}
               <div style={{ display: 'flex', alignItems: 'center', padding: '12px 14px', gap: '10px' }}>
-                <GripVertical size={14} color="rgba(255,255,255,0.2)" style={{ cursor: 'grab', flexShrink: 0 }} />
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1px', flexShrink: 0 }}>
+                  <button onClick={(e) => { e.stopPropagation(); moveUp(albums.indexOf(album)); }} disabled={albums.indexOf(album) === 0} style={{ padding: '2px', background: 'none', border: 'none', color: 'rgba(255,255,255,0.15)', cursor: 'pointer' }}>
+                    <ChevronUp size={13} />
+                  </button>
+                  <button onClick={(e) => { e.stopPropagation(); moveDown(albums.indexOf(album)); }} disabled={albums.indexOf(album) === albums.length - 1} style={{ padding: '2px', background: 'none', border: 'none', color: 'rgba(255,255,255,0.15)', cursor: 'pointer' }}>
+                    <ChevronDownIcon size={13} />
+                  </button>
+                </div>
                 <button onClick={() => setExpanded(isOpen ? null : album.id)} style={{
                   flex: 1, display: 'flex', alignItems: 'center', gap: '10px',
                   background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left',
@@ -190,14 +230,29 @@ export default function AlbumManager({ pageId, accent }: { pageId: string; accen
         })}
       </div>
 
-      <button onClick={handleAdd} style={{
-        display: 'flex', alignItems: 'center', gap: '8px',
-        padding: '9px 16px', borderRadius: '8px',
-        background: `${accent}14`, border: `1px solid ${accent}35`, color: accent,
-        cursor: 'pointer', fontSize: '12px', fontFamily: 'var(--font-inter)', letterSpacing: '0.06em',
-      }}>
-        <Plus size={14} /> Add Folder
-      </button>
+      <div style={{ display: 'flex', gap: '10px' }}>
+        <button onClick={handleAdd} style={{
+          display: 'flex', alignItems: 'center', gap: '8px',
+          padding: '9px 16px', borderRadius: '8px',
+          background: `${accent}14`, border: `1px solid ${accent}35`, color: accent,
+          cursor: 'pointer', fontSize: '12px', fontFamily: 'var(--font-inter)', letterSpacing: '0.06em',
+        }}>
+          <Plus size={14} /> Add Folder
+        </button>
+        {albums.length > 1 && (
+          <button onClick={handleSaveOrder} disabled={saving === 'order'} style={{
+            display: 'flex', alignItems: 'center', gap: '8px',
+            padding: '9px 16px', borderRadius: '8px',
+            background: saved === 'order' ? 'rgba(52,211,153,0.12)' : 'rgba(255,255,255,0.03)',
+            border: saved === 'order' ? '1px solid rgba(52,211,153,0.3)' : '1px solid rgba(255,255,255,0.1)',
+            color: saved === 'order' ? '#34d399' : 'rgba(255,255,255,0.5)',
+            cursor: 'pointer', fontSize: '12px', fontFamily: 'var(--font-inter)', letterSpacing: '0.06em',
+          }}>
+            {saving === 'order' ? <Loader2 size={13} className="animate-spin" /> : saved === 'order' ? <CheckCircle size={13} /> : <Save size={13} />}
+            Save Folder Order
+          </button>
+        )}
+      </div>
     </div>
   );
 }

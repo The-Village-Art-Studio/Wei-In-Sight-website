@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Plus, Search, Filter, MoreHorizontal, Image as ImageIcon, Loader2, Trash2, Edit2, Save, X, CheckCircle, ExternalLink } from 'lucide-react';
+import { Plus, Search, Filter, MoreHorizontal, Image as ImageIcon, Loader2, Trash2, Edit2, Save, X, CheckCircle, ExternalLink, ChevronUp, ChevronDown } from 'lucide-react';
 import { supabase, deleteFileFromStorage } from '@/lib/supabase';
 import SupabaseUploader from '@/components/admin/SupabaseUploader';
 import { formatExternalLink } from '@/lib/utils';
@@ -116,6 +116,39 @@ export default function WorksEditorPage() {
     setWorks(prev => prev.filter(w => w.id !== work.id));
   };
 
+  const [orderChanged, setOrderChanged] = useState(false);
+
+  const moveItem = (index: number, direction: 'up' | 'down') => {
+    const newIndex = direction === 'up' ? index - 1 : index + 1;
+    if (newIndex < 0 || newIndex >= works.length) return;
+
+    const newWorks = [...works];
+    [newWorks[index], newWorks[newIndex]] = [newWorks[newIndex], newWorks[index]];
+
+    const reordered = newWorks.map((work, idx) => ({ ...work, sort_order: idx }));
+    setWorks(reordered);
+    setOrderChanged(true);
+  };
+
+  const handleSaveOrder = async () => {
+    setSaving(true);
+    try {
+      for (const work of works) {
+        if (!work.id.startsWith('new_')) {
+          await supabase.from('works').update({ sort_order: work.sort_order }).eq('id', work.id);
+        }
+      }
+      setOrderChanged(false);
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    } catch (err) {
+      console.error(err);
+      alert('Failed to save order');
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="flex items-center justify-between">
@@ -123,13 +156,25 @@ export default function WorksEditorPage() {
           <h1 className="text-3xl font-light text-white tracking-wide">Visual Works</h1>
           <p className="text-white/50 mt-2">Manage individual art pieces, paintings, and sculptures.</p>
         </div>
-        <button 
-          onClick={handleNew}
-          className="flex items-center gap-2 px-4 py-2 bg-pink-500 text-white rounded-lg hover:bg-pink-400 transition-colors shadow-[0_0_15px_rgba(255,105,180,0.3)]"
-        >
-          <Plus className="w-4 h-4" />
-          New Work
-        </button>
+        <div className="flex items-center gap-4">
+          {orderChanged && (
+            <button 
+              onClick={handleSaveOrder}
+              disabled={saving}
+              className="flex items-center gap-2 px-4 py-2 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-lg hover:bg-emerald-500/30 transition-colors"
+            >
+              {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+              Save New Order
+            </button>
+          )}
+          <button 
+            onClick={handleNew}
+            className="flex items-center gap-2 px-4 py-2 bg-pink-500 text-white rounded-lg hover:bg-pink-400 transition-colors shadow-[0_0_15px_rgba(255,105,180,0.3)]"
+          >
+            <Plus className="w-4 h-4" />
+            New Work
+          </button>
+        </div>
       </div>
 
       <div className="bg-[#0f0f0f] border border-white/10 rounded-2xl overflow-hidden">
@@ -161,6 +206,7 @@ export default function WorksEditorPage() {
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="border-b border-white/10 text-xs uppercase tracking-widest text-white/40 bg-[#0a0a0a]">
+                  <th className="px-6 py-4 font-medium w-16">Order</th>
                   <th className="px-6 py-4 font-medium">Artwork</th>
                   <th className="px-6 py-4 font-medium">Year</th>
                   <th className="px-6 py-4 font-medium">Medium</th>
@@ -169,8 +215,26 @@ export default function WorksEditorPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
-                {works.map((work) => (
+                {works.map((work, idx) => (
                   <tr key={work.id} className="hover:bg-white/[0.02] transition-colors group">
+                    <td className="px-6 py-4">
+                      <div className="flex flex-col gap-1">
+                        <button 
+                          onClick={() => moveItem(idx, 'up')}
+                          disabled={idx === 0}
+                          className={`p-1 rounded hover:bg-white/10 transition-colors ${idx === 0 ? 'text-white/5 cursor-default' : 'text-white/20 hover:text-pink-400'}`}
+                        >
+                          <ChevronUp className="w-3 h-3" />
+                        </button>
+                        <button 
+                          onClick={() => moveItem(idx, 'down')}
+                          disabled={idx === works.length - 1}
+                          className={`p-1 rounded hover:bg-white/10 transition-colors ${idx === works.length - 1 ? 'text-white/5 cursor-default' : 'text-white/20 hover:text-pink-400'}`}
+                        >
+                          <ChevronDown className="w-3 h-3" />
+                        </button>
+                      </div>
+                    </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-4">
                         <div className="w-12 h-12 bg-white/5 rounded-lg border border-white/10 flex items-center justify-center overflow-hidden relative">
