@@ -139,16 +139,18 @@ export function useContent(sectionId: string, slug: string) {
         const staticContent = MOCK_CONTENT[`${sectionId}/${slug}`];
         
         // Filter out blocks from staticContent that we are going to replace with DB data
-        // ONLY if we actually have data from the DB to replace it with
+        // If the page exists in the DB, we consider the DB the source of truth for these dynamic blocks.
         const hasGallery = blocks.some(b => b.type === 'gallery' || b.type === 'video-gallery');
         const hasExhibitions = blocks.some(b => b.type === 'exhibition-list');
         const hasBuyArt = blocks.some(b => b.type === 'logo-grid');
 
         const preserveBlocks = staticContent?.blocks?.filter(b => {
-          if (b.type === 'gallery' || b.type === 'video-gallery') return !hasGallery;
-          if (b.type === 'exhibition-list') return !hasExhibitions;
-          if (b.type === 'logo-grid' && slug === 'buy-art') return !hasBuyArt;
-          if (b.type === 'profile-photo') return false; // Profile photo is always handled separately or replaced
+          // If the page record exists (pageData), we hide these static equivalents because the user 
+          // might have intentionally deleted all items in the CMS.
+          // We hide all types that the CMS is now capable of managing.
+          const managedTypes = ['gallery', 'video-gallery', 'exhibition-list', 'logo-grid', 'profile-photo', 'text'];
+          if (managedTypes.includes(b.type)) return false;
+          
           return true;
         }) || [];
 
@@ -156,8 +158,8 @@ export function useContent(sectionId: string, slug: string) {
           id: pageData.id,
           slug: pageData.slug,
           sectionId: pageData.section_key,
-          title: pageData.title || staticContent?.title || '',
-          subtitle: pageData.subtitle || staticContent?.subtitle || '',
+          title: (pageData.title !== null && pageData.title !== undefined) ? pageData.title : (staticContent?.title || ''),
+          subtitle: (pageData.subtitle !== null && pageData.subtitle !== undefined) ? pageData.subtitle : (staticContent?.subtitle || ''),
           heroImage: pageData.hero_image_url || staticContent?.heroImage || '',
           // Combine blocks: place profile-photo first, then preserved static text, then other dynamic blocks
           blocks: [
@@ -165,9 +167,8 @@ export function useContent(sectionId: string, slug: string) {
             ...preserveBlocks,
             ...blocks.filter(b => b.type !== 'profile-photo')
           ],
-          // If the DB has albums, use them. Otherwise fallback to static albums to prevent blank pages
-          // If we have AT LEAST ONE album in the DB, we consider the DB the source of truth for albums
-          albums: (albums.length > 0) ? albums : (staticContent?.albums || [])
+          // If the page is in the DB, the albums list from the DB is the source of truth.
+          albums: albums
         });
       } catch (err) {
         console.error('Error fetching content:', err);
