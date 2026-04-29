@@ -55,7 +55,7 @@ export default function AlbumItemsManager({ albumId, accent }: { albumId: string
         title: item.title || '', 
         year: item.year || '', 
         medium: item.medium || '', 
-        // size: item.size || '', // TEMPORARILY DISABLED: Column missing in DB schema cache
+        size: item.size || '', 
         description: item.description || '', 
         sort_order: item.sort_order || 0 
       };

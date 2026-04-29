@@ -105,17 +105,41 @@ export default function ExhibitionsPage() {
   };
 
   const handleSave = async (item: Exhibition) => {
-    setSaving(item.id);
-    const payload = { year: item.year, title: item.title, location: item.location, is_award: item.is_award, sort_order: item.sort_order };
-    if (item.id.startsWith('new_')) {
-      const { data } = await supabase.from('exhibitions').insert(payload).select().single();
-      if (data) setItems(prev => prev.map(i => i.id === item.id ? data : i));
-    } else {
-      await supabase.from('exhibitions').update(payload).eq('id', item.id);
+    if (!item.year || !item.title || !item.location) {
+      alert('Please fill in Year, Title, and Location before saving.');
+      return;
     }
-    setSaving(null);
-    setSaved(item.id);
-    setTimeout(() => setSaved(null), 2000);
+
+    setSaving(item.id);
+    try {
+      const payload = { 
+        year: item.year, 
+        title: item.title, 
+        location: item.location, 
+        is_award: item.is_award, 
+        sort_order: item.sort_order 
+      };
+
+      if (item.id.startsWith('new_')) {
+        const { data, error } = await supabase.from('exhibitions').insert(payload).select().single();
+        if (error) throw error;
+        if (data) {
+          // Merge local state with DB result to preserve any field edits made while saving
+          setItems(prev => prev.map(i => i.id === item.id ? { ...i, ...data, id: data.id } : i));
+        }
+      } else {
+        const { error } = await supabase.from('exhibitions').update(payload).eq('id', item.id);
+        if (error) throw error;
+      }
+      
+      setSaved(item.id);
+      setTimeout(() => setSaved(null), 2500);
+    } catch (error: any) {
+      console.error('Error saving exhibition:', error);
+      alert('Failed to save exhibition: ' + error.message);
+    } finally {
+      setSaving(null);
+    }
   };
 
   const handleDelete = async (id: string) => {

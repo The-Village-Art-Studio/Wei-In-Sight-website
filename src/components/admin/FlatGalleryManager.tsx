@@ -58,7 +58,7 @@ export default function FlatGalleryManager({ pageId, isVideo, accent }: {
         title: item.title || '', 
         year: item.year || '', 
         medium: item.medium || '', 
-        // size: item.size || '', // TEMPORARILY DISABLED: Column missing in DB schema cache
+        size: item.size || '', 
         description: item.description || '', 
         link: item.link || '',
         sort_order: item.sort_order || 0 
