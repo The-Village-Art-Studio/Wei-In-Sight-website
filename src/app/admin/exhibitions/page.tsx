@@ -142,9 +142,10 @@ export default function ExhibitionsPage() {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!id.startsWith('new_')) await supabase.from('exhibitions').delete().eq('id', id);
-    setItems(prev => prev.filter(i => i.id !== id));
+  const handleDelete = async (item: Exhibition) => {
+    if (!item.id.startsWith('new_') && !confirm(`Delete "${item.title}"?`)) return;
+    if (!item.id.startsWith('new_')) await supabase.from('exhibitions').delete().eq('id', item.id);
+    setItems(prev => prev.filter(i => i.id !== item.id));
   };
 
   const update = (id: string, field: keyof Exhibition, value: string | boolean) => {
@@ -344,7 +345,7 @@ export default function ExhibitionsPage() {
                   {saving === item.id ? <Loader2 size={11} className="animate-spin" /> : saved === item.id ? <CheckCircle size={11} /> : <Save size={11} />}
                   {saving === item.id ? '…' : saved === item.id ? 'Saved' : 'Save'}
                 </button>
-                <button onClick={() => handleDelete(item.id)} style={{
+                <button onClick={() => handleDelete(item)} style={{
                   display: 'flex', alignItems: 'center', gap: '5px', padding: '7px 10px', borderRadius: '7px',
                   background: 'rgba(239,68,68,0.07)', border: '1px solid rgba(239,68,68,0.18)', color: 'rgba(239,68,68,0.7)',
                   cursor: 'pointer', fontSize: '11px', fontFamily: 'var(--font-inter)',

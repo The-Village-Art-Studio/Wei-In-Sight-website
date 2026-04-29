@@ -120,10 +120,15 @@ export default function BuyArtPage() {
     setTimeout(() => setSaved(null), 2000);
   };
 
-  const handleDelete = async (id: string) => {
-    if (!id.startsWith('new_') && !confirm('Delete this acquisition destination?')) return;
-    if (!id.startsWith('new_')) await supabase.from('buy_art_items').delete().eq('id', id);
-    setItems(prev => prev.filter(i => i.id !== id));
+  const handleDelete = async (item: BuyArtItem) => {
+    if (!item.id.startsWith('new_') && !confirm(`Delete "${item.title}"? This will also remove the logo file from the server.`)) return;
+    if (!item.id.startsWith('new_')) {
+      await supabase.from('buy_art_items').delete().eq('id', item.id);
+      if (item.logo_url) {
+        await deleteFileFromStorage(item.logo_url);
+      }
+    }
+    setItems(prev => prev.filter(i => i.id !== item.id));
   };
 
   const update = (id: string, field: keyof BuyArtItem, value: string | number) => {
@@ -342,7 +347,7 @@ export default function BuyArtPage() {
                       <ExternalLink size={10} />
                     </a>
                   )}
-                  <button onClick={() => handleDelete(item.id)} style={{
+                  <button onClick={() => handleDelete(item)} style={{
                     display: 'flex', alignItems: 'center', gap: '5px', padding: '7px 10px', borderRadius: '7px',
                     background: 'rgba(239,68,68,0.07)', border: '1px solid rgba(239,68,68,0.18)', color: 'rgba(239,68,68,0.7)',
                     cursor: 'pointer', fontSize: '11px', fontFamily: 'var(--font-inter)',
