@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import Image from 'next/image';
+import { formatExternalLink } from '@/lib/utils';
 
 interface LogoItem {
   logoUrl: string;
@@ -60,7 +61,7 @@ export default function LogoGrid({ items, columns = 3 }: LogoGridProps) {
             className={`logo-item ${item.link ? 'clickable' : ''}`}
           >
             {item.link ? (
-              <a href={item.link} target="_blank" rel="noopener noreferrer" className="logo-link">
+              <a href={formatExternalLink(item.link)} target="_blank" rel="noopener noreferrer" className="logo-link">
                 {content}
               </a>
             ) : (

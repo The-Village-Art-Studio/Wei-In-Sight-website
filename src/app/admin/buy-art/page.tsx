@@ -7,6 +7,7 @@ import { FieldInput, SaveButton, SectionCard } from '@/components/admin/PageCont
 import ImageCropper from '@/components/admin/ImageCropper';
 import SupabaseUploader from '@/components/admin/SupabaseUploader';
 import { Area } from 'react-easy-crop';
+import { formatExternalLink } from '@/lib/utils';
 
 interface PageMeta {
   id: string;
@@ -273,7 +274,7 @@ export default function BuyArtPage() {
                     {saving === item.id ? '…' : saved === item.id ? 'Saved' : 'Save'}
                   </button>
                   {item.link && (
-                    <a href={item.link} target="_blank" rel="noopener noreferrer" style={{
+                    <a href={formatExternalLink(item.link)} target="_blank" rel="noopener noreferrer" style={{
                       display: 'flex', alignItems: 'center', gap: '5px', padding: '7px 10px', borderRadius: '7px',
                       background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)',
                       color: 'rgba(255,255,255,0.5)', fontSize: '11px', fontFamily: 'var(--font-inter)', textDecoration: 'none',

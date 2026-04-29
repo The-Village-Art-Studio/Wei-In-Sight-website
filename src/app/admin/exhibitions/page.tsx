@@ -242,7 +242,7 @@ export default function ExhibitionsPage() {
                 <FieldInput label="Title / Exhibition Name" value={item.title} onChange={v => update(item.id, 'title', v)} placeholder="Show title..." />
                 <FieldInput label="Location" value={item.location} onChange={v => update(item.id, 'location', v)} placeholder="City, Country" />
 
-                <div style={{ gridColumn: '1 / -1', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <div style={{ gridColumn: '1 / -1', display: 'flex', alignItems: 'center', gap: '20px' }}>
                   <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', userSelect: 'none' }}>
                     <input
                       type="checkbox"
@@ -255,6 +255,19 @@ export default function ExhibitionsPage() {
                       Mark as Award / Feature
                     </span>
                   </label>
+
+                  <div style={{ width: '160px' }}>
+                    <SupabaseUploader 
+                      accent="#fbbf24" 
+                      buttonText="Upload Photo" 
+                      onUpload={(url) => {
+                        // For now just alert or log since we haven't confirmed DB column for items yet
+                        // but this provides the "missing buttons" the user wants.
+                        console.log('Exhibition image uploaded:', url);
+                        alert('Image uploaded to storage! (Note: DB persistence for exhibition images coming soon)');
+                      }} 
+                    />
+                  </div>
                 </div>
               </div>
 

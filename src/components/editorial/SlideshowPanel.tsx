@@ -9,6 +9,7 @@ import { useSliderDrag } from "@/hooks/use-slider-drag"
 import { useSliderWheel } from "@/hooks/use-slider-wheel"
 import { useColorExtraction, useCurrentColors } from "@/hooks/use-color-extraction"
 import { GalleryItem } from "@/lib/mockContent"
+import { formatExternalLink } from "@/lib/utils"
 
 interface SlideshowPanelProps {
   items: GalleryItem[];
@@ -241,7 +242,7 @@ export default function SlideshowPanel({ items, initialIndex, isOpen, onClose }:
 
                     {currentItem?.link && (
                       <motion.a
-                        href={currentItem.link}
+                        href={formatExternalLink(currentItem.link)}
                         target="_blank"
                         rel="noopener noreferrer"
                         initial={{ opacity: 0, y: 10 }}

@@ -45,10 +45,16 @@ export default function ExhibitionList({ items }: ExhibitionListProps) {
 
                 {/* Title (Middle) */}
                 <div className="flex items-center gap-6">
-                  {/* Text-only layout as requested */}
-                  <h4 className="text-base text-white/90 group-hover:text-white transition-colors tracking-wide leading-relaxed">
-                    {item.title}
-                  </h4>
+                  <div className="flex flex-col gap-1">
+                    <h4 className="text-base text-white/90 group-hover:text-white transition-colors tracking-wide leading-relaxed flex items-center gap-4">
+                      {item.title}
+                      {item.isAward && (
+                        <span className="flex items-center gap-1.5 px-3 py-1 bg-pink-500/10 border border-pink-500/30 rounded-full text-[10px] text-pink-500 font-bold uppercase tracking-widest">
+                          Award / Feature
+                        </span>
+                      )}
+                    </h4>
+                  </div>
                 </div>
                 
                 {/* Location (Right) */}

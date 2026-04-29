@@ -132,21 +132,21 @@ export default function AlbumItemsManager({ albumId, accent }: { albumId: string
             <div style={{ flex: 1, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
               <div style={{ gridColumn: '1 / -1' }}>
                 <FieldInput label="Image URL" value={item.media_url} onChange={v => update(item.id, 'media_url', v)} placeholder="https://..." />
-                <div style={{ marginTop: '6px' }}>
-                  <SupabaseUploader 
-                    accent={accent} 
-                    buttonText="Upload File" 
-                    onUpload={(url) => {
-                      if (item.media_url) deleteFileFromStorage(item.media_url);
-                      const updatedItem = { ...item, media_url: url };
-                      update(item.id, 'media_url', url);
-                      handleSave(updatedItem);
-                    }} 
-                  />
-                  <span style={{ marginLeft: '8px', fontSize: '10px', color: 'rgba(255,255,255,0.25)', fontStyle: 'italic' }}>
-                    Auto-saves after upload
-                  </span>
-                </div>
+                  <div style={{ marginTop: '6px' }}>
+                    <SupabaseUploader 
+                      accent={accent} 
+                      buttonText="Upload Portfolio Image" 
+                      onUpload={(url) => {
+                        if (item.media_url) deleteFileFromStorage(item.media_url);
+                        const updatedItem = { ...item, media_url: url };
+                        update(item.id, 'media_url', url);
+                        handleSave(updatedItem);
+                      }} 
+                    />
+                    <div style={{ marginTop: '6px', fontSize: '10px', color: 'rgba(52,211,153,0.7)', fontStyle: 'italic', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <CheckCircle size={10} /> Auto-saves after upload
+                    </div>
+                  </div>
               </div>
               <FieldInput label="Title" value={item.title ?? ''} onChange={v => update(item.id, 'title', v)} />
               <FieldInput label="Year" value={item.year ?? ''} onChange={v => update(item.id, 'year', v)} />

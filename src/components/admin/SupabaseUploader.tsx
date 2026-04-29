@@ -47,7 +47,7 @@ export default function SupabaseUploader({ onUpload, accent = '#ff69b4', buttonT
   };
 
   return (
-    <div style={{ position: 'relative', display: 'inline-block' }}>
+    <div style={{ position: 'relative', display: 'inline-block', width: '100%' }}>
       <input
         type="file"
         accept="image/*"
@@ -58,25 +58,30 @@ export default function SupabaseUploader({ onUpload, accent = '#ff69b4', buttonT
           inset: 0,
           opacity: 0,
           cursor: uploading ? 'wait' : 'pointer',
-          width: '100%'
+          width: '100%',
+          zIndex: 10
         }}
       />
       <div style={{
         display: 'flex',
         alignItems: 'center',
-        gap: '6px',
-        padding: '8px 14px',
-        borderRadius: '8px',
-        background: success ? 'rgba(52,211,153,0.1)' : 'rgba(255,255,255,0.04)',
-        border: success ? '1px solid rgba(52,211,153,0.3)' : '1px solid rgba(255,255,255,0.1)',
-        color: success ? '#34d399' : 'rgba(255,255,255,0.6)',
-        fontSize: '11px',
+        justifyContent: 'center',
+        gap: '8px',
+        padding: '10px 16px',
+        borderRadius: '10px',
+        background: success ? 'rgba(52,211,153,0.1)' : `${accent}15`,
+        border: success ? '1px solid rgba(52,211,153,0.4)' : `1px solid ${accent}40`,
+        color: success ? '#34d399' : '#fff',
+        fontSize: '12px',
+        fontWeight: 600,
         fontFamily: 'var(--font-inter)',
         whiteSpace: 'nowrap',
-        pointerEvents: 'none'
+        pointerEvents: 'none',
+        boxShadow: success ? '0 0 15px rgba(52,211,153,0.1)' : `0 0 15px ${accent}10`,
+        transition: 'all 0.3s ease'
       }}>
-        {uploading ? <Loader2 size={13} className="animate-spin" /> : success ? <CheckCircle size={13} /> : <UploadCloud size={13} />}
-        {uploading ? 'Uploading...' : success ? 'Uploaded!' : buttonText}
+        {uploading ? <Loader2 size={14} className="animate-spin" /> : success ? <CheckCircle size={14} /> : <UploadCloud size={14} />}
+        {uploading ? 'Uploading...' : success ? 'Uploaded Successfully!' : buttonText}
       </div>
     </div>
   );
