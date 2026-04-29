@@ -26,28 +26,26 @@ export function useContent(sectionId: string, slug: string) {
           return;
         }
 
-        // 2. Fetch Albums (if any)
+        // 2. Fetch Albums with their items in a single query
         const { data: albumsData } = await supabase
           .from('albums')
-          .select('*')
+          .select('*, items:album_items(*)')
           .eq('page_id', pageData.id)
           .order('sort_order');
 
         let albums: Album[] = [];
         if (albumsData) {
-          for (const album of albumsData) {
-            const { data: items } = await supabase
-              .from('album_items')
-              .select('*')
-              .eq('album_id', album.id)
-              .order('sort_order');
+          albums = albumsData.map(album => {
+            const items = (album.items || []) as any[];
+            // Sort items locally since we can't easily order nested select in a single order call for some supabase versions
+            const sortedItems = [...items].sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
             
-            albums.push({
+            return {
               id: album.id,
               title: album.title,
               description: album.description,
-              coverImages: items ? items.slice(0, 3).map(i => i.media_url) : [],
-              items: (items || []).map(i => ({
+              coverImages: sortedItems.slice(0, 3).map(i => i.media_url),
+              items: sortedItems.map(i => ({
                 id: i.id,
                 url: i.media_url,
                 title: i.title,
@@ -57,8 +55,8 @@ export function useContent(sectionId: string, slug: string) {
                 description: i.description,
                 link: i.link
               }))
-            });
-          }
+            };
+          });
         }
 
         // 3. Fetch Flat Gallery Items
@@ -195,12 +193,10 @@ export function useAlbum(albumId: string) {
       if (!albumId) return;
       setLoading(true);
       
-      // Try fetching by ID first (UUID) or Slug
-      let query = supabase.from('albums').select('*');
+      // Try fetching by ID first (UUID) or Slug with items nested
+      let query = supabase.from('albums').select('*, items:album_items(*)');
       
-      // Check if it's a UUID or a slug
       const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(albumId);
-      
       if (isUUID) {
         query = query.eq('id', albumId);
       } else {
@@ -210,18 +206,15 @@ export function useAlbum(albumId: string) {
       const { data: albumData } = await query.single();
 
       if (albumData) {
-        const { data: items } = await supabase
-          .from('album_items')
-          .select('*')
-          .eq('album_id', albumData.id)
-          .order('sort_order');
+        const items = (albumData.items || []) as any[];
+        const sortedItems = [...items].sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
 
         setAlbum({
           id: albumData.id,
           title: albumData.title,
           description: albumData.description,
-          coverImages: items ? items.slice(0, 3).map(i => i.media_url) : [],
-          items: (items || []).map(i => ({
+          coverImages: sortedItems.slice(0, 3).map(i => i.media_url),
+          items: sortedItems.map(i => ({
             id: i.id,
             url: i.media_url,
             title: i.title,

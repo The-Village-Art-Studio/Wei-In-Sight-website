@@ -42,17 +42,44 @@ export default function AlbumItemsManager({ albumId, accent }: { albumId: string
   };
 
   const handleSave = async (item: AlbumItem) => {
-    setSaving(item.id);
-    const payload = { album_id: albumId, media_url: item.media_url, title: item.title, year: item.year, medium: item.medium, size: item.size, description: item.description, sort_order: item.sort_order };
-    if (item.id.startsWith('new_')) {
-      const { data } = await supabase.from('album_items').insert(payload).select().single();
-      if (data) setItems(prev => prev.map(i => i.id === item.id ? data : i));
-    } else {
-      await supabase.from('album_items').update(payload).eq('id', item.id);
+    if (!item.media_url) {
+      alert('Please upload an image before saving.');
+      return;
     }
-    setSaving(null);
-    setSaved(item.id);
-    setTimeout(() => setSaved(null), 2000);
+
+    setSaving(item.id);
+    try {
+      const payload = { 
+        album_id: albumId, 
+        media_url: item.media_url, 
+        title: item.title || '', 
+        year: item.year || '', 
+        medium: item.medium || '', 
+        size: item.size || '', 
+        description: item.description || '', 
+        sort_order: item.sort_order || 0 
+      };
+
+      if (item.id.startsWith('new_')) {
+        const { data, error } = await supabase.from('album_items').insert(payload).select().single();
+        if (error) throw error;
+        if (data) {
+          // Merge current local state with DB ID to preserve unsaved field edits
+          setItems(prev => prev.map(i => i.id === item.id ? { ...i, ...data, id: data.id } : i));
+        }
+      } else {
+        const { error } = await supabase.from('album_items').update(payload).eq('id', item.id);
+        if (error) throw error;
+      }
+      
+      setSaved(item.id);
+      setTimeout(() => setSaved(null), 2500);
+    } catch (error: any) {
+      console.error('Error saving item:', error);
+      alert('Failed to save item: ' + error.message);
+    } finally {
+      setSaving(null);
+    }
   };
 
   const handleDelete = async (item: AlbumItem) => {

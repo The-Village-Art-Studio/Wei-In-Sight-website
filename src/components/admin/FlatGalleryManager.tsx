@@ -45,17 +45,44 @@ export default function FlatGalleryManager({ pageId, isVideo, accent }: {
   };
 
   const handleSave = async (item: GalleryItem) => {
-    setSaving(item.id);
-    const payload = { page_id: pageId, media_url: item.media_url, title: item.title, year: item.year, medium: item.medium, size: item.size, description: item.description, link: item.link, sort_order: item.sort_order };
-    if (item.id.startsWith('new_')) {
-      const { data } = await supabase.from('page_gallery_items').insert(payload).select().single();
-      if (data) setItems(prev => prev.map(i => i.id === item.id ? data : i));
-    } else {
-      await supabase.from('page_gallery_items').update(payload).eq('id', item.id);
+    if (!item.media_url) {
+      alert('Please upload a file before saving.');
+      return;
     }
-    setSaving(null);
-    setSaved(item.id);
-    setTimeout(() => setSaved(null), 2000);
+
+    setSaving(item.id);
+    try {
+      const payload = { 
+        page_id: pageId, 
+        media_url: item.media_url, 
+        title: item.title || '', 
+        year: item.year || '', 
+        medium: item.medium || '', 
+        size: item.size || '', 
+        description: item.description || '', 
+        link: item.link || '',
+        sort_order: item.sort_order || 0 
+      };
+
+      if (item.id.startsWith('new_')) {
+        const { data, error } = await supabase.from('page_gallery_items').insert(payload).select().single();
+        if (error) throw error;
+        if (data) {
+          setItems(prev => prev.map(i => i.id === item.id ? { ...i, ...data, id: data.id } : i));
+        }
+      } else {
+        const { error } = await supabase.from('page_gallery_items').update(payload).eq('id', item.id);
+        if (error) throw error;
+      }
+      
+      setSaved(item.id);
+      setTimeout(() => setSaved(null), 2500);
+    } catch (error: any) {
+      console.error('Error saving gallery item:', error);
+      alert('Failed to save gallery item: ' + error.message);
+    } finally {
+      setSaving(null);
+    }
   };
 
   const handleDelete = async (item: GalleryItem) => {
