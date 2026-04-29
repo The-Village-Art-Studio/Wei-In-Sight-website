@@ -1,10 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
+import { supabase, deleteFileFromStorage } from '@/lib/supabase';
 import { Plus, Trash2, Save, Loader2, CheckCircle, GripVertical, ExternalLink, ShoppingBag, Crop } from 'lucide-react';
 import { FieldInput, SaveButton, SectionCard } from '@/components/admin/PageContentEditor';
 import ImageCropper from '@/components/admin/ImageCropper';
+import SupabaseUploader from '@/components/admin/SupabaseUploader';
 import { Area } from 'react-easy-crop';
 
 interface PageMeta {
@@ -164,6 +165,16 @@ export default function BuyArtPage() {
             <FieldInput label="Subtitle" value={meta.subtitle ?? ''} onChange={v => setMeta({ ...meta, subtitle: v })} />
             <FieldInput label="Hero Cover Image URL" value={meta.hero_image_url ?? ''} onChange={v => setMeta({ ...meta, hero_image_url: v })} />
             
+            <SupabaseUploader 
+              accent="#a78bfa" 
+              buttonText="Upload Header Image" 
+              onUpload={(url) => {
+                // If there's an old Supabase file, we could delete it here
+                // but for now let's just update the URL
+                setMeta({ ...meta, hero_image_url: url });
+              }} 
+            />
+
             {meta.hero_image_url && (
               <div style={{ display: 'flex', gap: '14px', alignItems: 'flex-start' }}>
                 <div style={{ flex: 1, height: '140px', borderRadius: '10px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.08)' }}>
@@ -228,7 +239,19 @@ export default function BuyArtPage() {
                 <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '10px' }}>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                     <FieldInput label="Title" value={item.title} onChange={v => update(item.id, 'title', v)} placeholder="Marketplace name…" />
-                    <FieldInput label="Logo URL" value={item.logo_url} onChange={v => update(item.id, 'logo_url', v)} placeholder="/assets/logo.png" />
+                    <div>
+                      <FieldInput label="Logo URL" value={item.logo_url} onChange={v => update(item.id, 'logo_url', v)} placeholder="/assets/logo.png" />
+                      <div style={{ marginTop: '6px' }}>
+                        <SupabaseUploader 
+                          accent="#a78bfa" 
+                          buttonText="Upload Logo" 
+                          onUpload={(url) => {
+                            if (item.logo_url) deleteFileFromStorage(item.logo_url);
+                            update(item.id, 'logo_url', url);
+                          }} 
+                        />
+                      </div>
+                    </div>
                   </div>
                   <FieldInput label="Description" value={item.description ?? ''} onChange={v => update(item.id, 'description', v)} placeholder="What collectors can find here…" multiline />
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 80px', gap: '10px' }}>
