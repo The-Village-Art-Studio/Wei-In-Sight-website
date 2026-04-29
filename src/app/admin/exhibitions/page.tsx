@@ -116,7 +116,7 @@ export default function ExhibitionsPage() {
         year: item.year, 
         title: item.title, 
         location: item.location, 
-        is_award: item.is_award, 
+        // is_award: item.is_award, // TEMPORARILY DISABLED: Column missing in DB schema cache
         sort_order: item.sort_order 
       };
 

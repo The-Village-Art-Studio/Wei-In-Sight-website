@@ -83,6 +83,7 @@ export default function MediaGrid({ items, columns = 4 }: MediaGridProps) {
                 fill
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
                 className="grid-image"
+                style={{ objectFit: 'cover' }}
               />
               <div className="item-overlay">
                 <div className="item-info">
