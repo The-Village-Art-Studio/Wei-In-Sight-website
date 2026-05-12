@@ -145,8 +145,10 @@ export function useContent(sectionId: string, slug: string) {
         const preserveBlocks = staticContent?.blocks?.filter(b => {
           // If the page record exists (pageData), we hide these static equivalents because the user 
           // might have intentionally deleted all items in the CMS.
-          // We hide all types that the CMS is now capable of managing.
-          const managedTypes = ['gallery', 'video-gallery', 'exhibition-list', 'logo-grid', 'profile-photo', 'text'];
+          const managedTypes = ['gallery', 'video-gallery', 'profile-photo'];
+          if (slug === 'buy-art') managedTypes.push('logo-grid');
+          if (slug === 'exhibitions-features') managedTypes.push('exhibition-list');
+          
           if (managedTypes.includes(b.type)) return false;
           
           return true;
