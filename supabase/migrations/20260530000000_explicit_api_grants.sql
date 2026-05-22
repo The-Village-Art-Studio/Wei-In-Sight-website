@@ -5,129 +5,74 @@
 --   via PostgREST / supabase-js without explicit GRANTs.
 -- Rollout to all existing projects: October 30, 2026.
 -- Reference: https://supabase.com/docs/guides/database/postgres/roles
+--
+-- Uses conditional DO blocks so this migration is safe to run
+-- regardless of which tables exist on the target database.
 -- ============================================================
 
--- ─────────────────────────────────────────────
--- 1. SITE SETTINGS
---    Read: admin (authenticated) only
---    Write: admin only
--- ─────────────────────────────────────────────
-GRANT SELECT, INSERT, UPDATE, DELETE ON public.site_settings TO authenticated;
-GRANT SELECT, INSERT, UPDATE, DELETE ON public.site_settings TO service_role;
--- anon intentionally excluded: site_settings is admin-only data
+DO $$
+DECLARE
+  tbl text;
+  -- Tables with public read access (anon SELECT + authenticated/service_role full)
+  public_tables text[] := ARRAY[
+    'sections',
+    'collections',
+    'collection_items',
+    'works',
+    'writing_entries',
+    'pages',
+    'albums',
+    'album_items',
+    'page_gallery_items',
+    'exhibitions',
+    'buy_art_items'
+  ];
+  -- Tables with admin-only access (no anon access at all)
+  admin_only_tables text[] := ARRAY[
+    'site_settings',
+    'admin_users'
+  ];
+BEGIN
+  -- ── Public-readable tables ──────────────────────────────────
+  FOREACH tbl IN ARRAY public_tables LOOP
+    IF EXISTS (
+      SELECT 1 FROM information_schema.tables
+      WHERE table_schema = 'public' AND table_name = tbl
+    ) THEN
+      EXECUTE format('GRANT SELECT ON public.%I TO anon', tbl);
+      EXECUTE format('GRANT SELECT, INSERT, UPDATE, DELETE ON public.%I TO authenticated', tbl);
+      EXECUTE format('GRANT SELECT, INSERT, UPDATE, DELETE ON public.%I TO service_role', tbl);
+      RAISE NOTICE 'Granted public read + admin write on public.%', tbl;
+    ELSE
+      RAISE NOTICE 'Skipped % — table does not exist on this database', tbl;
+    END IF;
+  END LOOP;
 
--- ─────────────────────────────────────────────
--- 2. ADMIN USERS
---    Read/Write: admin (authenticated) only
--- ─────────────────────────────────────────────
-GRANT SELECT, INSERT, UPDATE, DELETE ON public.admin_users TO authenticated;
-GRANT SELECT, INSERT, UPDATE, DELETE ON public.admin_users TO service_role;
--- anon intentionally excluded: never expose user records publicly
+  -- ── Admin-only tables (no anon access) ─────────────────────
+  FOREACH tbl IN ARRAY admin_only_tables LOOP
+    IF EXISTS (
+      SELECT 1 FROM information_schema.tables
+      WHERE table_schema = 'public' AND table_name = tbl
+    ) THEN
+      EXECUTE format('GRANT SELECT, INSERT, UPDATE, DELETE ON public.%I TO authenticated', tbl);
+      EXECUTE format('GRANT SELECT, INSERT, UPDATE, DELETE ON public.%I TO service_role', tbl);
+      RAISE NOTICE 'Granted admin-only access on public.%', tbl;
+    ELSE
+      RAISE NOTICE 'Skipped % — table does not exist on this database', tbl;
+    END IF;
+  END LOOP;
 
--- ─────────────────────────────────────────────
--- 3. SECTIONS
---    Read: public (anon)
---    Write: admin (authenticated)
--- ─────────────────────────────────────────────
-GRANT SELECT ON public.sections TO anon;
-GRANT SELECT, INSERT, UPDATE, DELETE ON public.sections TO authenticated;
-GRANT SELECT, INSERT, UPDATE, DELETE ON public.sections TO service_role;
+  -- ── Inquiries: anon INSERT only (form submissions) ──────────
+  IF EXISTS (
+    SELECT 1 FROM information_schema.tables
+    WHERE table_schema = 'public' AND table_name = 'inquiries'
+  ) THEN
+    EXECUTE 'GRANT INSERT ON public.inquiries TO anon';
+    EXECUTE 'GRANT SELECT, INSERT, UPDATE, DELETE ON public.inquiries TO authenticated';
+    EXECUTE 'GRANT SELECT, INSERT, UPDATE, DELETE ON public.inquiries TO service_role';
+    RAISE NOTICE 'Granted anon INSERT + admin full access on public.inquiries';
+  ELSE
+    RAISE NOTICE 'Skipped inquiries — table does not exist on this database';
+  END IF;
 
--- ─────────────────────────────────────────────
--- 4. COLLECTIONS
---    Read: public (anon)
---    Write: admin (authenticated)
--- ─────────────────────────────────────────────
-GRANT SELECT ON public.collections TO anon;
-GRANT SELECT, INSERT, UPDATE, DELETE ON public.collections TO authenticated;
-GRANT SELECT, INSERT, UPDATE, DELETE ON public.collections TO service_role;
-
--- ─────────────────────────────────────────────
--- 5. COLLECTION ITEMS
---    Read: public (anon)
---    Write: admin (authenticated)
--- ─────────────────────────────────────────────
-GRANT SELECT ON public.collection_items TO anon;
-GRANT SELECT, INSERT, UPDATE, DELETE ON public.collection_items TO authenticated;
-GRANT SELECT, INSERT, UPDATE, DELETE ON public.collection_items TO service_role;
-
--- ─────────────────────────────────────────────
--- 6. WORKS
---    Read: public (anon)
---    Write: admin (authenticated)
--- ─────────────────────────────────────────────
-GRANT SELECT ON public.works TO anon;
-GRANT SELECT, INSERT, UPDATE, DELETE ON public.works TO authenticated;
-GRANT SELECT, INSERT, UPDATE, DELETE ON public.works TO service_role;
-
--- ─────────────────────────────────────────────
--- 7. WRITING ENTRIES
---    Read: public (anon)
---    Write: admin (authenticated)
--- ─────────────────────────────────────────────
-GRANT SELECT ON public.writing_entries TO anon;
-GRANT SELECT, INSERT, UPDATE, DELETE ON public.writing_entries TO authenticated;
-GRANT SELECT, INSERT, UPDATE, DELETE ON public.writing_entries TO service_role;
-
--- ─────────────────────────────────────────────
--- 8. PAGES
---    Read: public (anon)
---    Write: admin (authenticated)
--- ─────────────────────────────────────────────
-GRANT SELECT ON public.pages TO anon;
-GRANT SELECT, INSERT, UPDATE, DELETE ON public.pages TO authenticated;
-GRANT SELECT, INSERT, UPDATE, DELETE ON public.pages TO service_role;
-
--- ─────────────────────────────────────────────
--- 9. ALBUMS
---    Read: public (anon)
---    Write: admin (authenticated)
--- ─────────────────────────────────────────────
-GRANT SELECT ON public.albums TO anon;
-GRANT SELECT, INSERT, UPDATE, DELETE ON public.albums TO authenticated;
-GRANT SELECT, INSERT, UPDATE, DELETE ON public.albums TO service_role;
-
--- ─────────────────────────────────────────────
--- 10. ALBUM ITEMS
---    Read: public (anon)
---    Write: admin (authenticated)
--- ─────────────────────────────────────────────
-GRANT SELECT ON public.album_items TO anon;
-GRANT SELECT, INSERT, UPDATE, DELETE ON public.album_items TO authenticated;
-GRANT SELECT, INSERT, UPDATE, DELETE ON public.album_items TO service_role;
-
--- ─────────────────────────────────────────────
--- 11. PAGE GALLERY ITEMS
---    Read: public (anon)
---    Write: admin (authenticated)
--- ─────────────────────────────────────────────
-GRANT SELECT ON public.page_gallery_items TO anon;
-GRANT SELECT, INSERT, UPDATE, DELETE ON public.page_gallery_items TO authenticated;
-GRANT SELECT, INSERT, UPDATE, DELETE ON public.page_gallery_items TO service_role;
-
--- ─────────────────────────────────────────────
--- 12. EXHIBITIONS
---    Read: public (anon)
---    Write: admin (authenticated)
--- ─────────────────────────────────────────────
-GRANT SELECT ON public.exhibitions TO anon;
-GRANT SELECT, INSERT, UPDATE, DELETE ON public.exhibitions TO authenticated;
-GRANT SELECT, INSERT, UPDATE, DELETE ON public.exhibitions TO service_role;
-
--- ─────────────────────────────────────────────
--- 13. INQUIRIES
---    Insert: public (anon) — contact/commission form submissions
---    Read/Update/Delete: admin only
--- ─────────────────────────────────────────────
-GRANT INSERT ON public.inquiries TO anon;
-GRANT SELECT, INSERT, UPDATE, DELETE ON public.inquiries TO authenticated;
-GRANT SELECT, INSERT, UPDATE, DELETE ON public.inquiries TO service_role;
-
--- ─────────────────────────────────────────────
--- 14. BUY ART ITEMS
---    Read: public (anon)
---    Write: admin (authenticated)
--- ─────────────────────────────────────────────
-GRANT SELECT ON public.buy_art_items TO anon;
-GRANT SELECT, INSERT, UPDATE, DELETE ON public.buy_art_items TO authenticated;
-GRANT SELECT, INSERT, UPDATE, DELETE ON public.buy_art_items TO service_role;
+END $$;
