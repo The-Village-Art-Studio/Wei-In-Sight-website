@@ -1,0 +1,17 @@
+/* TEAM */
+Artist: Jacky Ho
+Site: https://weiinsight.com
+Instagram: @weiinsight
+TikTok: @weiinsight
+Location: Earth
+
+/* SITE */
+Project: Wei In Sight — The Creative Atlas of Jacky Ho
+Standards: HTML5, CSS3, JavaScript ES2024
+Components: Next.js, React, Three.js, Framer Motion, Supabase
+Fonts: Inter, Outfit (Google Fonts)
+Software: Visual Studio Code
+
+/* THANKS */
+Inspiration: The human body as a map of creative expression.
+Philosophy: Artist. Maker. Storyteller.
