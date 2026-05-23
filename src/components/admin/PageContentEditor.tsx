@@ -78,7 +78,8 @@ export default function PageContentEditor({ section, submenu }: Props) {
       title: submenu.label,
       subtitle: '',
       hero_image_url: '',
-    }).select().single();
+      bio: '',
+    }).select('id, title, subtitle, hero_image_url, bio').single();
 
     if (data) {
       setMeta(data);
