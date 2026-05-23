@@ -35,7 +35,10 @@ export function useContent(sectionId: string, slug: string) {
 
         let albums: Album[] = [];
         if (albumsData) {
-          albums = albumsData.map(album => {
+          // Sort albums locally to guarantee correct folder order on the frontend
+          const sortedAlbumsData = [...albumsData].sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
+          
+          albums = sortedAlbumsData.map(album => {
             const items = (album.items || []) as any[];
             // Sort items locally since we can't easily order nested select in a single order call for some supabase versions
             const sortedItems = [...items].sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
