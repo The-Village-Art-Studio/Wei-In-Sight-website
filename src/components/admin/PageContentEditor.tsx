@@ -16,6 +16,7 @@ interface PageMeta {
   title: string;
   subtitle: string;
   hero_image_url: string;
+  bio?: string;
 }
 
 // Pages with nested album folders
@@ -57,7 +58,7 @@ export default function PageContentEditor({ section, submenu }: Props) {
     setLoading(true);
     const { data } = await supabase
       .from('pages')
-      .select('id, title, subtitle, hero_image_url')
+      .select('id, title, subtitle, hero_image_url, bio')
       .eq('section_key', section.id)
       .eq('slug', submenu.id);
     
@@ -92,6 +93,7 @@ export default function PageContentEditor({ section, submenu }: Props) {
       title: meta.title,
       subtitle: meta.subtitle,
       hero_image_url: meta.hero_image_url,
+      bio: meta.bio ?? '',
     }).eq('id', meta.id);
     setSaving(false);
     setSaved(true);
@@ -173,6 +175,15 @@ export default function PageContentEditor({ section, submenu }: Props) {
               value={meta.hero_image_url ?? ''}
               onChange={v => setMeta({ ...meta, hero_image_url: v })}
             />
+            {isAbout && (
+              <FieldInput
+                label="Biography (Bio)"
+                value={meta.bio ?? ''}
+                onChange={v => setMeta({ ...meta, bio: v })}
+                multiline
+                placeholder="Enter the artist biography..."
+              />
+            )}
 
             {/* Image Preview + Buttons */}
             {meta.hero_image_url && (

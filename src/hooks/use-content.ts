@@ -69,13 +69,22 @@ export function useContent(sectionId: string, slug: string) {
           .eq('page_id', pageData.id)
           .order('sort_order');
 
+        const staticContent = MOCK_CONTENT[`${sectionId}/${slug}`];
         const blocks: ContentBlock[] = [];
         
-        // Special Case: About Page Profile Photo
-        if (slug === 'about' && pageData.hero_image_url) {
+        // Special Case: About Page Profile Photo & Bio
+        if (slug === 'about') {
+          const profilePhotoUrl = pageData.hero_image_url || staticContent?.blocks?.find(b => b.type === 'profile-photo')?.url || '';
+          if (profilePhotoUrl) {
+            blocks.push({
+              type: 'profile-photo',
+              url: profilePhotoUrl
+            });
+          }
+          const staticAboutText = staticContent?.blocks?.find(b => b.type === 'text')?.content || '';
           blocks.push({
-            type: 'profile-photo',
-            url: pageData.hero_image_url
+            type: 'text',
+            content: pageData.bio || staticAboutText
           });
         }
         // For now, if there's flat gallery data, add it as a block
@@ -137,7 +146,7 @@ export function useContent(sectionId: string, slug: string) {
         // --- MERGE LOGIC ---
         // We start with the static mock content because the CMS doesn't yet support
         // rich text blocks, pillar grids, audio players, etc.
-        const staticContent = MOCK_CONTENT[`${sectionId}/${slug}`];
+        // (staticContent is already defined above)
         
         // Filter out blocks from staticContent that we are going to replace with DB data
         // If the page exists in the DB, we consider the DB the source of truth for these dynamic blocks.
@@ -149,6 +158,7 @@ export function useContent(sectionId: string, slug: string) {
           // If the page record exists (pageData), we hide these static equivalents because the user 
           // might have intentionally deleted all items in the CMS.
           const managedTypes = ['gallery', 'video-gallery', 'profile-photo'];
+          if (slug === 'about') managedTypes.push('text');
           if (slug === 'buy-art') managedTypes.push('logo-grid');
           if (slug === 'exhibitions-features') managedTypes.push('exhibition-list');
           
