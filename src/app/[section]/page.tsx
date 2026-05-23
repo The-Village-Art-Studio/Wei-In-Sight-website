@@ -25,9 +25,7 @@ export default function SectionPage() {
       <div className="section-content">
         <div className="editorial-intro">
           <p className="text-large">
-            Exploring the boundaries of {section.label.toLowerCase()} through 
-            sculpted narratives and digital resonance. This collection represents 
-            a deep dive into {section.practicalMeaning.toLowerCase()}.
+            {section.description}
           </p>
         </div>
 

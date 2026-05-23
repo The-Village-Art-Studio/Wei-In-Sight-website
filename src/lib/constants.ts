@@ -16,6 +16,7 @@ export interface Section {
   label: string;
   poeticLabel: string;
   practicalMeaning: string;
+  description: string;
   href: string;
   bodyAnchor: string;
   anchorPos: AnchorPosition;
@@ -47,6 +48,7 @@ export const NAV_SECTIONS: Section[] = [
     label: 'Sight',
     poeticLabel: 'Visual Arts',
     practicalMeaning: 'Visual Arts',
+    description: 'A constellation of painting, photography, sculpture, and digital art. This section explores how image, form, and atmosphere become vessels for perception and feeling.',
     href: '/sight',
     bodyAnchor: 'Eyes',
     anchorPos: { x: 50, y: 18 },
@@ -69,6 +71,7 @@ export const NAV_SECTIONS: Section[] = [
     label: 'Sound',
     poeticLabel: 'Music & Audio',
     practicalMeaning: 'Music & Audio',
+    description: 'An immersive dimension of conceptual soundscapes, cinematic scores, and experimental audio archives. This section translates memory and atmosphere into auditory resonance.',
     href: '/sound',
     bodyAnchor: 'Ears',
     anchorPos: { x: 55, y: 22 },
@@ -90,6 +93,7 @@ export const NAV_SECTIONS: Section[] = [
     label: 'Touch',
     poeticLabel: 'Mixed Media & Process',
     practicalMeaning: 'Mixed Media & Process',
+    description: 'A tactile archive of mixed media, installation, mural work, watchmaking, and fashion design. This section lives where material, process, and human touch leave their mark.',
     href: '/touch',
     bodyAnchor: 'Hand/Fingertips',
     anchorPos: { x: 30, y: 55 },
@@ -112,6 +116,7 @@ export const NAV_SECTIONS: Section[] = [
     label: 'Voice',
     poeticLabel: 'Poems & Lyrics',
     practicalMeaning: 'Poems & Lyrics',
+    description: 'A gathering of poems and lyrics shaped by memory, rhythm, and emotional residue. This section gives language to what image and sound alone cannot fully hold.',
     href: '/voice',
     bodyAnchor: 'Throat',
     anchorPos: { x: 50, y: 28 },
@@ -132,6 +137,7 @@ export const NAV_SECTIONS: Section[] = [
     label: 'Dream',
     poeticLabel: 'Novel & Story World',
     practicalMeaning: 'Novel & Story World',
+    description: 'A literary world of novels and selected quotes, where story, atmosphere, and inner cinema unfold. This section opens the imagination behind the page.',
     href: '/dream',
     bodyAnchor: 'Forehead/Temple',
     anchorPos: { x: 50, y: 12 },
@@ -152,6 +158,7 @@ export const NAV_SECTIONS: Section[] = [
     label: 'Heart',
     poeticLabel: 'About / Philosophy / Journey',
     practicalMeaning: 'About / Philosophy / Journey',
+    description: 'A closer view of the artist behind the work through biography, philosophy, creative process, and public presence. This section holds the pulse beneath the practice.',
     href: '/heart',
     bodyAnchor: 'Chest/Heart',
     anchorPos: { x: 50, y: 42 },
@@ -174,6 +181,7 @@ export const NAV_SECTIONS: Section[] = [
     label: 'Pulse',
     poeticLabel: 'Buy Art / Commissions / Contact',
     practicalMeaning: 'Buy Art / Commissions / Contact',
+    description: 'A point of exchange, connection, and resonance. This section brings together collecting, commissions, and inquiry for those who wish to carry the work further.',
     href: '/pulse',
     bodyAnchor: 'Wrist',
     anchorPos: { x: 75, y: 62 },
