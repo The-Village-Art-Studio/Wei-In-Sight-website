@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { supabase, deleteFileFromStorage } from '@/lib/supabase';
-import { Plus, Trash2, Save, Loader2, CheckCircle, ChevronUp, ChevronDown, Image as ImageIcon } from 'lucide-react';
+import { Plus, Trash2, Save, Loader2, CheckCircle, ChevronUp, ChevronDown, Image as ImageIcon, Images } from 'lucide-react';
 import { FieldInput } from './PageContentEditor';
 import SupabaseUploader from './SupabaseUploader';
 
@@ -97,6 +97,30 @@ export default function AlbumItemsManager({ albumId, accent }: { albumId: string
       sort_order: items.length,
     };
     setItems(prev => [...prev, temp]);
+  };
+
+  const handleBatchUpload = async (urls: string[]) => {
+    const newItems: AlbumItem[] = [];
+    for (let i = 0; i < urls.length; i++) {
+      const sortOrder = items.length + newItems.length;
+      const payload = {
+        album_id: albumId,
+        media_url: urls[i],
+        title: '',
+        year: '',
+        medium: '',
+        size: '',
+        description: '',
+        sort_order: sortOrder,
+      };
+      const { data, error } = await supabase.from('album_items').insert(payload).select().single();
+      if (!error && data) {
+        newItems.push(data as AlbumItem);
+      }
+    }
+    if (newItems.length > 0) {
+      setItems(prev => [...prev, ...newItems]);
+    }
   };
 
   const update = (id: string, field: keyof AlbumItem, value: string) => {
@@ -251,13 +275,24 @@ export default function AlbumItemsManager({ albumId, accent }: { albumId: string
         ))}
       </div>
 
-      <button onClick={handleAdd} style={{
-        display: 'flex', alignItems: 'center', gap: '7px', padding: '7px 14px', borderRadius: '7px',
-        background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.5)',
-        cursor: 'pointer', fontSize: '11px', fontFamily: 'var(--font-inter)',
-      }}>
-        <Plus size={12} /> Add Image
-      </button>
+      <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', alignItems: 'center' }}>
+        <button onClick={handleAdd} style={{
+          display: 'flex', alignItems: 'center', gap: '7px', padding: '7px 14px', borderRadius: '7px',
+          background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.5)',
+          cursor: 'pointer', fontSize: '11px', fontFamily: 'var(--font-inter)',
+        }}>
+          <Plus size={12} /> Add Image
+        </button>
+        <SupabaseUploader
+          mode="multi"
+          accent={accent}
+          buttonText="Batch Upload"
+          onBatchUpload={handleBatchUpload}
+        />
+        <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)', fontStyle: 'italic' }}>
+          Select multiple — add details later
+        </span>
+      </div>
     </div>
   );
 }

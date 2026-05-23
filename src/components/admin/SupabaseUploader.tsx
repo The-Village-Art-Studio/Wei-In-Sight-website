@@ -1,56 +1,106 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { supabase } from '@/lib/supabase';
-import { Loader2, UploadCloud, CheckCircle } from 'lucide-react';
+import { Loader2, UploadCloud, CheckCircle, Images } from 'lucide-react';
 
-interface Props {
+interface SingleProps {
+  mode?: 'single';
   onUpload: (url: string) => void;
+  onBatchUpload?: never;
   accent?: string;
   buttonText?: string;
 }
 
-export default function SupabaseUploader({ onUpload, accent = '#ff69b4', buttonText = 'Upload' }: Props) {
+interface MultiProps {
+  mode: 'multi';
+  onUpload?: never;
+  onBatchUpload: (urls: string[]) => void;
+  accent?: string;
+  buttonText?: string;
+}
+
+type Props = SingleProps | MultiProps;
+
+async function uploadFile(file: File): Promise<string> {
+  const fileExt = file.name.split('.').pop();
+  const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 9)}.${fileExt}`;
+  const filePath = `uploads/${fileName}`;
+
+  const { error: uploadError } = await supabase.storage
+    .from('media')
+    .upload(filePath, file, { upsert: false });
+
+  if (uploadError) throw uploadError;
+
+  const { data } = supabase.storage.from('media').getPublicUrl(filePath);
+  return data.publicUrl;
+}
+
+export default function SupabaseUploader(props: Props) {
+  const { accent = '#ff69b4', buttonText } = props;
+  const isMulti = props.mode === 'multi';
+
   const [uploading, setUploading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [progress, setProgress] = useState('');
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     try {
-      const file = e.target.files?.[0];
-      if (!file) return;
+      const files = e.target.files;
+      if (!files || files.length === 0) return;
 
       setUploading(true);
       setSuccess(false);
 
-      // Create a unique file name
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 9)}.${fileExt}`;
-      const filePath = `uploads/${fileName}`;
+      if (isMulti && files.length > 1) {
+        // Multi-file upload
+        const urls: string[] = [];
+        const total = files.length;
 
-      const { error: uploadError } = await supabase.storage
-        .from('media')
-        .upload(filePath, file, { upsert: false });
+        for (let i = 0; i < total; i++) {
+          setProgress(`${i + 1} / ${total}`);
+          const url = await uploadFile(files[i]);
+          urls.push(url);
+        }
 
-      if (uploadError) throw uploadError;
+        props.onBatchUpload(urls);
+      } else {
+        // Single file
+        setProgress('');
+        const url = await uploadFile(files[0]);
 
-      const { data } = supabase.storage.from('media').getPublicUrl(filePath);
-      
-      onUpload(data.publicUrl);
+        if (isMulti) {
+          props.onBatchUpload([url]);
+        } else {
+          props.onUpload(url);
+        }
+      }
+
       setSuccess(true);
-      setTimeout(() => setSuccess(false), 2000);
+      setProgress('');
+      setTimeout(() => setSuccess(false), 2500);
     } catch (error: any) {
       console.error('Error uploading image:', error.message);
-      alert('Error uploading image: ' + error.message);
+      alert('Error uploading: ' + error.message);
     } finally {
       setUploading(false);
+      // Reset input so the same files can be re-selected
+      if (inputRef.current) inputRef.current.value = '';
     }
   };
+
+  const label = buttonText || (isMulti ? 'Upload Images' : 'Upload');
+  const IconComponent = isMulti ? Images : UploadCloud;
 
   return (
     <div style={{ position: 'relative', display: 'inline-block', width: '100%' }}>
       <input
+        ref={inputRef}
         type="file"
         accept="image/*"
+        multiple={isMulti}
         onChange={handleUpload}
         disabled={uploading}
         style={{
@@ -80,8 +130,18 @@ export default function SupabaseUploader({ onUpload, accent = '#ff69b4', buttonT
         boxShadow: success ? '0 0 15px rgba(52,211,153,0.1)' : `0 0 15px ${accent}10`,
         transition: 'all 0.3s ease'
       }}>
-        {uploading ? <Loader2 size={14} className="animate-spin" /> : success ? <CheckCircle size={14} /> : <UploadCloud size={14} />}
-        {uploading ? 'Uploading...' : success ? 'Uploaded Successfully!' : buttonText}
+        {uploading
+          ? <Loader2 size={14} className="animate-spin" />
+          : success
+            ? <CheckCircle size={14} />
+            : <IconComponent size={14} />
+        }
+        {uploading
+          ? (progress ? `Uploading ${progress}...` : 'Uploading...')
+          : success
+            ? 'Uploaded Successfully!'
+            : label
+        }
       </div>
     </div>
   );

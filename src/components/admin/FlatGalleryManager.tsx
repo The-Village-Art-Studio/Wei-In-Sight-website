@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { supabase, deleteFileFromStorage } from '@/lib/supabase';
-import { Plus, Trash2, Save, Loader2, CheckCircle, GripVertical, Image as ImageIcon, Film, ChevronUp, ChevronDown, ExternalLink } from 'lucide-react';
+import { Plus, Trash2, Save, Loader2, CheckCircle, GripVertical, Image as ImageIcon, Film, ChevronUp, ChevronDown, ExternalLink, Images } from 'lucide-react';
 import { FieldInput } from './PageContentEditor';
 import SupabaseUploader from './SupabaseUploader';
 import { formatExternalLink } from '@/lib/utils';
@@ -101,6 +101,31 @@ export default function FlatGalleryManager({ pageId, isVideo, accent }: {
       sort_order: items.length,
     };
     setItems(prev => [...prev, temp]);
+  };
+
+  const handleBatchUpload = async (urls: string[]) => {
+    const newItems: GalleryItem[] = [];
+    for (let i = 0; i < urls.length; i++) {
+      const sortOrder = items.length + newItems.length;
+      const payload = {
+        page_id: pageId,
+        media_url: urls[i],
+        title: '',
+        year: '',
+        medium: isVideo ? 'Video' : '',
+        size: '',
+        description: '',
+        link: '',
+        sort_order: sortOrder,
+      };
+      const { data, error } = await supabase.from('page_gallery_items').insert(payload).select().single();
+      if (!error && data) {
+        newItems.push(data as GalleryItem);
+      }
+    }
+    if (newItems.length > 0) {
+      setItems(prev => [...prev, ...newItems]);
+    }
   };
 
   const moveUp = (idx: number) => {
@@ -260,7 +285,7 @@ export default function FlatGalleryManager({ pageId, isVideo, accent }: {
         ))}
       </div>
 
-      <div style={{ display: 'flex', gap: '10px' }}>
+      <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', alignItems: 'center' }}>
         <button onClick={handleAdd} style={{
           display: 'flex', alignItems: 'center', gap: '7px', padding: '9px 16px', borderRadius: '8px',
           background: `${accent}12`, border: `1px solid ${accent}30`, color: accent,
@@ -268,6 +293,19 @@ export default function FlatGalleryManager({ pageId, isVideo, accent }: {
         }}>
           <Plus size={13} /> Add {isVideo ? 'Video' : 'Image'}
         </button>
+        {!isVideo && (
+          <SupabaseUploader
+            mode="multi"
+            accent={accent}
+            buttonText="Batch Upload Images"
+            onBatchUpload={handleBatchUpload}
+          />
+        )}
+        {!isVideo && (
+          <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)', fontStyle: 'italic' }}>
+            Select multiple files — add details later
+          </span>
+        )}
         {items.length > 1 && (
           <button onClick={handleSaveOrder} disabled={saving === 'order'} style={{
             display: 'flex', alignItems: 'center', gap: '7px', padding: '9px 16px', borderRadius: '8px',
