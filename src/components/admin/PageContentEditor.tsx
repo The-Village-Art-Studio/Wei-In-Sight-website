@@ -56,12 +56,15 @@ export default function PageContentEditor({ section, submenu }: Props) {
 
   const fetchMeta = async () => {
     setLoading(true);
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('pages')
-      .select('id, title, subtitle, hero_image_url, bio')
+      .select('*')
       .eq('section_key', section.id)
       .eq('slug', submenu.id);
     
+    if (error) {
+      console.error('[PageContentEditor] fetchMeta error:', error);
+    }
     if (data && data.length > 0) {
       setMeta(data[0]);
     } else {
@@ -79,8 +82,11 @@ export default function PageContentEditor({ section, submenu }: Props) {
       subtitle: '',
       hero_image_url: '',
       bio: '',
-    }).select('id, title, subtitle, hero_image_url, bio').single();
+    }).select('*').single();
 
+    if (error) {
+      console.error('[PageContentEditor] handleInitializePage error:', error);
+    }
     if (data) {
       setMeta(data);
     }
