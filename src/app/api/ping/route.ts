@@ -1,20 +1,62 @@
 import { NextResponse } from 'next/server';
+import { createClient } from '@supabase/supabase-js';
 
 /**
  * KEEP-ALIVE PING ROUTE
- * Purpose: This endpoint can be called by an external cron job (e.g., GitHub Actions, Cron-job.org)
- * to keep the Next.js server and the Supabase connection warm, preventing the project from auto-pausing.
+ *
+ * Called by a GitHub Actions cron job every 4 days to prevent
+ * Supabase from auto-pausing the project (7-day inactivity limit on free tier).
+ *
+ * This endpoint makes an actual database query — that's the only thing
+ * that counts as "activity" for Supabase's pause logic.
+ *
+ * Protected by CRON_SECRET to prevent external abuse.
  */
-export async function GET() {
+export async function GET(request: Request) {
+  // ── Auth check ──────────────────────────────────────────────
+  const cronSecret = process.env.CRON_SECRET;
+  if (cronSecret) {
+    const authHeader = request.headers.get('authorization');
+    if (authHeader !== `Bearer ${cronSecret}`) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+  }
+
+  // ── Create a one-off Supabase client ────────────────────────
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  if (!supabaseUrl || !supabaseKey) {
+    return NextResponse.json({
+      status: 'error',
+      message: 'Supabase env vars not configured',
+    }, { status: 500 });
+  }
+
+  const supabase = createClient(supabaseUrl, supabaseKey);
+
+  // ── Execute a real DB query (the actual keep-alive) ─────────
   const timestamp = new Date().toISOString();
-  
-  // In the future, we can add a simple database query here to ensure the DB connection is also warm.
-  // e.g., await supabase.from('site_settings').select('id').limit(1);
+
+  const { data, error } = await supabase
+    .from('site_settings')
+    .select('id')
+    .limit(1);
+
+  if (error) {
+    console.error('[keep-alive] Supabase query failed:', error.message);
+    return NextResponse.json({
+      status: 'error',
+      timestamp,
+      message: error.message,
+    }, { status: 502 });
+  }
 
   return NextResponse.json({
     status: 'active',
     ping: 'pong',
     timestamp,
-    message: 'Supabase keep-alive active'
-  }, { status: 200 });
+    db_rows_returned: data?.length ?? 0,
+    message: 'Supabase keep-alive: database pinged successfully',
+  });
 }

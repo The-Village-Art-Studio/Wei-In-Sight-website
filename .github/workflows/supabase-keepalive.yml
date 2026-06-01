@@ -1,0 +1,30 @@
+# Supabase Keep-Alive
+# Prevents the free-tier Supabase project from auto-pausing after 7 days of inactivity.
+# Runs every 4 days and hits our /api/ping endpoint, which performs an actual DB query.
+
+name: Supabase Keep-Alive
+
+on:
+  schedule:
+    # Every 4 days at 10:00 UTC  (minute hour day-of-month month day-of-week)
+    - cron: '0 10 */4 * *'
+  workflow_dispatch: # Allow manual trigger for testing
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Supabase keep-alive endpoint
+        run: |
+          response=$(curl -s -o /dev/null -w "%{http_code}" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            "https://weiinsight.com/api/ping")
+
+          echo "HTTP status: $response"
+
+          if [ "$response" -ne 200 ]; then
+            echo "::error::Keep-alive ping failed with status $response"
+            exit 1
+          fi
+
+          echo "✅ Supabase keep-alive ping succeeded"
